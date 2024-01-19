@@ -128,21 +128,21 @@ namespace VectorCubeAnimationEditor
             }
         }
 
-        public static void DrawPrimitive(Graphics e, IdentifiedPrimitive identifiedPrimitive)
+        public static void DrawPrimitive(Graphics e, Primitive primitive)
         {
-            switch (identifiedPrimitive.PrimitiveType)
+            switch (primitive.Type)
             {
                 case AnimationConstants._Circle:
-                    Utility.DrawCircle(e, identifiedPrimitive.Primitive.Circle);
+                    Utility.DrawCircle(e, primitive.Circle);
                     break;
                 case AnimationConstants._QuarterCircle:
-                    Utility.DrawQuarterCircle(e, identifiedPrimitive.Primitive.QuarterCircle);
+                    Utility.DrawQuarterCircle(e, primitive.QuarterCircle);
                     break;
                 case AnimationConstants._Triangle:
-                    Utility.DrawTriangle(e, identifiedPrimitive.Primitive.Triangle);
+                    Utility.DrawTriangle(e, primitive.Triangle);
                     break;
                 case AnimationConstants._RoundRect:
-                    Utility.DrawRoundRect(e, identifiedPrimitive.Primitive.RoundRect);
+                    Utility.DrawRoundRect(e, primitive.RoundRect);
                     break;
             }
         }

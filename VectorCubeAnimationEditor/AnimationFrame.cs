@@ -15,7 +15,7 @@ namespace VectorCubeAnimationEditor
         private UInt32 duration = 0;
         private UInt16 fillColor = 0x0000;
         private UInt16 primitiveCount = 0;
-        private IdentifiedPrimitive[] identifiedPrimitives = new IdentifiedPrimitive[AnimationConstants._MaxPrimitiveCount];
+        private Primitive[] primitives = new Primitive[AnimationConstants._MaxPrimitiveCount];
 
         public UInt32 Duration
         {
@@ -36,18 +36,18 @@ namespace VectorCubeAnimationEditor
 
         public AnimationFrame()
         {
-            for(int i = 0; i < identifiedPrimitives.Length; i++)
+            for(int i = 0; i < primitives.Length; i++)
             {
-                identifiedPrimitives[i] = new IdentifiedPrimitive();
+                primitives[i] = new Primitive();
             }
         }
 
-        public int GetNumberOfIdentifiedPrimitive(IdentifiedPrimitive? identifiedPrimitive)
+        public int GetNumberOfPrimitive(Primitive? primitive)
         {
-            if (identifiedPrimitive == null) return -1;
-            for (int index = 0; index < identifiedPrimitives.Length; index++)
+            if (primitive == null) return -1;
+            for (int index = 0; index < primitives.Length; index++)
             {
-                if (object.ReferenceEquals(identifiedPrimitive, identifiedPrimitives[index]))
+                if (object.ReferenceEquals(primitive, primitives[index]))
                 {
                     return index + 1;
                 }
@@ -55,31 +55,31 @@ namespace VectorCubeAnimationEditor
             return -1;
         }
 
-        public IdentifiedPrimitive? GetIdentifiedPrimitiveNumber(int identifiedPrimitiveNumber)
+        public Primitive? GetPrimitiveNumber(int primitiveNumber)
         {
-            if(identifiedPrimitiveNumber < 1 || identifiedPrimitiveNumber > primitiveCount) return null;
-            return identifiedPrimitives[identifiedPrimitiveNumber - 1];
+            if(primitiveNumber < 1 || primitiveNumber > primitiveCount) return null;
+            return primitives[primitiveNumber - 1];
         }
 
-        public IdentifiedPrimitive? AddIdentifiedPrimitive()
+        public Primitive? AddPrimitive()
         {
             if (primitiveCount > AnimationConstants._MaxPrimitiveCount) return null;
             primitiveCount++;
-            return identifiedPrimitives[primitiveCount - 1];
+            return primitives[primitiveCount - 1];
         }
 
-        public int RemoveIdentifiedPrimitive(IdentifiedPrimitive? identifiedPrimitive)
+        public int RemovePrimitive(Primitive? primitive)
         {
-            if(identifiedPrimitive == null) return -1;
-            for (int index = 0; index < identifiedPrimitives.Length; index++)
+            if(primitive == null) return -1;
+            for (int index = 0; index < primitives.Length; index++)
             {
-                if (object.ReferenceEquals(identifiedPrimitive, identifiedPrimitives[index]))
+                if (object.ReferenceEquals(primitive, primitives[index]))
                 {
-                    for (int innerIndex = index; innerIndex < identifiedPrimitives.Length - 1; innerIndex++)
+                    for (int innerIndex = index; innerIndex < primitives.Length - 1; innerIndex++)
                     {
-                        identifiedPrimitives[innerIndex] = identifiedPrimitives[innerIndex + 1];
+                        primitives[innerIndex] = primitives[innerIndex + 1];
                     }
-                    identifiedPrimitives[^1] = new IdentifiedPrimitive();
+                    primitives[^1] = new Primitive();
                     primitiveCount--;
                     return index + 1;
                 }
@@ -95,9 +95,9 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), primitiveCount);
             bytePosition += 2;
-            for (int index = 0; index < identifiedPrimitives.Length; index++)
+            for (int index = 0; index < primitives.Length; index++)
             {
-                identifiedPrimitives[index].serialize(ref bytePosition, animationBytes);
+                primitives[index].serialize(ref bytePosition, animationBytes);
             }
         }
 
@@ -109,9 +109,9 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            for (int index = 0; index < identifiedPrimitives.Length; index++)
+            for (int index = 0; index < primitives.Length; index++)
             {
-                identifiedPrimitives[index].deserialize(ref bytePosition, animationBytes);
+                primitives[index].deserialize(ref bytePosition, animationBytes);
             }
         }
 

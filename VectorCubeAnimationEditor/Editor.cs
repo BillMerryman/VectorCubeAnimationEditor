@@ -8,12 +8,11 @@ namespace VectorCubeAnimationEditor
     {
         Animation animation;
         AnimationFrame? currentFrame;
-        IdentifiedPrimitive? currentIdentifiedPrimitive;
+        Primitive? currentPrimitive;
         bool isResizing = false;
         bool isMoving = false;
         int isVertexMoving = -1;
         Point MouseLocation = new Point(0, 0);
-
 
         public Editor()
         {
@@ -108,7 +107,7 @@ namespace VectorCubeAnimationEditor
             {
                 currentFrame = null;
                 txtCurrentFrame.Text = string.Empty;
-                txtCurrentIdentifiedPrimitive.Text = string.Empty;
+                txtCurrentPrimitive.Text = string.Empty;
                 btnRemoveCurrentPrimitive.Enabled = false;
                 DisablePrimitiveCreation();
                 DisablePrimitiveNavigation();
@@ -198,43 +197,43 @@ namespace VectorCubeAnimationEditor
         private void btnRemoveCurrentPrimitive_Click(object sender, EventArgs e)
         {
             if (currentFrame == null) return;
-            int currentIdentifiedPrimitiveNumber = currentFrame.RemoveIdentifiedPrimitive(currentIdentifiedPrimitive);
-            txtIdentifiedPrimitiveCount.Text = currentFrame.PrimitiveCount.ToString();
+            int currentPrimitiveNumber = currentFrame.RemovePrimitive(currentPrimitive);
+            txtPrimitiveCount.Text = currentFrame.PrimitiveCount.ToString();
 
             if (currentFrame.PrimitiveCount < 2) DisablePrimitiveNavigation();
             if (currentFrame.PrimitiveCount < 1)
             {
-                txtCurrentIdentifiedPrimitive.Text = string.Empty;
+                txtCurrentPrimitive.Text = string.Empty;
                 DisablePrimitiveNavigation();
                 HideAllPrimitiveFields();
                 pctbxCanvas.Refresh();
                 return;
             }
 
-            while (currentIdentifiedPrimitiveNumber > currentFrame.PrimitiveCount) --currentIdentifiedPrimitiveNumber;
-            txtCurrentIdentifiedPrimitive.Text = currentIdentifiedPrimitiveNumber.ToString();
-            SetCurrentIdentifiedPrimitive(currentFrame.GetIdentifiedPrimitiveNumber(currentIdentifiedPrimitiveNumber));
+            while (currentPrimitiveNumber > currentFrame.PrimitiveCount) --currentPrimitiveNumber;
+            txtCurrentPrimitive.Text = currentPrimitiveNumber.ToString();
+            SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(currentPrimitiveNumber));
         }
 
         private void btnPreviousPrimitive_Click(object sender, EventArgs e)
         {
             if (currentFrame == null) return;
-            int currentIdentifiedPrimitiveNumber = currentFrame.GetNumberOfIdentifiedPrimitive(currentIdentifiedPrimitive);
-            if (currentIdentifiedPrimitiveNumber < 0) return;
-            if (currentIdentifiedPrimitiveNumber == 1) return;
-            currentIdentifiedPrimitiveNumber--;
-            txtCurrentIdentifiedPrimitive.Text = currentIdentifiedPrimitiveNumber.ToString();
-            SetCurrentIdentifiedPrimitive(currentFrame.GetIdentifiedPrimitiveNumber(currentIdentifiedPrimitiveNumber));
+            int currentPrimitiveNumber = currentFrame.GetNumberOfPrimitive(currentPrimitive);
+            if (currentPrimitiveNumber < 0) return;
+            if (currentPrimitiveNumber == 1) return;
+            currentPrimitiveNumber--;
+            txtCurrentPrimitive.Text = currentPrimitiveNumber.ToString();
+            SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(currentPrimitiveNumber));
         }
 
         private void btnNextPrimitive_Click(object sender, EventArgs e)
         {
             if (currentFrame == null) return;
-            int currentIdentifiedPrimitiveNumber = currentFrame.GetNumberOfIdentifiedPrimitive(currentIdentifiedPrimitive);
-            if (currentIdentifiedPrimitiveNumber == currentFrame.PrimitiveCount) return;
-            currentIdentifiedPrimitiveNumber++;
-            txtCurrentIdentifiedPrimitive.Text = currentIdentifiedPrimitiveNumber.ToString();
-            SetCurrentIdentifiedPrimitive(currentFrame.GetIdentifiedPrimitiveNumber(currentIdentifiedPrimitiveNumber));
+            int currentPrimitiveNumber = currentFrame.GetNumberOfPrimitive(currentPrimitive);
+            if (currentPrimitiveNumber == currentFrame.PrimitiveCount) return;
+            currentPrimitiveNumber++;
+            txtCurrentPrimitive.Text = currentPrimitiveNumber.ToString();
+            SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(currentPrimitiveNumber));
         }
 
         private void btnPrimitiveDrawColor_Click(object sender, EventArgs e)
@@ -250,20 +249,20 @@ namespace VectorCubeAnimationEditor
 
         private void btnUpdateCurrentPrimitive_Click(object sender, EventArgs e)
         {
-            if (currentIdentifiedPrimitive == null) return;
-            switch (currentIdentifiedPrimitive.PrimitiveType)
+            if (currentPrimitive == null) return;
+            switch (currentPrimitive.Type)
             {
                 case AnimationConstants._Circle:
-                    SetCircleFromDisplayFields(currentIdentifiedPrimitive.Primitive.Circle);
+                    SetCircleFromDisplayFields(currentPrimitive.Circle);
                     break;
                 case AnimationConstants._QuarterCircle:
-                    SetQuarterCircleFromDisplayFields(currentIdentifiedPrimitive.Primitive.QuarterCircle);
+                    SetQuarterCircleFromDisplayFields(currentPrimitive.QuarterCircle);
                     break;
                 case AnimationConstants._Triangle:
-                    SetTriangleFromDisplayFields(currentIdentifiedPrimitive.Primitive.Triangle);
+                    SetTriangleFromDisplayFields(currentPrimitive.Triangle);
                     break;
                 case AnimationConstants._RoundRect:
-                    SetRoundRectFromDisplayFields(currentIdentifiedPrimitive.Primitive.RoundRect);
+                    SetRoundRectFromDisplayFields(currentPrimitive.RoundRect);
                     break;
             }
             pctbxCanvas.Refresh();
@@ -271,12 +270,12 @@ namespace VectorCubeAnimationEditor
 
         private void pctbxCanvas_MouseDown(object sender, MouseEventArgs e)
         {
-            if (currentIdentifiedPrimitive == null) return;
+            if (currentPrimitive == null) return;
             MouseLocation = e.Location;
-            switch (currentIdentifiedPrimitive.PrimitiveType)
+            switch (currentPrimitive.Type)
             {
                 case AnimationConstants._Circle:
-                    Circle circle = currentIdentifiedPrimitive.Primitive.Circle;
+                    Circle circle = currentPrimitive.Circle;
                     if (Utility.IsScreenPointOnRadius(MouseLocation, new Point(circle.X0, circle.Y0), circle.R))
                     {
                         isResizing = true;
@@ -287,7 +286,7 @@ namespace VectorCubeAnimationEditor
                     }
                     break;
                 case AnimationConstants._QuarterCircle:
-                    QuarterCircle quarterCircle = currentIdentifiedPrimitive.Primitive.QuarterCircle;
+                    QuarterCircle quarterCircle = currentPrimitive.QuarterCircle;
                     if (Utility.IsScreenPointOnRadius(MouseLocation, new Point(quarterCircle.X0, quarterCircle.Y0), quarterCircle.R))
                     {
                         isResizing = true;
@@ -298,14 +297,14 @@ namespace VectorCubeAnimationEditor
                     }
                     break;
                 case AnimationConstants._Triangle:
-                    Triangle triangle = currentIdentifiedPrimitive.Primitive.Triangle;
+                    Triangle triangle = currentPrimitive.Triangle;
                     if (Utility.IsScreenPointNearPoint(MouseLocation, new Point(triangle.X0, triangle.Y0))) isVertexMoving = 0;
                     if (Utility.IsScreenPointNearPoint(MouseLocation, new Point(triangle.X1, triangle.Y1))) isVertexMoving = 1;
                     if (Utility.IsScreenPointNearPoint(MouseLocation, new Point(triangle.X2, triangle.Y2))) isVertexMoving = 2;
                     if (Utility.IsScreenPointNearPoint(MouseLocation, Utility.GetCentroid(triangle))) isMoving = true;
                     break;
                 case AnimationConstants._RoundRect:
-                    RoundRect roundRect = currentIdentifiedPrimitive.Primitive.RoundRect;
+                    RoundRect roundRect = currentPrimitive.RoundRect;
                     int roundRectBottomRightX = (roundRect.X0 + roundRect.W);
                     int roundRectBottomRightY = (roundRect.Y0 + roundRect.H);
                     Point roundRectBottomRight = new Point(roundRectBottomRightX, roundRectBottomRightY);
@@ -323,29 +322,29 @@ namespace VectorCubeAnimationEditor
 
         private void pctbxCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if (currentIdentifiedPrimitive == null) return;
+            if (currentPrimitive == null) return;
             int mouseDeltaX = e.Location.X - MouseLocation.X;
             int mouseDeltaY = e.Location.Y - MouseLocation.Y;
             int primitiveDeltaX = (int)Math.Floor((double)mouseDeltaX / AnimationConstants._ScaleFactor);
             int primitiveDeltaY = (int)Math.Floor((double)mouseDeltaY / AnimationConstants._ScaleFactor);
             if (isResizing)
             {
-                switch (currentIdentifiedPrimitive.PrimitiveType)
+                switch (currentPrimitive.Type)
                 {
                     case AnimationConstants._Circle:
-                        Circle circle = currentIdentifiedPrimitive.Primitive.Circle;
+                        Circle circle = currentPrimitive.Circle;
                         int cRadius = circle.R;
                         if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
                         SetDisplayFieldsFromCircle(circle);
                         break;
                     case AnimationConstants._QuarterCircle:
-                        QuarterCircle quarterCircle = currentIdentifiedPrimitive.Primitive.QuarterCircle;
+                        QuarterCircle quarterCircle = currentPrimitive.QuarterCircle;
                         int qcRadius = quarterCircle.R;
                         if (qcRadius + primitiveDeltaY > 0) quarterCircle.R += (Int16)primitiveDeltaY;
                         SetDisplayFieldsFromQuarterCircle(quarterCircle);
                         break;
                     case AnimationConstants._RoundRect:
-                        RoundRect roundRect = currentIdentifiedPrimitive.Primitive.RoundRect;
+                        RoundRect roundRect = currentPrimitive.RoundRect;
                         int width = roundRect.W;
                         int height = roundRect.H;
                         if (width + primitiveDeltaX > 0) roundRect.W += (Int16)primitiveDeltaX;
@@ -359,22 +358,22 @@ namespace VectorCubeAnimationEditor
             }
             if (isMoving)
             {
-                switch (currentIdentifiedPrimitive.PrimitiveType)
+                switch (currentPrimitive.Type)
                 {
                     case AnimationConstants._Circle:
-                        Circle circle = currentIdentifiedPrimitive.Primitive.Circle;
+                        Circle circle = currentPrimitive.Circle;
                         circle.X0 += (Int16)primitiveDeltaX;
                         circle.Y0 += (Int16)primitiveDeltaY;
                         SetDisplayFieldsFromCircle(circle);
                         break;
                     case AnimationConstants._QuarterCircle:
-                        QuarterCircle quarterCircle = currentIdentifiedPrimitive.Primitive.QuarterCircle;
+                        QuarterCircle quarterCircle = currentPrimitive.QuarterCircle;
                         quarterCircle.X0 += (Int16)primitiveDeltaX;
                         quarterCircle.Y0 += (Int16)primitiveDeltaY;
                         SetDisplayFieldsFromQuarterCircle(quarterCircle);
                         break;
                     case AnimationConstants._Triangle:
-                        Triangle triangle = currentIdentifiedPrimitive.Primitive.Triangle;
+                        Triangle triangle = currentPrimitive.Triangle;
                         triangle.X0 += (Int16)primitiveDeltaX;
                         triangle.Y0 += (Int16)primitiveDeltaY;
                         triangle.X1 += (Int16)primitiveDeltaX;
@@ -384,7 +383,7 @@ namespace VectorCubeAnimationEditor
                         SetDisplayFieldsFromTriangle(triangle);
                         break;
                     case AnimationConstants._RoundRect:
-                        RoundRect roundRect = currentIdentifiedPrimitive.Primitive.RoundRect;
+                        RoundRect roundRect = currentPrimitive.RoundRect;
                         roundRect.X0 += (Int16)primitiveDeltaX;
                         roundRect.Y0 += (Int16)primitiveDeltaY;
                         SetDisplayFieldsFromRoundRect(roundRect);
@@ -396,7 +395,7 @@ namespace VectorCubeAnimationEditor
             }
             if (isVertexMoving > -1)
             {
-                Triangle triangle = currentIdentifiedPrimitive.Primitive.Triangle;
+                Triangle triangle = currentPrimitive.Triangle;
                 if (isVertexMoving == 0)
                 {
                     int X0 = triangle.X0;
@@ -446,10 +445,10 @@ namespace VectorCubeAnimationEditor
                 {
                     for (int index = 1; index <= currentFrame.PrimitiveCount; index++)
                     {
-                        IdentifiedPrimitive? identifiedPrimitive = currentFrame.GetIdentifiedPrimitiveNumber(index);
-                        if (identifiedPrimitive != null)
+                        Primitive? Primitive = currentFrame.GetPrimitiveNumber(index);
+                        if (Primitive != null)
                         {
-                            Utility.DrawPrimitive(e.Graphics, identifiedPrimitive);
+                            Utility.DrawPrimitive(e.Graphics, Primitive);
                         }
                     }
                 }
@@ -468,20 +467,20 @@ namespace VectorCubeAnimationEditor
             currentFrame = frame;
             txtFrameFillColor.Text = Utility.GetRGBStringFromUIint16(frame.FillColor);
             txtFrameDuration.Text = frame.Duration.ToString();
-            txtIdentifiedPrimitiveCount.Text = frame.PrimitiveCount.ToString();
+            txtPrimitiveCount.Text = frame.PrimitiveCount.ToString();
             EnablePrimitiveCreation();
             if (currentFrame.PrimitiveCount > 1) EnablePrimitiveNavigation();
             if (currentFrame.PrimitiveCount > 0)
             {
                 btnRemoveCurrentPrimitive.Enabled = true;
                 int primitiveNumber = 1;
-                txtCurrentIdentifiedPrimitive.Text = primitiveNumber.ToString();
-                SetCurrentIdentifiedPrimitive(currentFrame.GetIdentifiedPrimitiveNumber(primitiveNumber));
+                txtCurrentPrimitive.Text = primitiveNumber.ToString();
+                SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(primitiveNumber));
                 btnRemoveCurrentPrimitive.Enabled = true;
             }
             else
             {
-                txtCurrentIdentifiedPrimitive.Text = string.Empty;
+                txtCurrentPrimitive.Text = string.Empty;
                 btnRemoveCurrentPrimitive.Enabled = false;
                 DisablePrimitiveNavigation();
                 HideAllPrimitiveFields();
@@ -518,29 +517,29 @@ namespace VectorCubeAnimationEditor
             btnAddRoundRectangle.Enabled = false;
         }
 
-        private void SetCurrentIdentifiedPrimitive(IdentifiedPrimitive? identifiedPrimitive)
+        private void SetCurrentPrimitive(Primitive? Primitive)
         {
-            if (identifiedPrimitive == null) return;
+            if (Primitive == null) return;
             HideAllPrimitiveFields();
-            currentIdentifiedPrimitive = identifiedPrimitive;
-            txtPrimitiveDrawColor.Text = Utility.GetDrawColorStringFromPrimitive(currentIdentifiedPrimitive.PrimitiveType, currentIdentifiedPrimitive.Primitive);
-            switch (identifiedPrimitive.PrimitiveType)
+            currentPrimitive = Primitive;
+            txtPrimitiveDrawColor.Text = Utility.GetDrawColorStringFromPrimitive(currentPrimitive.Type, currentPrimitive);
+            switch (Primitive.Type)
             {
                 case AnimationConstants._Circle:
                     grpbxCircle.Visible = true;
-                    SetDisplayFieldsFromCircle(identifiedPrimitive.Primitive.Circle);
+                    SetDisplayFieldsFromCircle(Primitive.Circle);
                     break;
                 case AnimationConstants._QuarterCircle:
                     grpbxQuarterCircle.Visible = true;
-                    SetDisplayFieldsFromQuarterCircle(identifiedPrimitive.Primitive.QuarterCircle);
+                    SetDisplayFieldsFromQuarterCircle(Primitive.QuarterCircle);
                     break;
                 case AnimationConstants._Triangle:
                     grpbxTriangle.Visible = true;
-                    SetDisplayFieldsFromTriangle(identifiedPrimitive.Primitive.Triangle);
+                    SetDisplayFieldsFromTriangle(Primitive.Triangle);
                     break;
                 case AnimationConstants._RoundRect:
                     grpbxRoundRect.Visible = true;
-                    SetDisplayFieldsFromRoundRect(identifiedPrimitive.Primitive.RoundRect);
+                    SetDisplayFieldsFromRoundRect(Primitive.RoundRect);
                     break;
             }
             pctbxCanvas.Refresh();
@@ -553,22 +552,22 @@ namespace VectorCubeAnimationEditor
 
             UInt16 color;
             if (!Utility.GetUInt16FromRGBString(txtAddPrimitiveDrawColor.Text, out color)) return;
-            IdentifiedPrimitive? identifiedPrimitive = currentFrame.AddIdentifiedPrimitive();
-            if (identifiedPrimitive == null) return;
-            identifiedPrimitive.PrimitiveType = primitiveType;
+            Primitive? Primitive = currentFrame.AddPrimitive();
+            if (Primitive == null) return;
+            Primitive.Type = primitiveType;
             switch (primitiveType)
             {
                 case AnimationConstants._Circle:
-                    identifiedPrimitive.Primitive.Circle.Color = color;
+                    Primitive.Circle.Color = color;
                     break;
                 case AnimationConstants._QuarterCircle:
-                    identifiedPrimitive.Primitive.QuarterCircle.Color = color;
+                    Primitive.QuarterCircle.Color = color;
                     break;
                 case AnimationConstants._Triangle:
-                    identifiedPrimitive.Primitive.Triangle.Color = color;
+                    Primitive.Triangle.Color = color;
                     break;
                 case AnimationConstants._RoundRect:
-                    identifiedPrimitive.Primitive.RoundRect.Color = color;
+                    Primitive.RoundRect.Color = color;
                     break;
             }
             if (currentFrame.PrimitiveCount == 1)
@@ -576,9 +575,9 @@ namespace VectorCubeAnimationEditor
                 EnablePrimitiveNavigation();
             }
 
-            txtIdentifiedPrimitiveCount.Text = currentFrame.PrimitiveCount.ToString();
-            txtCurrentIdentifiedPrimitive.Text = currentFrame.PrimitiveCount.ToString();
-            SetCurrentIdentifiedPrimitive(identifiedPrimitive);
+            txtPrimitiveCount.Text = currentFrame.PrimitiveCount.ToString();
+            txtCurrentPrimitive.Text = currentFrame.PrimitiveCount.ToString();
+            SetCurrentPrimitive(Primitive);
         }
 
         private void EnablePrimitiveNavigation()

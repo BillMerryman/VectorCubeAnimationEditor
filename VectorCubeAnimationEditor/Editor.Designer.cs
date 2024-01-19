@@ -101,7 +101,7 @@
             btnPrimitiveDrawColor = new Button();
             txtPrimitiveDrawColor = new TextBox();
             lblPrimitiveDrawColor = new Label();
-            txtCurrentIdentifiedPrimitive = new TextBox();
+            txtCurrentPrimitive = new TextBox();
             lblCurrentPrimitiveNumber = new Label();
             btnAddRoundRectangle = new Button();
             btnAddTriangle = new Button();
@@ -110,7 +110,7 @@
             btnRemoveCurrentPrimitive = new Button();
             btnNextPrimitive = new Button();
             btnPreviousPrimitive = new Button();
-            txtIdentifiedPrimitiveCount = new TextBox();
+            txtPrimitiveCount = new TextBox();
             lblPrimitiveCount = new Label();
             selectColor = new ColorDialog();
             grpbxFile = new GroupBox();
@@ -395,7 +395,7 @@
             grpbxPrimitives.Controls.Add(btnRemoveCurrentPrimitive);
             grpbxPrimitives.Controls.Add(btnNextPrimitive);
             grpbxPrimitives.Controls.Add(btnPreviousPrimitive);
-            grpbxPrimitives.Controls.Add(txtIdentifiedPrimitiveCount);
+            grpbxPrimitives.Controls.Add(txtPrimitiveCount);
             grpbxPrimitives.Controls.Add(lblPrimitiveCount);
             grpbxPrimitives.Font = new Font("Segoe UI", 8.25F);
             grpbxPrimitives.Location = new Point(585, 10);
@@ -445,7 +445,7 @@
             grpbxCurrentPrimitive.Controls.Add(btnPrimitiveDrawColor);
             grpbxCurrentPrimitive.Controls.Add(txtPrimitiveDrawColor);
             grpbxCurrentPrimitive.Controls.Add(lblPrimitiveDrawColor);
-            grpbxCurrentPrimitive.Controls.Add(txtCurrentIdentifiedPrimitive);
+            grpbxCurrentPrimitive.Controls.Add(txtCurrentPrimitive);
             grpbxCurrentPrimitive.Controls.Add(lblCurrentPrimitiveNumber);
             grpbxCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
             grpbxCurrentPrimitive.Location = new Point(5, 215);
@@ -879,14 +879,14 @@
             lblPrimitiveDrawColor.TabIndex = 20;
             lblPrimitiveDrawColor.Text = "Color:";
             // 
-            // txtCurrentIdentifiedPrimitive
+            // txtCurrentPrimitive
             // 
-            txtCurrentIdentifiedPrimitive.Font = new Font("Segoe UI", 8.25F);
-            txtCurrentIdentifiedPrimitive.Location = new Point(115, 15);
-            txtCurrentIdentifiedPrimitive.Name = "txtCurrentIdentifiedPrimitive";
-            txtCurrentIdentifiedPrimitive.Size = new Size(36, 22);
-            txtCurrentIdentifiedPrimitive.TabIndex = 19;
-            txtCurrentIdentifiedPrimitive.KeyDown += txtCurrentPrimitive_KeyDown;
+            txtCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
+            txtCurrentPrimitive.Location = new Point(115, 15);
+            txtCurrentPrimitive.Name = "txtCurrentPrimitive";
+            txtCurrentPrimitive.Size = new Size(36, 22);
+            txtCurrentPrimitive.TabIndex = 19;
+            txtCurrentPrimitive.KeyDown += txtCurrentPrimitive_KeyDown;
             // 
             // lblCurrentPrimitiveNumber
             // 
@@ -983,14 +983,14 @@
             btnPreviousPrimitive.UseVisualStyleBackColor = true;
             btnPreviousPrimitive.Click += btnPreviousPrimitive_Click;
             // 
-            // txtIdentifiedPrimitiveCount
+            // txtPrimitiveCount
             // 
-            txtIdentifiedPrimitiveCount.Font = new Font("Segoe UI", 8.25F);
-            txtIdentifiedPrimitiveCount.Location = new Point(120, 15);
-            txtIdentifiedPrimitiveCount.Name = "txtIdentifiedPrimitiveCount";
-            txtIdentifiedPrimitiveCount.Size = new Size(36, 22);
-            txtIdentifiedPrimitiveCount.TabIndex = 8;
-            txtIdentifiedPrimitiveCount.KeyDown += txtPrimitiveCount_KeyDown;
+            txtPrimitiveCount.Font = new Font("Segoe UI", 8.25F);
+            txtPrimitiveCount.Location = new Point(120, 15);
+            txtPrimitiveCount.Name = "txtPrimitiveCount";
+            txtPrimitiveCount.Size = new Size(36, 22);
+            txtPrimitiveCount.TabIndex = 8;
+            txtPrimitiveCount.KeyDown += txtPrimitiveCount_KeyDown;
             // 
             // lblPrimitiveCount
             // 
@@ -1115,7 +1115,7 @@
         private GroupBox grpbxPrimitives;
         private Button btnNextPrimitive;
         private Button btnPreviousPrimitive;
-        private TextBox txtIdentifiedPrimitiveCount;
+        private TextBox txtPrimitiveCount;
         private Label lblPrimitiveCount;
         private Button btnRemoveCurrentFrame;
         private ColorDialog selectColor;
@@ -1155,7 +1155,7 @@
         private Button btnPrimitiveDrawColor;
         private TextBox txtPrimitiveDrawColor;
         private Label lblPrimitiveDrawColor;
-        private TextBox txtCurrentIdentifiedPrimitive;
+        private TextBox txtCurrentPrimitive;
         private Label lblCurrentPrimitiveNumber;
         private TextBox txtAddFrameDuration;
         private Label lblAddFrameDuration;
