@@ -78,5 +78,21 @@ namespace VectorCubeAnimationEditor
             bytePosition += 5;
         }
 
+        public void deserialize(ref int bytePosition, byte[] animationBytes)
+        {
+            x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            r = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            quadrants = animationBytes[bytePosition];
+            bytePosition += 1;
+            delta = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 5;
+        }
+
     }
 }

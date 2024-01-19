@@ -119,8 +119,8 @@
             btnTransmitFile = new Button();
             btnSaveFile = new Button();
             btnLoadFile = new Button();
-            openAnimation = new OpenFileDialog();
-            saveAnimation = new SaveFileDialog();
+            openFile = new OpenFileDialog();
+            saveFile = new SaveFileDialog();
             grpbxFrames.SuspendLayout();
             grpbxCurrentFrame.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pctbxCanvas).BeginInit();
@@ -1070,10 +1070,6 @@
             btnLoadFile.UseVisualStyleBackColor = true;
             btnLoadFile.Click += btnLoadFile_Click;
             // 
-            // openAnimation
-            // 
-            openAnimation.FileName = "openFileDialog1";
-            // 
             // Editor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1134,8 +1130,7 @@
         private Button btnAddTriangle;
         private Button btnAddQuarterCircle;
         private Button btnAddCircle;
-        private OpenFileDialog openAnimation;
-        private SaveFileDialog saveAnimation;
+        private OpenFileDialog openFile;
         private GroupBox grpbxRoundRect;
         private Label lblRoundRectH;
         private Label lblRoundRectW;
@@ -1202,5 +1197,6 @@
         private Label lblQuarterCircleQuadrants;
         private Label lblQuarterCircleY0;
         private Label lblQuarterCircleX0;
+        private SaveFileDialog saveFile;
     }
 }

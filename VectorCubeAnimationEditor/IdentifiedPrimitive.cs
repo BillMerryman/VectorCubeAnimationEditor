@@ -55,5 +55,29 @@ namespace VectorCubeAnimationEditor
             }
         }
 
+        public void deserialize(ref int bytePosition, byte[] animationBytes)
+        {
+            primitiveType = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            switch (primitiveType)
+            {
+                case AnimationConstants._Circle:
+                    primitive.Circle.deserialize(ref bytePosition, animationBytes);
+                    break;
+                case AnimationConstants._QuarterCircle:
+                    primitive.QuarterCircle.deserialize(ref bytePosition, animationBytes);
+                    break;
+                case AnimationConstants._Triangle:
+                    primitive.Triangle.deserialize(ref bytePosition, animationBytes);
+                    break;
+                case AnimationConstants._RoundRect:
+                    primitive.RoundRect.deserialize(ref bytePosition, animationBytes);
+                    break;
+                default:
+                    bytePosition += 14;
+                    break;
+            }
+        }
+
     }
 }

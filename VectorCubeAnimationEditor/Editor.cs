@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net.Sockets;
+using System.IO;
 
 namespace VectorCubeAnimationEditor
 {
@@ -27,13 +28,29 @@ namespace VectorCubeAnimationEditor
 
         private void btnLoadFile_Click(object sender, EventArgs e)
         {
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                byte[] serialized = File.ReadAllBytes(openFile.FileName);
+                animation.deserialize(serialized);
 
+                if (animation.FrameCount == 0) return;
+                AnimationFrame frame = animation.GetFrameNumber(1);
+                btnRemoveCurrentFrame.Enabled = true;
+                if (animation.FrameCount > 1) EnableFrameNavigation();
+
+                txtFrameCount.Text = animation.FrameCount.ToString();
+                txtCurrentFrame.Text = animation.FrameCount.ToString();
+                SetCurrentFrame(frame);
+            }
         }
 
         private void btnSaveFile_Click(object sender, EventArgs e)
         {
-            byte[] serialized = animation.serialize();
-            return;
+            if (saveFile.ShowDialog() == DialogResult.OK)
+            {
+                byte[] serialized = animation.serialize();
+                File.WriteAllBytes(saveFile.FileName, serialized);
+            }
         }
 
         private void btnTransmitFile_Click(object sender, EventArgs e)

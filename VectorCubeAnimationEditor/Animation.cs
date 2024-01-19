@@ -99,5 +99,19 @@ namespace VectorCubeAnimationEditor
             return animationBytes;
         }
 
+        public void deserialize(byte[] animationBytes)
+        {
+            if (animationBytes.Length != 2404) return;
+            int bytePosition = 0;
+            UInt16 command = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            for (int index = 0; index < frames.Length; index++)
+            {
+                frames[index].deserialize(ref bytePosition, animationBytes);
+            }
+        }
+
     }
 }

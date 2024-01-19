@@ -101,5 +101,19 @@ namespace VectorCubeAnimationEditor
             }
         }
 
+        public void deserialize(ref int bytePosition, byte[] animationBytes)
+        {
+            duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 4;
+            fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            for (int index = 0; index < identifiedPrimitives.Length; index++)
+            {
+                identifiedPrimitives[index].deserialize(ref bytePosition, animationBytes);
+            }
+        }
+
     }
 }
