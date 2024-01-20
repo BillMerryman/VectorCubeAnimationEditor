@@ -55,9 +55,16 @@ namespace VectorCubeAnimationEditor
         private void btnTransmitFile_Click(object sender, EventArgs e)
         {
             byte[] serialized = animation.serialize();
+            string IPAddress = txtIPFirstOctet.Text;
+            IPAddress += ".";
+            IPAddress += txtIPSecondOctet.Text;
+            IPAddress += ".";
+            IPAddress += txtIPThirdOctet.Text;
+            IPAddress += ".";
+            IPAddress += txtIPFourthOctet.Text;
             try
             {
-                using (TcpClient client = new TcpClient(txtIPAddress.Text, 80))
+                using (TcpClient client = new TcpClient(IPAddress, 80))
                 {
                     using (NetworkStream stream = client.GetStream())
                     {
@@ -74,9 +81,129 @@ namespace VectorCubeAnimationEditor
             }
         }
 
+        private void txtIPFirstOctet_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            string keyValue = e.KeyChar.ToString();
+            if (!char.IsDigit(Convert.ToChar(keyValue)) && Convert.ToChar(keyValue) != '\b')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtIPFirstOctet_Leave(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtIPFirstOctet.Text, out int intValue))
+            {
+                if (intValue < 0 || intValue > 255)
+                {
+                    MessageBox.Show("First octet must be between 0 and 255 inclusive.", "Alert!");
+                    txtIPFirstOctet.Focus();
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("First octet cannot be empty.", "Alert!");
+                txtIPFirstOctet.Focus();
+            }
+        }
+
+        private void txtIPSecondOctet_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            string keyValue = e.KeyChar.ToString();
+            if (!char.IsDigit(Convert.ToChar(keyValue)) && Convert.ToChar(keyValue) != '\b')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtIPSecondOctet_Leave(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtIPSecondOctet.Text, out int intValue))
+            {
+                if (intValue < 0 || intValue > 255)
+                {
+                    MessageBox.Show("Second octet must be between 0 and 255 inclusive.", "Alert!");
+                    txtIPSecondOctet.Focus();
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Second octet cannot be empty.", "Alert!");
+                txtIPSecondOctet.Focus();
+            }
+        }
+
+        private void txtIPThirdOctet_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            string keyValue = e.KeyChar.ToString();
+            if (!char.IsDigit(Convert.ToChar(keyValue)) && Convert.ToChar(keyValue) != '\b')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtIPThirdOctet_Leave(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtIPThirdOctet.Text, out int intValue))
+            {
+                if (intValue < 0 || intValue > 255)
+                {
+                    MessageBox.Show("Third octet must be between 0 and 255 inclusive.", "Alert!");
+                    txtIPThirdOctet.Focus();
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Third octet cannot be empty.", "Alert!");
+                txtIPThirdOctet.Focus();
+            }
+        }
+
+        private void txtIPFourthOctet_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            string keyValue = e.KeyChar.ToString();
+            if (!char.IsDigit(Convert.ToChar(keyValue)) && Convert.ToChar(keyValue) != '\b')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtIPFourthOctet_Leave(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtIPFourthOctet.Text, out int intValue))
+            {
+                if (intValue < 0 || intValue > 255)
+                {
+                    MessageBox.Show("Fourth octet must be between 0 and 255 inclusive.", "Alert!");
+                    txtIPFourthOctet.Focus();
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Fourth octet cannot be empty.", "Alert!");
+                txtIPFourthOctet.Focus();
+            }
+        }
+
         private void btnAddFrame_Click(object sender, EventArgs e)
         {
-            AnimationFrame? newFrame = animation.AddFrame(txtAddFrameFillColor.Text, txtAddFrameDuration.Text);
+            UInt16 fillColor;
+            UInt32 duration;
+            if (!Utility.GetUInt16FromRGBString(txtAddFrameFillColor.Text, out fillColor))
+            {
+                MessageBox.Show("Invalid fill color", "Alert!");
+                return;
+            }
+            if (!Utility.GetUInt32FromString(txtAddFrameDuration.Text, out duration))
+            {
+                MessageBox.Show("Invalid duration", "Alert!");
+                return;
+            };
+            AnimationFrame? newFrame = animation.AddFrame(fillColor, duration);
             if (newFrame == null) { return; }
             if (animation.FrameCount > 0) btnRemoveCurrentFrame.Enabled = true;
             if (animation.FrameCount > 1) EnableFrameNavigation();
@@ -183,6 +310,11 @@ namespace VectorCubeAnimationEditor
             AddPrimitive(AnimationConstants._RoundRect);
         }
 
+        private void btnAddLine_Click(object sender, EventArgs e)
+        {
+            AddPrimitive(AnimationConstants._Line);
+        }
+
         private void btnAddPrimitiveDrawColor_Click(object sender, EventArgs e)
         {
             DialogResult result = selectColor.ShowDialog();
@@ -264,6 +396,9 @@ namespace VectorCubeAnimationEditor
                 case AnimationConstants._RoundRect:
                     SetRoundRectFromDisplayFields(currentPrimitive.RoundRect);
                     break;
+                case AnimationConstants._Line:
+                    SetLineFromDisplayFields(currentPrimitive.Line);
+                    break;
             }
             pctbxCanvas.Refresh();
         }
@@ -316,6 +451,11 @@ namespace VectorCubeAnimationEditor
                     {
                         isMoving = true;
                     }
+                    break;
+                case AnimationConstants._Line:
+                    Line line = currentPrimitive.Line;
+                    if (Utility.IsScreenPointNearPoint(MouseLocation, new Point(line.X0, line.Y0))) isVertexMoving = 0;
+                    if (Utility.IsScreenPointNearPoint(MouseLocation, new Point(line.X1, line.Y1))) isVertexMoving = 1;
                     break;
             }
         }
@@ -395,31 +535,46 @@ namespace VectorCubeAnimationEditor
             }
             if (isVertexMoving > -1)
             {
-                Triangle triangle = currentPrimitive.Triangle;
-                if (isVertexMoving == 0)
+                switch (currentPrimitive.Type)
                 {
-                    int X0 = triangle.X0;
-                    int Y0 = triangle.Y0;
-                    triangle.X0 += (Int16)primitiveDeltaX;
-                    triangle.Y0 += (Int16)primitiveDeltaY;
+                    case AnimationConstants._Triangle:
+                        Triangle triangle = currentPrimitive.Triangle;
+                        if (isVertexMoving == 0)
+                        {
+                            triangle.X0 += (Int16)primitiveDeltaX;
+                            triangle.Y0 += (Int16)primitiveDeltaY;
+                        }
+                        if (isVertexMoving == 1)
+                        {
+                            triangle.X1 += (Int16)primitiveDeltaX;
+                            triangle.Y1 += (Int16)primitiveDeltaY;
+                        }
+                        if (isVertexMoving == 2)
+                        {
+                            triangle.X2 += (Int16)primitiveDeltaX;
+                            triangle.Y2 += (Int16)primitiveDeltaY;
+                        }
+                        SetDisplayFieldsFromTriangle(triangle);
+                        MouseLocation.X += primitiveDeltaX * AnimationConstants._ScaleFactor;
+                        MouseLocation.Y += primitiveDeltaY * AnimationConstants._ScaleFactor;
+                        break;
+                    case AnimationConstants._Line:
+                        Line line = currentPrimitive.Line;
+                        if (isVertexMoving == 0)
+                        {
+                            line.X0 += (Int16)primitiveDeltaX;
+                            line.Y0 += (Int16)primitiveDeltaY;
+                        }
+                        if (isVertexMoving == 1)
+                        {
+                            line.X1 += (Int16)primitiveDeltaX;
+                            line.Y1 += (Int16)primitiveDeltaY;
+                        }
+                        SetDisplayFieldsFromLine(line);
+                        MouseLocation.X += primitiveDeltaX * AnimationConstants._ScaleFactor;
+                        MouseLocation.Y += primitiveDeltaY * AnimationConstants._ScaleFactor;
+                        break;
                 }
-                if (isVertexMoving == 1)
-                {
-                    int X0 = triangle.X1;
-                    int Y0 = triangle.Y1;
-                    triangle.X1 += (Int16)primitiveDeltaX;
-                    triangle.Y1 += (Int16)primitiveDeltaY;
-                }
-                if (isVertexMoving == 2)
-                {
-                    int X0 = triangle.X2;
-                    int Y0 = triangle.Y2;
-                    triangle.X2 += (Int16)primitiveDeltaX;
-                    triangle.Y2 += (Int16)primitiveDeltaY;
-                }
-                SetDisplayFieldsFromTriangle(triangle);
-                MouseLocation.X += primitiveDeltaX * AnimationConstants._ScaleFactor;
-                MouseLocation.Y += primitiveDeltaY * AnimationConstants._ScaleFactor;
                 pctbxCanvas.Refresh();
             }
         }
@@ -507,6 +662,7 @@ namespace VectorCubeAnimationEditor
             btnAddQuarterCircle.Enabled = true;
             btnAddTriangle.Enabled = true;
             btnAddRoundRectangle.Enabled = true;
+            btnAddLine.Enabled = true;
         }
 
         private void DisablePrimitiveCreation()
@@ -515,6 +671,7 @@ namespace VectorCubeAnimationEditor
             btnAddQuarterCircle.Enabled = false;
             btnAddTriangle.Enabled = false;
             btnAddRoundRectangle.Enabled = false;
+            btnAddLine.Enabled = false;
         }
 
         private void SetCurrentPrimitive(Primitive? Primitive)
@@ -540,6 +697,10 @@ namespace VectorCubeAnimationEditor
                 case AnimationConstants._RoundRect:
                     grpbxRoundRect.Visible = true;
                     SetDisplayFieldsFromRoundRect(Primitive.RoundRect);
+                    break;
+                case AnimationConstants._Line:
+                    grpbxLine.Visible = true;
+                    SetDisplayFieldsFromLine(Primitive.Line);
                     break;
             }
             pctbxCanvas.Refresh();
@@ -568,6 +729,9 @@ namespace VectorCubeAnimationEditor
                     break;
                 case AnimationConstants._RoundRect:
                     Primitive.RoundRect.Color = color;
+                    break;
+                case AnimationConstants._Line:
+                    Primitive.Line.Color = color;
                     break;
             }
             if (currentFrame.PrimitiveCount == 1)
@@ -600,6 +764,7 @@ namespace VectorCubeAnimationEditor
             grpbxQuarterCircle.Visible = false;
             grpbxTriangle.Visible = false;
             grpbxRoundRect.Visible = false;
+            grpbxLine.Visible = false;
         }
 
         private void SetDisplayFieldsFromCircle(Circle circle)
@@ -615,10 +780,12 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtCircleX0.Text, out Int16 X0)) return;
             if (!Utility.GetInt16FromString(txtCircleY0.Text, out Int16 Y0)) return;
             if (!Utility.GetInt16FromString(txtCircleRadius.Text, out Int16 R)) return;
+            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             circle.X0 = X0;
             circle.Y0 = Y0;
             circle.R = R;
+            circle.Color = Color;
         }
 
         private void SetDisplayFieldsFromQuarterCircle(QuarterCircle quarterCircle)
@@ -638,12 +805,14 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtQuarterCircleRadius.Text, out Int16 R)) return;
             if (!Utility.GetByteFromString(txtQuarterCircleQuadrants.Text, out Byte Quadrants)) return;
             if (!Utility.GetInt16FromString(txtQuarterCircleDelta.Text, out Int16 Delta)) return;
+            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             quarterCircle.X0 = X0;
             quarterCircle.Y0 = Y0;
             quarterCircle.R = R;
             quarterCircle.Quadrants = Quadrants;
             quarterCircle.Delta = Delta;
+            quarterCircle.Color = Color;
         }
 
         private void SetDisplayFieldsFromTriangle(Triangle triangle)
@@ -665,6 +834,7 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtTriangleY1.Text, out Int16 Y1)) return;
             if (!Utility.GetInt16FromString(txtTriangleX2.Text, out Int16 X2)) return;
             if (!Utility.GetInt16FromString(txtTriangleY2.Text, out Int16 Y2)) return;
+            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             triangle.X0 = X0;
             triangle.Y0 = Y0;
@@ -672,6 +842,7 @@ namespace VectorCubeAnimationEditor
             triangle.Y1 = Y1;
             triangle.X2 = X2;
             triangle.Y2 = Y2;
+            triangle.Color = Color;
         }
 
         private void SetDisplayFieldsFromRoundRect(RoundRect roundRect)
@@ -691,12 +862,38 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtRoundRectW.Text, out Int16 W)) return;
             if (!Utility.GetInt16FromString(txtRoundRectH.Text, out Int16 H)) return;
             if (!Utility.GetInt16FromString(txtRoundRectRadius.Text, out Int16 Radius)) return;
+            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             roundRect.X0 = X0;
             roundRect.Y0 = Y0;
             roundRect.W = W;
             roundRect.H = H;
             roundRect.Radius = Radius;
+            roundRect.Color = Color;
+        }
+
+        private void SetDisplayFieldsFromLine(Line line)
+        {
+            txtLineX0.Text = line.X0.ToString();
+            txtLineY0.Text = line.Y0.ToString();
+            txtLineX1.Text = line.X1.ToString();
+            txtLineY1.Text = line.Y1.ToString();
+        }
+
+        private void SetLineFromDisplayFields(Line line)
+        {
+            if (line == null) return;
+            if (!Utility.GetInt16FromString(txtLineX0.Text, out Int16 X0)) return;
+            if (!Utility.GetInt16FromString(txtLineY0.Text, out Int16 Y0)) return;
+            if (!Utility.GetInt16FromString(txtLineX1.Text, out Int16 X1)) return;
+            if (!Utility.GetInt16FromString(txtLineY1.Text, out Int16 Y1)) return;
+            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
+
+            line.X0 = X0;
+            line.Y0 = Y0;
+            line.X1 = X1;
+            line.Y1 = Y1;
+            line.Color = Color;
         }
 
         //Disabled Text Fields

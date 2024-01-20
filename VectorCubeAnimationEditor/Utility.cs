@@ -26,6 +26,8 @@ namespace VectorCubeAnimationEditor
                     return Utility.GetRGBStringFromUIint16(primitive.Triangle.Color);
                 case AnimationConstants._RoundRect:
                     return Utility.GetRGBStringFromUIint16(primitive.RoundRect.Color);
+                case AnimationConstants._Line:
+                    return Utility.GetRGBStringFromUIint16(primitive.Line.Color);
             }
             return String.Empty;
         }
@@ -144,6 +146,9 @@ namespace VectorCubeAnimationEditor
                 case AnimationConstants._RoundRect:
                     Utility.DrawRoundRect(e, primitive.RoundRect);
                     break;
+                case AnimationConstants._Line:
+                    Utility.DrawLine(e, primitive.Line);
+                    break;
             }
         }
 
@@ -203,6 +208,13 @@ namespace VectorCubeAnimationEditor
             GraphicsPath path = GetRoundRectPath(roundRect);
             Brush brush = new SolidBrush(GetColorFromUIint16(roundRect.Color));
             e.FillPath(brush, path);
+        }
+
+        public static void DrawLine(Graphics e, Line line)
+        {
+            Pen pen = new Pen(GetColorFromUIint16(line.Color), 3);
+            e.DrawLine(pen, line.X0 * AnimationConstants._ScaleFactor, line.Y0 * AnimationConstants._ScaleFactor, line.X1 * AnimationConstants._ScaleFactor, line.Y1 * AnimationConstants._ScaleFactor);
+            pen.Dispose();
         }
 
         public static GraphicsPath GetRoundRectPath(RoundRect roundRect)

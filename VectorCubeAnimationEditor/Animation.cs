@@ -49,13 +49,9 @@ namespace VectorCubeAnimationEditor
             return -1;
         }
 
-        public AnimationFrame? AddFrame(String strFillColor, String strDuration)
+        public AnimationFrame? AddFrame(UInt16 fillColor, UInt32 duration)
         {
             if(frameCount >= AnimationConstants._MaxFrameCount) return null;
-            UInt16 fillColor;
-            UInt32 duration;
-            if (!Utility.GetUInt32FromString(strDuration, out duration)) return null;
-            if (!Utility.GetUInt16FromRGBString(strFillColor, out fillColor)) return null;
             AnimationFrame frame = new AnimationFrame();
             frames[frameCount] = frame;
             frame.FillColor = fillColor;

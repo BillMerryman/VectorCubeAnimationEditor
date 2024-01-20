@@ -17,6 +17,7 @@ namespace VectorCubeAnimationEditor
         QuarterCircle quarterCircle;
         Triangle triangle;
         RoundRect roundRect;
+        Line line;
 
         public PrimitiveType Type 
         { 
@@ -44,12 +45,18 @@ namespace VectorCubeAnimationEditor
             get { return roundRect; }
         }
 
+        public Line Line
+        {
+            get { return line; }
+        }
+
         public Primitive()
         {
             circle = new Circle();
             quarterCircle = new QuarterCircle();
             triangle = new Triangle();
             roundRect = new RoundRect();
+            line = new Line();
         }
 
         public void serialize(ref int bytePosition, byte[] animationBytes)
@@ -69,6 +76,9 @@ namespace VectorCubeAnimationEditor
                     break;
                 case AnimationConstants._RoundRect:
                     roundRect.serialize(ref bytePosition, animationBytes);
+                    break;
+                case AnimationConstants._Line:
+                    line.serialize(ref bytePosition, animationBytes);
                     break;
                 default:
                     bytePosition += 14;
@@ -93,6 +103,9 @@ namespace VectorCubeAnimationEditor
                     break;
                 case AnimationConstants._RoundRect:
                     roundRect.deserialize(ref bytePosition, animationBytes);
+                    break;
+                case AnimationConstants._Line:
+                    line.deserialize(ref bytePosition, animationBytes);
                     break;
                 default:
                     bytePosition += 14;

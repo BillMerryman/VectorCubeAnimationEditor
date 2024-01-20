@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             grpbxFrames = new GroupBox();
             txtAddFrameDuration = new TextBox();
             lblAddFrameDuration = new Label();
@@ -51,10 +52,20 @@
             lblFrameCount = new Label();
             pctbxCanvas = new PictureBox();
             grpbxPrimitives = new GroupBox();
+            btnAddLine = new Button();
             btnAddPrimitiveDrawColor = new Button();
             txtAddPrimitiveDrawColor = new TextBox();
             lblAddPrimitiveDrawColor = new Label();
             grpbxCurrentPrimitive = new GroupBox();
+            grpbxLine = new GroupBox();
+            txtLineY1 = new TextBox();
+            txtLineY0 = new TextBox();
+            txtLineX1 = new TextBox();
+            txtLineX0 = new TextBox();
+            lblLineY1 = new Label();
+            lblLineY0 = new Label();
+            lblLineX1 = new Label();
+            lblLineX0 = new Label();
             grpbxCircle = new GroupBox();
             txtCircleRadius = new TextBox();
             txtCircleY0 = new TextBox();
@@ -114,7 +125,14 @@
             lblPrimitiveCount = new Label();
             selectColor = new ColorDialog();
             grpbxFile = new GroupBox();
-            txtIPAddress = new TextBox();
+            btnSaveToHeaderFile = new Button();
+            lblIPThirdOctetSeperator = new Label();
+            lblIPSecondOctetSeperator = new Label();
+            lblIPFirstOctetSeperator = new Label();
+            txtIPFourthOctet = new TextBox();
+            txtIPThirdOctet = new TextBox();
+            txtIPSecondOctet = new TextBox();
+            txtIPFirstOctet = new TextBox();
             lblIPAddress = new Label();
             btnTransmitFile = new Button();
             btnSaveFile = new Button();
@@ -126,6 +144,7 @@
             ((System.ComponentModel.ISupportInitialize)pctbxCanvas).BeginInit();
             grpbxPrimitives.SuspendLayout();
             grpbxCurrentPrimitive.SuspendLayout();
+            grpbxLine.SuspendLayout();
             grpbxCircle.SuspendLayout();
             grpbxQuarterCircle.SuspendLayout();
             grpbxRoundRect.SuspendLayout();
@@ -148,9 +167,9 @@
             grpbxFrames.Controls.Add(txtFrameCount);
             grpbxFrames.Controls.Add(lblFrameCount);
             grpbxFrames.Font = new Font("Segoe UI", 8.25F);
-            grpbxFrames.Location = new Point(10, 140);
+            grpbxFrames.Location = new Point(10, 95);
             grpbxFrames.Name = "grpbxFrames";
-            grpbxFrames.Size = new Size(170, 290);
+            grpbxFrames.Size = new Size(170, 254);
             grpbxFrames.TabIndex = 1;
             grpbxFrames.TabStop = false;
             grpbxFrames.Text = "Frames";
@@ -158,18 +177,17 @@
             // txtAddFrameDuration
             // 
             txtAddFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            txtAddFrameDuration.Location = new Point(70, 88);
+            txtAddFrameDuration.Location = new Point(78, 74);
             txtAddFrameDuration.Name = "txtAddFrameDuration";
-            txtAddFrameDuration.Size = new Size(85, 22);
+            txtAddFrameDuration.Size = new Size(48, 22);
             txtAddFrameDuration.TabIndex = 25;
             // 
             // lblAddFrameDuration
             // 
-            lblAddFrameDuration.AutoSize = true;
             lblAddFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            lblAddFrameDuration.Location = new Point(8, 91);
+            lblAddFrameDuration.Location = new Point(15, 74);
             lblAddFrameDuration.Name = "lblAddFrameDuration";
-            lblAddFrameDuration.Size = new Size(56, 13);
+            lblAddFrameDuration.Size = new Size(63, 22);
             lblAddFrameDuration.TabIndex = 24;
             lblAddFrameDuration.Text = "Duration:";
             lblAddFrameDuration.TextAlign = ContentAlignment.MiddleRight;
@@ -177,9 +195,9 @@
             // btnAddFrameFillColor
             // 
             btnAddFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            btnAddFrameFillColor.Location = new Point(120, 64);
+            btnAddFrameFillColor.Location = new Point(132, 46);
             btnAddFrameFillColor.Name = "btnAddFrameFillColor";
-            btnAddFrameFillColor.Size = new Size(35, 22);
+            btnAddFrameFillColor.Size = new Size(32, 22);
             btnAddFrameFillColor.TabIndex = 23;
             btnAddFrameFillColor.Text = "...";
             btnAddFrameFillColor.TextAlign = ContentAlignment.TopCenter;
@@ -189,20 +207,20 @@
             // txtAddFrameFillColor
             // 
             txtAddFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            txtAddFrameFillColor.Location = new Point(70, 64);
+            txtAddFrameFillColor.Location = new Point(78, 46);
             txtAddFrameFillColor.Name = "txtAddFrameFillColor";
             txtAddFrameFillColor.Size = new Size(48, 22);
             txtAddFrameFillColor.TabIndex = 22;
             // 
             // lblAddFillColor
             // 
-            lblAddFillColor.AutoSize = true;
             lblAddFillColor.Font = new Font("Segoe UI", 8.25F);
-            lblAddFillColor.Location = new Point(9, 67);
+            lblAddFillColor.Location = new Point(15, 46);
             lblAddFillColor.Name = "lblAddFillColor";
-            lblAddFillColor.Size = new Size(56, 13);
+            lblAddFillColor.Size = new Size(63, 22);
             lblAddFillColor.TabIndex = 21;
             lblAddFillColor.Text = "Fill Color:";
+            lblAddFillColor.TextAlign = ContentAlignment.MiddleRight;
             // 
             // grpbxCurrentFrame
             // 
@@ -215,7 +233,7 @@
             grpbxCurrentFrame.Controls.Add(txtCurrentFrame);
             grpbxCurrentFrame.Controls.Add(lblCurrentFrameNumber);
             grpbxCurrentFrame.Font = new Font("Segoe UI", 8.25F);
-            grpbxCurrentFrame.Location = new Point(5, 160);
+            grpbxCurrentFrame.Location = new Point(5, 102);
             grpbxCurrentFrame.Name = "grpbxCurrentFrame";
             grpbxCurrentFrame.Size = new Size(160, 120);
             grpbxCurrentFrame.TabIndex = 14;
@@ -306,11 +324,11 @@
             // 
             btnRemoveCurrentFrame.Enabled = false;
             btnRemoveCurrentFrame.Font = new Font("Segoe UI", 8.25F);
-            btnRemoveCurrentFrame.Location = new Point(15, 113);
+            btnRemoveCurrentFrame.Image = (Image)resources.GetObject("btnRemoveCurrentFrame.Image");
+            btnRemoveCurrentFrame.Location = new Point(69, 226);
             btnRemoveCurrentFrame.Name = "btnRemoveCurrentFrame";
-            btnRemoveCurrentFrame.Size = new Size(140, 22);
+            btnRemoveCurrentFrame.Size = new Size(32, 22);
             btnRemoveCurrentFrame.TabIndex = 7;
-            btnRemoveCurrentFrame.Text = "Remove Current Frame";
             btnRemoveCurrentFrame.UseVisualStyleBackColor = true;
             btnRemoveCurrentFrame.Click += btnRemoveCurrentFrame_Click;
             // 
@@ -318,9 +336,9 @@
             // 
             btnNextFrame.Enabled = false;
             btnNextFrame.Font = new Font("Segoe UI", 8.25F);
-            btnNextFrame.Location = new Point(90, 135);
+            btnNextFrame.Location = new Point(107, 226);
             btnNextFrame.Name = "btnNextFrame";
-            btnNextFrame.Size = new Size(65, 22);
+            btnNextFrame.Size = new Size(32, 22);
             btnNextFrame.TabIndex = 6;
             btnNextFrame.Text = ">>";
             btnNextFrame.UseVisualStyleBackColor = true;
@@ -330,9 +348,9 @@
             // 
             btnPreviousFrame.Enabled = false;
             btnPreviousFrame.Font = new Font("Segoe UI", 8.25F);
-            btnPreviousFrame.Location = new Point(15, 135);
+            btnPreviousFrame.Location = new Point(31, 226);
             btnPreviousFrame.Name = "btnPreviousFrame";
-            btnPreviousFrame.Size = new Size(65, 22);
+            btnPreviousFrame.Size = new Size(32, 22);
             btnPreviousFrame.TabIndex = 5;
             btnPreviousFrame.Text = "<<";
             btnPreviousFrame.UseVisualStyleBackColor = true;
@@ -341,32 +359,32 @@
             // btnAddFrame
             // 
             btnAddFrame.Font = new Font("Segoe UI", 8.25F);
-            btnAddFrame.Location = new Point(15, 40);
+            btnAddFrame.Image = (Image)resources.GetObject("btnAddFrame.Image");
+            btnAddFrame.Location = new Point(132, 21);
+            btnAddFrame.Margin = new Padding(0);
             btnAddFrame.Name = "btnAddFrame";
-            btnAddFrame.Size = new Size(140, 22);
+            btnAddFrame.Size = new Size(32, 22);
             btnAddFrame.TabIndex = 2;
-            btnAddFrame.Text = "Add Frame";
             btnAddFrame.UseVisualStyleBackColor = true;
             btnAddFrame.Click += btnAddFrame_Click;
             // 
             // txtFrameCount
             // 
             txtFrameCount.Font = new Font("Segoe UI", 8.25F);
-            txtFrameCount.Location = new Point(120, 15);
+            txtFrameCount.Location = new Point(78, 20);
             txtFrameCount.Name = "txtFrameCount";
-            txtFrameCount.Size = new Size(35, 22);
+            txtFrameCount.Size = new Size(48, 22);
             txtFrameCount.TabIndex = 1;
             txtFrameCount.KeyDown += txtFrameCount_KeyDown;
             // 
             // lblFrameCount
             // 
-            lblFrameCount.AutoSize = true;
             lblFrameCount.Font = new Font("Segoe UI", 8.25F);
-            lblFrameCount.Location = new Point(37, 18);
+            lblFrameCount.Location = new Point(15, 20);
             lblFrameCount.Name = "lblFrameCount";
-            lblFrameCount.Size = new Size(76, 13);
+            lblFrameCount.Size = new Size(63, 22);
             lblFrameCount.TabIndex = 0;
-            lblFrameCount.Text = "Frame Count:";
+            lblFrameCount.Text = "Count:";
             lblFrameCount.TextAlign = ContentAlignment.MiddleRight;
             // 
             // pctbxCanvas
@@ -384,6 +402,7 @@
             // 
             // grpbxPrimitives
             // 
+            grpbxPrimitives.Controls.Add(btnAddLine);
             grpbxPrimitives.Controls.Add(btnAddPrimitiveDrawColor);
             grpbxPrimitives.Controls.Add(txtAddPrimitiveDrawColor);
             grpbxPrimitives.Controls.Add(lblAddPrimitiveDrawColor);
@@ -400,17 +419,29 @@
             grpbxPrimitives.Font = new Font("Segoe UI", 8.25F);
             grpbxPrimitives.Location = new Point(585, 10);
             grpbxPrimitives.Name = "grpbxPrimitives";
-            grpbxPrimitives.Size = new Size(170, 420);
+            grpbxPrimitives.Size = new Size(170, 370);
             grpbxPrimitives.TabIndex = 3;
             grpbxPrimitives.TabStop = false;
             grpbxPrimitives.Text = "Primitives";
             // 
+            // btnAddLine
+            // 
+            btnAddLine.Enabled = false;
+            btnAddLine.Font = new Font("Segoe UI", 8.25F);
+            btnAddLine.Image = (Image)resources.GetObject("btnAddLine.Image");
+            btnAddLine.Location = new Point(17, 108);
+            btnAddLine.Name = "btnAddLine";
+            btnAddLine.Size = new Size(32, 22);
+            btnAddLine.TabIndex = 27;
+            btnAddLine.UseVisualStyleBackColor = true;
+            btnAddLine.Click += btnAddLine_Click;
+            // 
             // btnAddPrimitiveDrawColor
             // 
             btnAddPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            btnAddPrimitiveDrawColor.Location = new Point(120, 140);
+            btnAddPrimitiveDrawColor.Location = new Point(132, 46);
             btnAddPrimitiveDrawColor.Name = "btnAddPrimitiveDrawColor";
-            btnAddPrimitiveDrawColor.Size = new Size(35, 22);
+            btnAddPrimitiveDrawColor.Size = new Size(32, 22);
             btnAddPrimitiveDrawColor.TabIndex = 26;
             btnAddPrimitiveDrawColor.Text = "...";
             btnAddPrimitiveDrawColor.TextAlign = ContentAlignment.TopCenter;
@@ -420,23 +451,24 @@
             // txtAddPrimitiveDrawColor
             // 
             txtAddPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            txtAddPrimitiveDrawColor.Location = new Point(70, 140);
+            txtAddPrimitiveDrawColor.Location = new Point(78, 46);
             txtAddPrimitiveDrawColor.Name = "txtAddPrimitiveDrawColor";
             txtAddPrimitiveDrawColor.Size = new Size(48, 22);
             txtAddPrimitiveDrawColor.TabIndex = 25;
             // 
             // lblAddPrimitiveDrawColor
             // 
-            lblAddPrimitiveDrawColor.AutoSize = true;
             lblAddPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            lblAddPrimitiveDrawColor.Location = new Point(26, 143);
+            lblAddPrimitiveDrawColor.Location = new Point(15, 46);
             lblAddPrimitiveDrawColor.Name = "lblAddPrimitiveDrawColor";
-            lblAddPrimitiveDrawColor.Size = new Size(38, 13);
+            lblAddPrimitiveDrawColor.Size = new Size(63, 22);
             lblAddPrimitiveDrawColor.TabIndex = 24;
             lblAddPrimitiveDrawColor.Text = "Color:";
+            lblAddPrimitiveDrawColor.TextAlign = ContentAlignment.MiddleRight;
             // 
             // grpbxCurrentPrimitive
             // 
+            grpbxCurrentPrimitive.Controls.Add(grpbxLine);
             grpbxCurrentPrimitive.Controls.Add(grpbxCircle);
             grpbxCurrentPrimitive.Controls.Add(grpbxQuarterCircle);
             grpbxCurrentPrimitive.Controls.Add(grpbxRoundRect);
@@ -448,12 +480,94 @@
             grpbxCurrentPrimitive.Controls.Add(txtCurrentPrimitive);
             grpbxCurrentPrimitive.Controls.Add(lblCurrentPrimitiveNumber);
             grpbxCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
-            grpbxCurrentPrimitive.Location = new Point(5, 215);
+            grpbxCurrentPrimitive.Location = new Point(6, 133);
             grpbxCurrentPrimitive.Name = "grpbxCurrentPrimitive";
-            grpbxCurrentPrimitive.Size = new Size(160, 195);
+            grpbxCurrentPrimitive.Size = new Size(160, 200);
             grpbxCurrentPrimitive.TabIndex = 23;
             grpbxCurrentPrimitive.TabStop = false;
             grpbxCurrentPrimitive.Text = "Current Primitive";
+            // 
+            // grpbxLine
+            // 
+            grpbxLine.Controls.Add(txtLineY1);
+            grpbxLine.Controls.Add(txtLineY0);
+            grpbxLine.Controls.Add(txtLineX1);
+            grpbxLine.Controls.Add(txtLineX0);
+            grpbxLine.Controls.Add(lblLineY1);
+            grpbxLine.Controls.Add(lblLineY0);
+            grpbxLine.Controls.Add(lblLineX1);
+            grpbxLine.Controls.Add(lblLineX0);
+            grpbxLine.Location = new Point(10, 70);
+            grpbxLine.Name = "grpbxLine";
+            grpbxLine.Size = new Size(140, 96);
+            grpbxLine.TabIndex = 32;
+            grpbxLine.TabStop = false;
+            grpbxLine.Text = "Line";
+            grpbxLine.Visible = false;
+            // 
+            // txtLineY1
+            // 
+            txtLineY1.Location = new Point(102, 40);
+            txtLineY1.Name = "txtLineY1";
+            txtLineY1.Size = new Size(30, 22);
+            txtLineY1.TabIndex = 17;
+            // 
+            // txtLineY0
+            // 
+            txtLineY0.Location = new Point(102, 16);
+            txtLineY0.Name = "txtLineY0";
+            txtLineY0.Size = new Size(30, 22);
+            txtLineY0.TabIndex = 16;
+            // 
+            // txtLineX1
+            // 
+            txtLineX1.Location = new Point(35, 40);
+            txtLineX1.Name = "txtLineX1";
+            txtLineX1.Size = new Size(30, 22);
+            txtLineX1.TabIndex = 15;
+            // 
+            // txtLineX0
+            // 
+            txtLineX0.Location = new Point(35, 16);
+            txtLineX0.Name = "txtLineX0";
+            txtLineX0.Size = new Size(30, 22);
+            txtLineX0.TabIndex = 14;
+            // 
+            // lblLineY1
+            // 
+            lblLineY1.AutoSize = true;
+            lblLineY1.Location = new Point(77, 43);
+            lblLineY1.Name = "lblLineY1";
+            lblLineY1.Size = new Size(21, 13);
+            lblLineY1.TabIndex = 13;
+            lblLineY1.Text = "Y1:";
+            // 
+            // lblLineY0
+            // 
+            lblLineY0.AutoSize = true;
+            lblLineY0.Location = new Point(77, 19);
+            lblLineY0.Name = "lblLineY0";
+            lblLineY0.Size = new Size(21, 13);
+            lblLineY0.TabIndex = 2;
+            lblLineY0.Text = "Y0:";
+            // 
+            // lblLineX1
+            // 
+            lblLineX1.AutoSize = true;
+            lblLineX1.Location = new Point(6, 43);
+            lblLineX1.Name = "lblLineX1";
+            lblLineX1.Size = new Size(22, 13);
+            lblLineX1.TabIndex = 1;
+            lblLineX1.Text = "X1:";
+            // 
+            // lblLineX0
+            // 
+            lblLineX0.AutoSize = true;
+            lblLineX0.Location = new Point(6, 19);
+            lblLineX0.Name = "lblLineX0";
+            lblLineX0.Size = new Size(22, 13);
+            lblLineX0.TabIndex = 0;
+            lblLineX0.Text = "X0:";
             // 
             // grpbxCircle
             // 
@@ -463,7 +577,7 @@
             grpbxCircle.Controls.Add(lblCircleRadius);
             grpbxCircle.Controls.Add(lblCircleY0);
             grpbxCircle.Controls.Add(lblCircleX0);
-            grpbxCircle.Location = new Point(10, 67);
+            grpbxCircle.Location = new Point(10, 70);
             grpbxCircle.Name = "grpbxCircle";
             grpbxCircle.Size = new Size(140, 96);
             grpbxCircle.TabIndex = 30;
@@ -531,7 +645,7 @@
             grpbxQuarterCircle.Controls.Add(lblQuarterCircleQuadrants);
             grpbxQuarterCircle.Controls.Add(lblQuarterCircleY0);
             grpbxQuarterCircle.Controls.Add(lblQuarterCircleX0);
-            grpbxQuarterCircle.Location = new Point(10, 67);
+            grpbxQuarterCircle.Location = new Point(10, 70);
             grpbxQuarterCircle.Name = "grpbxQuarterCircle";
             grpbxQuarterCircle.Size = new Size(140, 96);
             grpbxQuarterCircle.TabIndex = 31;
@@ -631,7 +745,7 @@
             grpbxRoundRect.Controls.Add(lblRoundRectW);
             grpbxRoundRect.Controls.Add(lblRoundRectY0);
             grpbxRoundRect.Controls.Add(lblRoundRectX0);
-            grpbxRoundRect.Location = new Point(10, 67);
+            grpbxRoundRect.Location = new Point(10, 70);
             grpbxRoundRect.Name = "grpbxRoundRect";
             grpbxRoundRect.Size = new Size(140, 96);
             grpbxRoundRect.TabIndex = 26;
@@ -733,7 +847,7 @@
             grpbxTriangle.Controls.Add(lblTriangleY0);
             grpbxTriangle.Controls.Add(lblTriangleX1);
             grpbxTriangle.Controls.Add(lblTriangleX0);
-            grpbxTriangle.Location = new Point(10, 67);
+            grpbxTriangle.Location = new Point(10, 70);
             grpbxTriangle.Name = "grpbxTriangle";
             grpbxTriangle.Size = new Size(140, 96);
             grpbxTriangle.TabIndex = 29;
@@ -841,7 +955,7 @@
             // 
             btnUpdateCurrentPrimitive.Enabled = false;
             btnUpdateCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnUpdateCurrentPrimitive.Location = new Point(10, 167);
+            btnUpdateCurrentPrimitive.Location = new Point(10, 170);
             btnUpdateCurrentPrimitive.Name = "btnUpdateCurrentPrimitive";
             btnUpdateCurrentPrimitive.Size = new Size(140, 22);
             btnUpdateCurrentPrimitive.TabIndex = 23;
@@ -873,7 +987,7 @@
             // 
             lblPrimitiveDrawColor.AutoSize = true;
             lblPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            lblPrimitiveDrawColor.Location = new Point(21, 44);
+            lblPrimitiveDrawColor.Location = new Point(21, 40);
             lblPrimitiveDrawColor.Name = "lblPrimitiveDrawColor";
             lblPrimitiveDrawColor.Size = new Size(38, 13);
             lblPrimitiveDrawColor.TabIndex = 20;
@@ -903,11 +1017,11 @@
             // 
             btnAddRoundRectangle.Enabled = false;
             btnAddRoundRectangle.Font = new Font("Segoe UI", 8.25F);
-            btnAddRoundRectangle.Location = new Point(15, 116);
+            btnAddRoundRectangle.Image = (Image)resources.GetObject("btnAddRoundRectangle.Image");
+            btnAddRoundRectangle.Location = new Point(122, 80);
             btnAddRoundRectangle.Name = "btnAddRoundRectangle";
-            btnAddRoundRectangle.Size = new Size(140, 22);
+            btnAddRoundRectangle.Size = new Size(32, 22);
             btnAddRoundRectangle.TabIndex = 21;
-            btnAddRoundRectangle.Text = "Add Round Rectangle";
             btnAddRoundRectangle.UseVisualStyleBackColor = true;
             btnAddRoundRectangle.Click += btnAddRoundRectangle_Click;
             // 
@@ -915,11 +1029,11 @@
             // 
             btnAddTriangle.Enabled = false;
             btnAddTriangle.Font = new Font("Segoe UI", 8.25F);
-            btnAddTriangle.Location = new Point(15, 92);
+            btnAddTriangle.Image = (Image)resources.GetObject("btnAddTriangle.Image");
+            btnAddTriangle.Location = new Point(87, 80);
             btnAddTriangle.Name = "btnAddTriangle";
-            btnAddTriangle.Size = new Size(140, 22);
+            btnAddTriangle.Size = new Size(32, 22);
             btnAddTriangle.TabIndex = 20;
-            btnAddTriangle.Text = "Add Triangle";
             btnAddTriangle.UseVisualStyleBackColor = true;
             btnAddTriangle.Click += btnAddTriangle_Click;
             // 
@@ -927,11 +1041,11 @@
             // 
             btnAddQuarterCircle.Enabled = false;
             btnAddQuarterCircle.Font = new Font("Segoe UI", 8.25F);
-            btnAddQuarterCircle.Location = new Point(15, 68);
+            btnAddQuarterCircle.Image = (Image)resources.GetObject("btnAddQuarterCircle.Image");
+            btnAddQuarterCircle.Location = new Point(52, 80);
             btnAddQuarterCircle.Name = "btnAddQuarterCircle";
-            btnAddQuarterCircle.Size = new Size(140, 22);
+            btnAddQuarterCircle.Size = new Size(32, 22);
             btnAddQuarterCircle.TabIndex = 19;
-            btnAddQuarterCircle.Text = "Add Quarter Circle";
             btnAddQuarterCircle.UseVisualStyleBackColor = true;
             btnAddQuarterCircle.Click += btnAddQuarterCircle_Click;
             // 
@@ -939,11 +1053,11 @@
             // 
             btnAddCircle.Enabled = false;
             btnAddCircle.Font = new Font("Segoe UI", 8.25F);
-            btnAddCircle.Location = new Point(15, 44);
+            btnAddCircle.Image = (Image)resources.GetObject("btnAddCircle.Image");
+            btnAddCircle.Location = new Point(17, 80);
             btnAddCircle.Name = "btnAddCircle";
-            btnAddCircle.Size = new Size(140, 22);
+            btnAddCircle.Size = new Size(32, 22);
             btnAddCircle.TabIndex = 18;
-            btnAddCircle.Text = "Add Circle";
             btnAddCircle.UseVisualStyleBackColor = true;
             btnAddCircle.Click += btnAddCircle_Click;
             // 
@@ -951,11 +1065,11 @@
             // 
             btnRemoveCurrentPrimitive.Enabled = false;
             btnRemoveCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnRemoveCurrentPrimitive.Location = new Point(15, 164);
+            btnRemoveCurrentPrimitive.Image = (Image)resources.GetObject("btnRemoveCurrentPrimitive.Image");
+            btnRemoveCurrentPrimitive.Location = new Point(69, 339);
             btnRemoveCurrentPrimitive.Name = "btnRemoveCurrentPrimitive";
-            btnRemoveCurrentPrimitive.Size = new Size(140, 22);
+            btnRemoveCurrentPrimitive.Size = new Size(32, 22);
             btnRemoveCurrentPrimitive.TabIndex = 14;
-            btnRemoveCurrentPrimitive.Text = "Remove Current Primitive";
             btnRemoveCurrentPrimitive.UseVisualStyleBackColor = true;
             btnRemoveCurrentPrimitive.Click += btnRemoveCurrentPrimitive_Click;
             // 
@@ -963,9 +1077,9 @@
             // 
             btnNextPrimitive.Enabled = false;
             btnNextPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnNextPrimitive.Location = new Point(90, 188);
+            btnNextPrimitive.Location = new Point(107, 339);
             btnNextPrimitive.Name = "btnNextPrimitive";
-            btnNextPrimitive.Size = new Size(65, 22);
+            btnNextPrimitive.Size = new Size(32, 22);
             btnNextPrimitive.TabIndex = 13;
             btnNextPrimitive.Text = ">>";
             btnNextPrimitive.UseVisualStyleBackColor = true;
@@ -975,9 +1089,9 @@
             // 
             btnPreviousPrimitive.Enabled = false;
             btnPreviousPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnPreviousPrimitive.Location = new Point(15, 188);
+            btnPreviousPrimitive.Location = new Point(31, 339);
             btnPreviousPrimitive.Name = "btnPreviousPrimitive";
-            btnPreviousPrimitive.Size = new Size(65, 22);
+            btnPreviousPrimitive.Size = new Size(32, 22);
             btnPreviousPrimitive.TabIndex = 12;
             btnPreviousPrimitive.Text = "<<";
             btnPreviousPrimitive.UseVisualStyleBackColor = true;
@@ -986,26 +1100,32 @@
             // txtPrimitiveCount
             // 
             txtPrimitiveCount.Font = new Font("Segoe UI", 8.25F);
-            txtPrimitiveCount.Location = new Point(120, 15);
+            txtPrimitiveCount.Location = new Point(78, 20);
             txtPrimitiveCount.Name = "txtPrimitiveCount";
-            txtPrimitiveCount.Size = new Size(36, 22);
+            txtPrimitiveCount.Size = new Size(48, 22);
             txtPrimitiveCount.TabIndex = 8;
             txtPrimitiveCount.KeyDown += txtPrimitiveCount_KeyDown;
             // 
             // lblPrimitiveCount
             // 
-            lblPrimitiveCount.AutoSize = true;
             lblPrimitiveCount.Font = new Font("Segoe UI", 8.25F);
-            lblPrimitiveCount.Location = new Point(37, 18);
+            lblPrimitiveCount.Location = new Point(15, 20);
             lblPrimitiveCount.Name = "lblPrimitiveCount";
-            lblPrimitiveCount.Size = new Size(88, 13);
+            lblPrimitiveCount.Size = new Size(63, 22);
             lblPrimitiveCount.TabIndex = 7;
-            lblPrimitiveCount.Text = "Primitive Count:";
+            lblPrimitiveCount.Text = "Count:";
             lblPrimitiveCount.TextAlign = ContentAlignment.MiddleRight;
             // 
             // grpbxFile
             // 
-            grpbxFile.Controls.Add(txtIPAddress);
+            grpbxFile.Controls.Add(btnSaveToHeaderFile);
+            grpbxFile.Controls.Add(lblIPThirdOctetSeperator);
+            grpbxFile.Controls.Add(lblIPSecondOctetSeperator);
+            grpbxFile.Controls.Add(lblIPFirstOctetSeperator);
+            grpbxFile.Controls.Add(txtIPFourthOctet);
+            grpbxFile.Controls.Add(txtIPThirdOctet);
+            grpbxFile.Controls.Add(txtIPSecondOctet);
+            grpbxFile.Controls.Add(txtIPFirstOctet);
             grpbxFile.Controls.Add(lblIPAddress);
             grpbxFile.Controls.Add(btnTransmitFile);
             grpbxFile.Controls.Add(btnSaveFile);
@@ -1013,60 +1133,130 @@
             grpbxFile.Font = new Font("Segoe UI", 8.25F);
             grpbxFile.Location = new Point(10, 10);
             grpbxFile.Name = "grpbxFile";
-            grpbxFile.Size = new Size(170, 125);
+            grpbxFile.Size = new Size(170, 79);
             grpbxFile.TabIndex = 4;
             grpbxFile.TabStop = false;
             grpbxFile.Text = "File";
             // 
-            // txtIPAddress
+            // btnSaveToHeaderFile
             // 
-            txtIPAddress.Font = new Font("Segoe UI", 8.25F);
-            txtIPAddress.Location = new Point(34, 94);
-            txtIPAddress.Name = "txtIPAddress";
-            txtIPAddress.Size = new Size(120, 22);
-            txtIPAddress.TabIndex = 4;
+            btnSaveToHeaderFile.Font = new Font("Segoe UI", 8.25F);
+            btnSaveToHeaderFile.Image = (Image)resources.GetObject("btnSaveToHeaderFile.Image");
+            btnSaveToHeaderFile.Location = new Point(122, 21);
+            btnSaveToHeaderFile.Name = "btnSaveToHeaderFile";
+            btnSaveToHeaderFile.Size = new Size(32, 22);
+            btnSaveToHeaderFile.TabIndex = 11;
+            btnSaveToHeaderFile.UseVisualStyleBackColor = true;
+            // 
+            // lblIPThirdOctetSeperator
+            // 
+            lblIPThirdOctetSeperator.Location = new Point(118, 53);
+            lblIPThirdOctetSeperator.Name = "lblIPThirdOctetSeperator";
+            lblIPThirdOctetSeperator.Size = new Size(8, 15);
+            lblIPThirdOctetSeperator.TabIndex = 10;
+            lblIPThirdOctetSeperator.Text = ".";
+            // 
+            // lblIPSecondOctetSeperator
+            // 
+            lblIPSecondOctetSeperator.Location = new Point(84, 53);
+            lblIPSecondOctetSeperator.Name = "lblIPSecondOctetSeperator";
+            lblIPSecondOctetSeperator.Size = new Size(8, 15);
+            lblIPSecondOctetSeperator.TabIndex = 9;
+            lblIPSecondOctetSeperator.Text = ".";
+            // 
+            // lblIPFirstOctetSeperator
+            // 
+            lblIPFirstOctetSeperator.Location = new Point(50, 53);
+            lblIPFirstOctetSeperator.Name = "lblIPFirstOctetSeperator";
+            lblIPFirstOctetSeperator.Size = new Size(8, 15);
+            lblIPFirstOctetSeperator.TabIndex = 8;
+            lblIPFirstOctetSeperator.Text = ".";
+            // 
+            // txtIPFourthOctet
+            // 
+            txtIPFourthOctet.Font = new Font("Segoe UI", 8.25F);
+            txtIPFourthOctet.Location = new Point(126, 46);
+            txtIPFourthOctet.Name = "txtIPFourthOctet";
+            txtIPFourthOctet.Size = new Size(26, 22);
+            txtIPFourthOctet.TabIndex = 7;
+            txtIPFourthOctet.Text = "1";
+            txtIPFourthOctet.KeyPress += txtIPFourthOctet_KeyPress;
+            txtIPFourthOctet.Leave += txtIPFourthOctet_Leave;
+            // 
+            // txtIPThirdOctet
+            // 
+            txtIPThirdOctet.Font = new Font("Segoe UI", 8.25F);
+            txtIPThirdOctet.Location = new Point(92, 46);
+            txtIPThirdOctet.Name = "txtIPThirdOctet";
+            txtIPThirdOctet.Size = new Size(26, 22);
+            txtIPThirdOctet.TabIndex = 6;
+            txtIPThirdOctet.Text = "1";
+            txtIPThirdOctet.KeyPress += txtIPThirdOctet_KeyPress;
+            txtIPThirdOctet.Leave += txtIPThirdOctet_Leave;
+            // 
+            // txtIPSecondOctet
+            // 
+            txtIPSecondOctet.Font = new Font("Segoe UI", 8.25F);
+            txtIPSecondOctet.Location = new Point(58, 46);
+            txtIPSecondOctet.Name = "txtIPSecondOctet";
+            txtIPSecondOctet.Size = new Size(26, 22);
+            txtIPSecondOctet.TabIndex = 5;
+            txtIPSecondOctet.Text = "168";
+            txtIPSecondOctet.KeyPress += txtIPSecondOctet_KeyPress;
+            txtIPSecondOctet.Leave += txtIPSecondOctet_Leave;
+            // 
+            // txtIPFirstOctet
+            // 
+            txtIPFirstOctet.Font = new Font("Segoe UI", 8.25F);
+            txtIPFirstOctet.Location = new Point(24, 46);
+            txtIPFirstOctet.Name = "txtIPFirstOctet";
+            txtIPFirstOctet.Size = new Size(26, 22);
+            txtIPFirstOctet.TabIndex = 4;
+            txtIPFirstOctet.Text = "192";
+            txtIPFirstOctet.KeyPress += txtIPFirstOctet_KeyPress;
+            txtIPFirstOctet.Leave += txtIPFirstOctet_Leave;
             // 
             // lblIPAddress
             // 
-            lblIPAddress.AutoSize = true;
             lblIPAddress.Font = new Font("Segoe UI", 8.25F);
-            lblIPAddress.Location = new Point(15, 97);
+            lblIPAddress.Location = new Point(2, 49);
+            lblIPAddress.Margin = new Padding(0);
             lblIPAddress.Name = "lblIPAddress";
-            lblIPAddress.Size = new Size(19, 13);
+            lblIPAddress.Size = new Size(20, 13);
             lblIPAddress.TabIndex = 3;
             lblIPAddress.Text = "IP:";
-            lblIPAddress.TextAlign = ContentAlignment.MiddleRight;
+            lblIPAddress.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // btnTransmitFile
             // 
             btnTransmitFile.Font = new Font("Segoe UI", 8.25F);
-            btnTransmitFile.Location = new Point(15, 68);
+            btnTransmitFile.Image = (Image)resources.GetObject("btnTransmitFile.Image");
+            btnTransmitFile.Location = new Point(87, 21);
             btnTransmitFile.Name = "btnTransmitFile";
-            btnTransmitFile.Size = new Size(140, 22);
+            btnTransmitFile.Size = new Size(32, 22);
             btnTransmitFile.TabIndex = 2;
-            btnTransmitFile.Text = "Transmit File";
             btnTransmitFile.UseVisualStyleBackColor = true;
             btnTransmitFile.Click += btnTransmitFile_Click;
             // 
             // btnSaveFile
             // 
             btnSaveFile.Font = new Font("Segoe UI", 8.25F);
-            btnSaveFile.Location = new Point(15, 44);
+            btnSaveFile.Image = (Image)resources.GetObject("btnSaveFile.Image");
+            btnSaveFile.Location = new Point(52, 21);
             btnSaveFile.Name = "btnSaveFile";
-            btnSaveFile.Size = new Size(140, 22);
+            btnSaveFile.Size = new Size(32, 22);
             btnSaveFile.TabIndex = 1;
-            btnSaveFile.Text = "Save File";
             btnSaveFile.UseVisualStyleBackColor = true;
             btnSaveFile.Click += btnSaveFile_Click;
             // 
             // btnLoadFile
             // 
             btnLoadFile.Font = new Font("Segoe UI", 8.25F);
-            btnLoadFile.Location = new Point(15, 20);
+            btnLoadFile.Image = (Image)resources.GetObject("btnLoadFile.Image");
+            btnLoadFile.Location = new Point(17, 21);
             btnLoadFile.Name = "btnLoadFile";
-            btnLoadFile.Size = new Size(140, 22);
+            btnLoadFile.Size = new Size(32, 22);
             btnLoadFile.TabIndex = 0;
-            btnLoadFile.Text = "Load File";
             btnLoadFile.UseVisualStyleBackColor = true;
             btnLoadFile.Click += btnLoadFile_Click;
             // 
@@ -1074,7 +1264,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(786, 447);
+            ClientSize = new Size(786, 414);
             Controls.Add(grpbxFile);
             Controls.Add(grpbxPrimitives);
             Controls.Add(pctbxCanvas);
@@ -1091,6 +1281,8 @@
             grpbxPrimitives.PerformLayout();
             grpbxCurrentPrimitive.ResumeLayout(false);
             grpbxCurrentPrimitive.PerformLayout();
+            grpbxLine.ResumeLayout(false);
+            grpbxLine.PerformLayout();
             grpbxCircle.ResumeLayout(false);
             grpbxCircle.PerformLayout();
             grpbxQuarterCircle.ResumeLayout(false);
@@ -1113,18 +1305,15 @@
         private Button btnPreviousFrame;
         private PictureBox pctbxCanvas;
         private GroupBox grpbxPrimitives;
-        private Button btnNextPrimitive;
-        private Button btnPreviousPrimitive;
         private TextBox txtPrimitiveCount;
         private Label lblPrimitiveCount;
         private Button btnRemoveCurrentFrame;
         private ColorDialog selectColor;
-        private Button btnRemoveCurrentPrimitive;
         private GroupBox grpbxFile;
         private Button btnTransmitFile;
         private Button btnSaveFile;
         private Button btnLoadFile;
-        private TextBox txtIPAddress;
+        private TextBox txtIPFirstOctet;
         private Label lblIPAddress;
         private Button btnAddRoundRectangle;
         private Button btnAddTriangle;
@@ -1198,5 +1387,25 @@
         private Label lblQuarterCircleY0;
         private Label lblQuarterCircleX0;
         private SaveFileDialog saveFile;
+        private TextBox txtIPFourthOctet;
+        private TextBox txtIPThirdOctet;
+        private TextBox txtIPSecondOctet;
+        private Label lblIPSecondOctetSeperator;
+        private Label lblIPFirstOctetSeperator;
+        private Label lblIPThirdOctetSeperator;
+        private Button btnRemoveCurrentPrimitive;
+        private Button btnNextPrimitive;
+        private Button btnPreviousPrimitive;
+        private Button btnAddLine;
+        private GroupBox grpbxLine;
+        private TextBox txtLineY1;
+        private TextBox txtLineY0;
+        private TextBox txtLineX1;
+        private TextBox txtLineX0;
+        private Label lblLineY1;
+        private Label lblLineY0;
+        private Label lblLineX1;
+        private Label lblLineX0;
+        private Button btnSaveToHeaderFile;
     }
 }
