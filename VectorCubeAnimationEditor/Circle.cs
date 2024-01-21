@@ -46,6 +46,14 @@ namespace VectorCubeAnimationEditor
             color = 0;
         }
 
+        public Circle(Circle circle)
+        {
+            x0 = circle.X0;
+            y0 = circle.Y0;
+            r = circle.R;
+            color = circle.Color;
+        }
+
         public void serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);

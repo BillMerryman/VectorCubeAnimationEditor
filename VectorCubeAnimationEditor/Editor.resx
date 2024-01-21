@@ -118,6 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnDuplicateCurrentFrame.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vgAADr4B6kKxwAAAADtJREFUOE9jGAjwn0RMMiBFE1UsgLmUWEwQoCsiShMUjFpAEIxaQBAMHgvQMbGA
+        FLVwQBcLSMH0BAwMAGsTRrqE6YTXAAAAAElFTkSuQmCC
+</value>
+  </data>
   <data name="btnRemoveCurrentFrame.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -182,7 +189,7 @@
   <data name="btnSaveToHeaderFile.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAAAHdJREFUOE/NzkEKwCAMRFHvf+mWgfwSopEkqz4YRmrUrr94hilrDZvxA/zdLUKX
+        vAAADrwBlbxySQAAAHdJREFUOE/NzkEKwCAMRFHvf+mWgfwSopEkqz4YRmrUrr94hilrDZvxA/zdLUKX
         tIZNeua04f+qEqE3fgjp8MV3hgtPAeu4n0XobTNG6I7vjL8sBqzjfhahN34I6fDF9YGIb+pKhC5pDZvR
         A+pKhC5pDZvJma61XkFMfoJlN48sAAAAAElFTkSuQmCC
 </value>

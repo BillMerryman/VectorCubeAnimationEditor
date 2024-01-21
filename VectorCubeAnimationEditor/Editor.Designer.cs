@@ -139,6 +139,7 @@
             btnLoadFile = new Button();
             openFile = new OpenFileDialog();
             saveFile = new SaveFileDialog();
+            btnDuplicateCurrentFrame = new Button();
             grpbxFrames.SuspendLayout();
             grpbxCurrentFrame.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pctbxCanvas).BeginInit();
@@ -154,6 +155,7 @@
             // 
             // grpbxFrames
             // 
+            grpbxFrames.Controls.Add(btnDuplicateCurrentFrame);
             grpbxFrames.Controls.Add(txtAddFrameDuration);
             grpbxFrames.Controls.Add(lblAddFrameDuration);
             grpbxFrames.Controls.Add(btnAddFrameFillColor);
@@ -325,7 +327,7 @@
             btnRemoveCurrentFrame.Enabled = false;
             btnRemoveCurrentFrame.Font = new Font("Segoe UI", 8.25F);
             btnRemoveCurrentFrame.Image = (Image)resources.GetObject("btnRemoveCurrentFrame.Image");
-            btnRemoveCurrentFrame.Location = new Point(69, 226);
+            btnRemoveCurrentFrame.Location = new Point(46, 226);
             btnRemoveCurrentFrame.Name = "btnRemoveCurrentFrame";
             btnRemoveCurrentFrame.Size = new Size(32, 22);
             btnRemoveCurrentFrame.TabIndex = 7;
@@ -336,7 +338,7 @@
             // 
             btnNextFrame.Enabled = false;
             btnNextFrame.Font = new Font("Segoe UI", 8.25F);
-            btnNextFrame.Location = new Point(107, 226);
+            btnNextFrame.Location = new Point(126, 226);
             btnNextFrame.Name = "btnNextFrame";
             btnNextFrame.Size = new Size(32, 22);
             btnNextFrame.TabIndex = 6;
@@ -348,7 +350,7 @@
             // 
             btnPreviousFrame.Enabled = false;
             btnPreviousFrame.Font = new Font("Segoe UI", 8.25F);
-            btnPreviousFrame.Location = new Point(31, 226);
+            btnPreviousFrame.Location = new Point(8, 226);
             btnPreviousFrame.Name = "btnPreviousFrame";
             btnPreviousFrame.Size = new Size(32, 22);
             btnPreviousFrame.TabIndex = 5;
@@ -1147,6 +1149,7 @@
             btnSaveToHeaderFile.Size = new Size(32, 22);
             btnSaveToHeaderFile.TabIndex = 11;
             btnSaveToHeaderFile.UseVisualStyleBackColor = true;
+            btnSaveToHeaderFile.Click += btnSaveToHeaderFile_Click;
             // 
             // lblIPThirdOctetSeperator
             // 
@@ -1259,6 +1262,18 @@
             btnLoadFile.TabIndex = 0;
             btnLoadFile.UseVisualStyleBackColor = true;
             btnLoadFile.Click += btnLoadFile_Click;
+            // 
+            // btnDuplicateCurrentFrame
+            // 
+            btnDuplicateCurrentFrame.Enabled = false;
+            btnDuplicateCurrentFrame.Font = new Font("Segoe UI", 8.25F);
+            btnDuplicateCurrentFrame.Image = (Image)resources.GetObject("btnDuplicateCurrentFrame.Image");
+            btnDuplicateCurrentFrame.Location = new Point(84, 226);
+            btnDuplicateCurrentFrame.Name = "btnDuplicateCurrentFrame";
+            btnDuplicateCurrentFrame.Size = new Size(32, 22);
+            btnDuplicateCurrentFrame.TabIndex = 26;
+            btnDuplicateCurrentFrame.UseVisualStyleBackColor = true;
+            btnDuplicateCurrentFrame.Click += btnDuplicateCurrentFrame_Click;
             // 
             // Editor
             // 
@@ -1407,5 +1422,6 @@
         private Label lblLineX1;
         private Label lblLineX0;
         private Button btnSaveToHeaderFile;
+        private Button btnDuplicateCurrentFrame;
     }
 }

@@ -60,6 +60,23 @@ namespace VectorCubeAnimationEditor
             return frame;
         }
 
+        public AnimationFrame? DuplicateFrame(AnimationFrame frame)
+        {
+            if(frame == null) return null;
+            if (frameCount >= AnimationConstants._MaxFrameCount) return null;
+            int frameNumber = GetNumberOfFrame(frame);
+            int newFrameNumber = frameNumber + 1;
+            int newFrameIndex = newFrameNumber - 1;
+            for (int index = AnimationConstants._MaxFrameCount - 1; index > newFrameIndex; index--)
+            {
+                frames[index - 1] = frames[index];
+            }
+            AnimationFrame newFrame = new AnimationFrame(frame);
+            frames[newFrameIndex] = newFrame;
+            frameCount++;
+            return newFrame;
+        }
+
         public int RemoveFrame(AnimationFrame? frame)
         {
             if(frame == null) return -1;

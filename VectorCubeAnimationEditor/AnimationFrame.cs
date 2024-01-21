@@ -42,6 +42,17 @@ namespace VectorCubeAnimationEditor
             }
         }
 
+        public AnimationFrame(AnimationFrame frame)
+        {
+            this.duration = frame.duration;
+            this.fillColor = frame.fillColor;
+            this.primitiveCount = frame.primitiveCount;
+            for (int i = 0; i < primitives.Length; i++)
+            {
+                primitives[i] = new Primitive(frame.primitives[i]);
+            }
+        }
+
         public int GetNumberOfPrimitive(Primitive? primitive)
         {
             if (primitive == null) return -1;

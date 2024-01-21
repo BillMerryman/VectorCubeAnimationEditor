@@ -70,6 +70,17 @@ namespace VectorCubeAnimationEditor
             color = 0;
         }
 
+        public Triangle(Triangle triangle)
+        {
+            x0 = triangle.X0;
+            y0 = triangle.Y0;
+            x1 = triangle.X1;
+            y1 = triangle.Y1;
+            x2 = triangle.X2;
+            y2 = triangle.Y2;
+            color = triangle.Color;
+        }
+
         public void serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);

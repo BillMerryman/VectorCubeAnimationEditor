@@ -59,6 +59,16 @@ namespace VectorCubeAnimationEditor
             line = new Line();
         }
 
+        public Primitive(Primitive primitive)
+        {
+            type = primitive.type;
+            circle = new Circle(primitive.Circle);
+            quarterCircle = new QuarterCircle(primitive.QuarterCircle);
+            triangle = new Triangle(primitive.Triangle);
+            roundRect = new RoundRect(primitive.RoundRect);
+            line = new Line(primitive.Line);
+        }
+
         public void serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), type);

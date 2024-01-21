@@ -62,6 +62,16 @@ namespace VectorCubeAnimationEditor
             color = 0;
         }
 
+        public QuarterCircle(QuarterCircle quarterCircle)
+        {
+            x0 = quarterCircle.X0;
+            y0 = quarterCircle.Y0;
+            r = quarterCircle.R;
+            quadrants = quarterCircle.Quadrants;
+            delta = quarterCircle.Delta;
+            color = quarterCircle.Color;
+        }
+
         public void serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);

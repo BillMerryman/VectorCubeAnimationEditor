@@ -62,6 +62,16 @@ namespace VectorCubeAnimationEditor
             color = 0;
         }
 
+        public RoundRect(RoundRect roundRect)
+        {
+            x0 = roundRect.X0;
+            y0 = roundRect.Y0;
+            w = roundRect.W;
+            h = roundRect.H;
+            radius = roundRect.Radius;
+            color = roundRect.Color;
+        }
+
         public void serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);

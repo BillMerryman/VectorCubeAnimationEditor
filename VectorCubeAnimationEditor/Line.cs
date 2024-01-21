@@ -54,6 +54,15 @@ namespace VectorCubeAnimationEditor
             color = 0;
         }
 
+        public Line(Line line)
+        {
+            x0 = line.X0;
+            y0 = line.Y0;
+            x1 = line.X1;
+            y1 = line.Y1;
+            color = line.Color;
+        }
+
         public void serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);
