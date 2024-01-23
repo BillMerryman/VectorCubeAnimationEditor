@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Sockets;
 using System.IO;
 using System;
+using System.Buffers.Binary;
 
 namespace VectorCubeAnimationEditor
 {
@@ -19,6 +20,7 @@ namespace VectorCubeAnimationEditor
         {
             InitializeComponent();
             animation = new Animation();
+            SetToolTips();
         }
 
         private void Editor_Load(object sender, EventArgs e)
@@ -30,8 +32,8 @@ namespace VectorCubeAnimationEditor
         {
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] serialized = File.ReadAllBytes(openFile.FileName);
-                animation.deserialize(serialized);
+                byte[] animationBytes = File.ReadAllBytes(openFile.FileName);
+                animation.deserialize(animationBytes);
 
                 if (animation.FrameCount == 0) return;
                 AnimationFrame frame = animation.GetFrameNumber(1);
@@ -40,7 +42,7 @@ namespace VectorCubeAnimationEditor
                 if (animation.FrameCount > 1) EnableFrameNavigation();
 
                 txtFrameCount.Text = animation.FrameCount.ToString();
-                txtCurrentFrame.Text = animation.FrameCount.ToString();
+                txtCurrentFrameNumber.Text = animation.FrameCount.ToString();
                 SetCurrentFrame(frame);
             }
         }
@@ -49,14 +51,15 @@ namespace VectorCubeAnimationEditor
         {
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] serialized = animation.serialize();
-                File.WriteAllBytes(saveFile.FileName, serialized);
+                byte[] animationBytes = animation.serialize();
+                File.WriteAllBytes(saveFile.FileName, animationBytes);
             }
         }
 
         private void btnTransmitFile_Click(object sender, EventArgs e)
         {
-            byte[] serialized = animation.serialize();
+            byte[] commandBytes = Utility.getCommandBytes(AnimationConstants._Animation);
+            byte[] animationBytes = animation.serialize();
             string IPAddress = txtIPFirstOctet.Text;
             IPAddress += ".";
             IPAddress += txtIPSecondOctet.Text;
@@ -70,9 +73,8 @@ namespace VectorCubeAnimationEditor
                 {
                     using (NetworkStream stream = client.GetStream())
                     {
-                        // Transmit the byte array
-                        stream.Write(serialized, 0, serialized.Length);
-
+                        stream.Write(commandBytes, 0, commandBytes.Length);
+                        stream.Write(animationBytes, 0, animationBytes.Length);
                         Console.WriteLine("Data transmitted successfully.");
                     }
                 }
@@ -87,17 +89,17 @@ namespace VectorCubeAnimationEditor
         {
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] serialized = animation.serialize();
+                byte[] animationBytes = animation.serialize();
                 try
                 {
                     using (StreamWriter writer = new StreamWriter(saveFile.FileName))
                     {
                         writer.WriteLine("static const uint8_t animation_" + Path.GetFileName(saveFile.FileName) + "[] PROGMEM = {");
                         int index = 0;
-                        while (index < serialized.Length)
+                        while (index < animationBytes.Length)
                         {
-                            writer.Write(serialized[index++].ToString("X2"));
-                            if (index < serialized.Length) writer.Write(", ");
+                            writer.Write(animationBytes[index++].ToString("X2"));
+                            if (index < animationBytes.Length) writer.Write(", ");
                             if (index % 16 == 0) writer.WriteLine("");
                         }
                         writer.WriteLine("");
@@ -112,6 +114,44 @@ namespace VectorCubeAnimationEditor
                 }
             }
         }
+
+        private void btnSendImage_Click(object sender, EventArgs e)
+        {
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                Image image = new Image();
+                Bitmap originalImage = new Bitmap(openFile.FileName);
+                Bitmap resizedImage = new Bitmap(originalImage, new Size(AnimationConstants.SCREEN_WIDTH, AnimationConstants.SCREEN_HEIGHT));
+                Utility.ConvertToRGB565(resizedImage, image.DisplayBuffer);
+                byte[] commandBytes = Utility.getCommandBytes(AnimationConstants._Image);
+                byte[] imageBytes = image.serialize();
+                string IPAddress = txtIPFirstOctet.Text;
+                IPAddress += ".";
+                IPAddress += txtIPSecondOctet.Text;
+                IPAddress += ".";
+                IPAddress += txtIPThirdOctet.Text;
+                IPAddress += ".";
+                IPAddress += txtIPFourthOctet.Text;
+                try
+                {
+                    using (TcpClient client = new TcpClient(IPAddress, 80))
+                    {
+                        using (NetworkStream stream = client.GetStream())
+                        {
+                            stream.Write(commandBytes, 0, commandBytes.Length);
+                            stream.Write(imageBytes, 0, imageBytes.Length);
+                            Console.WriteLine("Data transmitted successfully.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
+        }
+
+        //IP Validation
 
         private void txtIPFirstOctet_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -221,40 +261,41 @@ namespace VectorCubeAnimationEditor
             }
         }
 
+        //Frame Management
+
         private void btnAddFrame_Click(object sender, EventArgs e)
         {
             UInt16 fillColor;
             UInt32 duration;
-            if (!Utility.GetUInt16FromRGBString(txtAddFrameFillColor.Text, out fillColor))
+
+            if (!Utility.GetUInt16FromRGBString(txtFrameFillColor.Text, out fillColor))
             {
                 MessageBox.Show("Invalid fill color", "Alert!");
                 return;
             }
-            if (!Utility.GetUInt32FromString(txtAddFrameDuration.Text, out duration))
+            if (!Utility.GetUInt32FromString(txtFrameDuration.Text, out duration))
             {
                 MessageBox.Show("Invalid duration", "Alert!");
                 return;
             };
+
             AnimationFrame? newFrame = animation.AddFrame(fillColor, duration);
             if (newFrame == null) { return; }
-            if (animation.FrameCount > 0)
-            {
-                btnRemoveCurrentFrame.Enabled = true;
-                btnDuplicateCurrentFrame.Enabled= true;
-            }
+
+            if (animation.FrameCount > 0) EnableFrameManipulation();
             if (animation.FrameCount > 1) EnableFrameNavigation();
 
             txtFrameCount.Text = animation.FrameCount.ToString();
-            txtCurrentFrame.Text = animation.FrameCount.ToString();
+            txtCurrentFrameNumber.Text = animation.FrameCount.ToString();
             SetCurrentFrame(newFrame);
         }
 
-        private void btnAddFrameFillColor_Click(object sender, EventArgs e)
+        private void btnFrameFillColor_Click(object sender, EventArgs e)
         {
             DialogResult result = selectColor.ShowDialog();
             if (result == DialogResult.OK)
             {
-                txtAddFrameFillColor.Text = selectColor.Color.R.ToString("X2") +
+                txtFrameFillColor.Text = selectColor.Color.R.ToString("X2") +
                                           selectColor.Color.G.ToString("X2") +
                                           selectColor.Color.B.ToString("X2");
             }
@@ -266,7 +307,7 @@ namespace VectorCubeAnimationEditor
             if (currentFrameNumber < 0) return;
             if (currentFrameNumber == 1) return;
             currentFrameNumber--;
-            txtCurrentFrame.Text = currentFrameNumber.ToString();
+            txtCurrentFrameNumber.Text = currentFrameNumber.ToString();
             SetCurrentFrame(animation.GetFrameNumber(currentFrameNumber));
         }
 
@@ -279,8 +320,8 @@ namespace VectorCubeAnimationEditor
             if (animation.FrameCount < 1)
             {
                 currentFrame = null;
-                txtCurrentFrame.Text = string.Empty;
-                txtCurrentPrimitive.Text = string.Empty;
+                txtCurrentFrameNumber.Text = string.Empty;
+                txtCurrentPrimitiveNumber.Text = string.Empty;
                 btnRemoveCurrentPrimitive.Enabled = false;
                 DisablePrimitiveCreation();
                 DisablePrimitiveNavigation();
@@ -290,19 +331,19 @@ namespace VectorCubeAnimationEditor
             }
 
             while (currentFrameNumber > animation.FrameCount) --currentFrameNumber;
-            txtCurrentFrame.Text = currentFrameNumber.ToString();
+            txtCurrentFrameNumber.Text = currentFrameNumber.ToString();
             SetCurrentFrame(animation.GetFrameNumber(currentFrameNumber));
         }
 
         private void btnDuplicateCurrentFrame_Click(object sender, EventArgs e)
         {
-            if (currentFrame==null) return;
+            if (currentFrame == null) return;
             AnimationFrame? newFrame = animation.DuplicateFrame(currentFrame);
             if (newFrame == null) { return; }
             EnableFrameNavigation();
 
             txtFrameCount.Text = animation.FrameCount.ToString();
-            txtCurrentFrame.Text = animation.GetNumberOfFrame(newFrame).ToString();
+            txtCurrentFrameNumber.Text = animation.GetNumberOfFrame(newFrame).ToString();
             SetCurrentFrame(newFrame);
         }
 
@@ -311,7 +352,7 @@ namespace VectorCubeAnimationEditor
             int currentFrameNumber = animation.GetNumberOfFrame(currentFrame);
             if (currentFrameNumber == animation.FrameCount) return;
             currentFrameNumber++;
-            txtCurrentFrame.Text = currentFrameNumber.ToString();
+            txtCurrentFrameNumber.Text = currentFrameNumber.ToString();
             SetCurrentFrame(animation.GetFrameNumber(currentFrameNumber));
         }
 
@@ -320,19 +361,19 @@ namespace VectorCubeAnimationEditor
             if (currentFrame == null) return;
             UInt32 duration;
             UInt16 fillColor;
-            if (!Utility.GetUInt32FromString(txtFrameDuration.Text, out duration)) return;
-            if (!Utility.GetUInt16FromRGBString(txtFrameFillColor.Text, out fillColor)) return;
+            if (!Utility.GetUInt32FromString(txtCurrentFrameDuration.Text, out duration)) return;
+            if (!Utility.GetUInt16FromRGBString(txtCurrentFrameFillColor.Text, out fillColor)) return;
             currentFrame.Duration = duration;
             currentFrame.FillColor = fillColor;
             pctbxCanvas.Refresh();
         }
 
-        private void btnFrameFillColor_Click(object sender, EventArgs e)
+        private void btnCurrentFrameFillColor_Click(object sender, EventArgs e)
         {
             DialogResult result = selectColor.ShowDialog();
             if (result == DialogResult.OK)
             {
-                txtFrameFillColor.Text = selectColor.Color.R.ToString("X2") +
+                txtCurrentFrameFillColor.Text = selectColor.Color.R.ToString("X2") +
                                           selectColor.Color.G.ToString("X2") +
                                           selectColor.Color.B.ToString("X2");
             }
@@ -363,12 +404,12 @@ namespace VectorCubeAnimationEditor
             AddPrimitive(AnimationConstants._Line);
         }
 
-        private void btnAddPrimitiveDrawColor_Click(object sender, EventArgs e)
+        private void btnPrimitiveDrawColor_Click(object sender, EventArgs e)
         {
             DialogResult result = selectColor.ShowDialog();
             if (result == DialogResult.OK)
             {
-                txtAddPrimitiveDrawColor.Text = selectColor.Color.R.ToString("X2") +
+                txtPrimitiveDrawColor.Text = selectColor.Color.R.ToString("X2") +
                                                   selectColor.Color.G.ToString("X2") +
                                                   selectColor.Color.B.ToString("X2");
             }
@@ -383,15 +424,14 @@ namespace VectorCubeAnimationEditor
             if (currentFrame.PrimitiveCount < 2) DisablePrimitiveNavigation();
             if (currentFrame.PrimitiveCount < 1)
             {
-                txtCurrentPrimitive.Text = string.Empty;
-                DisablePrimitiveNavigation();
+                DisablePrimitiveManagement();
                 HideAllPrimitiveFields();
                 pctbxCanvas.Refresh();
                 return;
             }
 
             while (currentPrimitiveNumber > currentFrame.PrimitiveCount) --currentPrimitiveNumber;
-            txtCurrentPrimitive.Text = currentPrimitiveNumber.ToString();
+            txtCurrentPrimitiveNumber.Text = currentPrimitiveNumber.ToString();
             SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(currentPrimitiveNumber));
         }
 
@@ -402,7 +442,7 @@ namespace VectorCubeAnimationEditor
             if (currentPrimitiveNumber < 0) return;
             if (currentPrimitiveNumber == 1) return;
             currentPrimitiveNumber--;
-            txtCurrentPrimitive.Text = currentPrimitiveNumber.ToString();
+            txtCurrentPrimitiveNumber.Text = currentPrimitiveNumber.ToString();
             SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(currentPrimitiveNumber));
         }
 
@@ -412,16 +452,16 @@ namespace VectorCubeAnimationEditor
             int currentPrimitiveNumber = currentFrame.GetNumberOfPrimitive(currentPrimitive);
             if (currentPrimitiveNumber == currentFrame.PrimitiveCount) return;
             currentPrimitiveNumber++;
-            txtCurrentPrimitive.Text = currentPrimitiveNumber.ToString();
+            txtCurrentPrimitiveNumber.Text = currentPrimitiveNumber.ToString();
             SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(currentPrimitiveNumber));
         }
 
-        private void btnPrimitiveDrawColor_Click(object sender, EventArgs e)
+        private void btnCurrentPrimitiveDrawColor_Click(object sender, EventArgs e)
         {
             DialogResult result = selectColor.ShowDialog();
             if (result == DialogResult.OK)
             {
-                txtPrimitiveDrawColor.Text = selectColor.Color.R.ToString("X2") +
+                txtCurrentPrimitiveDrawColor.Text = selectColor.Color.R.ToString("X2") +
                                               selectColor.Color.G.ToString("X2") +
                                               selectColor.Color.B.ToString("X2");
             }
@@ -664,12 +704,14 @@ namespace VectorCubeAnimationEditor
 
         //Non-delegate functions
 
+        //For frames
+
         private void SetCurrentFrame(AnimationFrame? frame)
         {
             if (frame == null) return;
             currentFrame = frame;
-            txtFrameFillColor.Text = Utility.GetRGBStringFromUIint16(frame.FillColor);
-            txtFrameDuration.Text = frame.Duration.ToString();
+            txtCurrentFrameFillColor.Text = Utility.GetRGBStringFromUIint16(frame.FillColor);
+            txtCurrentFrameDuration.Text = frame.Duration.ToString();
             txtPrimitiveCount.Text = frame.PrimitiveCount.ToString();
             EnablePrimitiveCreation();
             if (currentFrame.PrimitiveCount > 1) EnablePrimitiveNavigation();
@@ -677,19 +719,37 @@ namespace VectorCubeAnimationEditor
             {
                 btnRemoveCurrentPrimitive.Enabled = true;
                 int primitiveNumber = 1;
-                txtCurrentPrimitive.Text = primitiveNumber.ToString();
+                txtCurrentPrimitiveNumber.Text = primitiveNumber.ToString();
                 SetCurrentPrimitive(currentFrame.GetPrimitiveNumber(primitiveNumber));
                 btnRemoveCurrentPrimitive.Enabled = true;
             }
             else
             {
-                txtCurrentPrimitive.Text = string.Empty;
+                txtCurrentPrimitiveNumber.Text = string.Empty;
                 btnRemoveCurrentPrimitive.Enabled = false;
                 DisablePrimitiveNavigation();
                 HideAllPrimitiveFields();
                 pctbxCanvas.Refresh();
             }
 
+        }
+
+        private void EnableFrameManipulation()
+        {
+            txtCurrentFrameNumber.Enabled = true;
+            txtCurrentFrameFillColor.Enabled = true;
+            btnCurrentFrameFillColor.Enabled = true;
+            btnRemoveCurrentFrame.Enabled = true;
+            btnDuplicateCurrentFrame.Enabled = true;
+        }
+
+        private void DisableFrameManipulation()
+        {
+            txtCurrentFrameNumber.Enabled = false;
+            txtCurrentFrameFillColor.Enabled = false;
+            btnCurrentFrameFillColor.Enabled = false;
+            btnRemoveCurrentFrame.Enabled = false;
+            btnDuplicateCurrentFrame.Enabled = false;
         }
 
         private void EnableFrameNavigation()
@@ -704,23 +764,7 @@ namespace VectorCubeAnimationEditor
             btnNextFrame.Enabled = false;
         }
 
-        private void EnablePrimitiveCreation()
-        {
-            btnAddCircle.Enabled = true;
-            btnAddQuarterCircle.Enabled = true;
-            btnAddTriangle.Enabled = true;
-            btnAddRoundRectangle.Enabled = true;
-            btnAddLine.Enabled = true;
-        }
-
-        private void DisablePrimitiveCreation()
-        {
-            btnAddCircle.Enabled = false;
-            btnAddQuarterCircle.Enabled = false;
-            btnAddTriangle.Enabled = false;
-            btnAddRoundRectangle.Enabled = false;
-            btnAddLine.Enabled = false;
-        }
+        //For primitives
 
         private void AddPrimitive(ushort primitiveType)
         {
@@ -728,7 +772,11 @@ namespace VectorCubeAnimationEditor
             if (currentFrame.PrimitiveCount > AnimationConstants._MaxPrimitiveCount) return;
 
             UInt16 color;
-            if (!Utility.GetUInt16FromRGBString(txtAddPrimitiveDrawColor.Text, out color)) return;
+            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out color))
+            {
+                MessageBox.Show("Select a valid draw color", "Alert!");
+                return;
+            }
             Primitive? Primitive = currentFrame.AddPrimitive();
             if (Primitive == null) return;
             Primitive.Type = primitiveType;
@@ -750,13 +798,12 @@ namespace VectorCubeAnimationEditor
                     Primitive.Line.Color = color;
                     break;
             }
-            if (currentFrame.PrimitiveCount == 1)
-            {
-                EnablePrimitiveNavigation();
-            }
+
+            if (currentFrame.PrimitiveCount == 1) EnablePrimitiveManagement();
+            if (currentFrame.PrimitiveCount == 2) EnablePrimitiveNavigation();
 
             txtPrimitiveCount.Text = currentFrame.PrimitiveCount.ToString();
-            txtCurrentPrimitive.Text = currentFrame.PrimitiveCount.ToString();
+            txtCurrentPrimitiveNumber.Text = currentFrame.PrimitiveCount.ToString();
             SetCurrentPrimitive(Primitive);
         }
 
@@ -791,10 +838,49 @@ namespace VectorCubeAnimationEditor
             pctbxCanvas.Refresh();
         }
 
-        private void EnablePrimitiveNavigation()
+        private void EnablePrimitiveCreation()
         {
+            txtPrimitiveDrawColor.Enabled = true;
+            btnPrimitiveDrawColor.Enabled = true;
+            btnAddCircle.Enabled = true;
+            btnAddQuarterCircle.Enabled = true;
+            btnAddTriangle.Enabled = true;
+            btnAddRoundRectangle.Enabled = true;
+            btnAddLine.Enabled = true;
+        }
+
+        private void DisablePrimitiveCreation()
+        {
+            txtPrimitiveDrawColor.Enabled = false;
+            btnPrimitiveDrawColor.Enabled = false;
+            btnAddCircle.Enabled = false;
+            btnAddQuarterCircle.Enabled = false;
+            btnAddTriangle.Enabled = false;
+            btnAddRoundRectangle.Enabled = false;
+            btnAddLine.Enabled = false;
+        }
+
+        private void EnablePrimitiveManagement()
+        {
+            txtCurrentPrimitiveNumber.Enabled = true;
+            txtCurrentPrimitiveDrawColor.Enabled = true;
+            btnCurrentPrimitiveDrawColor.Enabled = true;
             btnUpdateCurrentPrimitive.Enabled = true;
             btnRemoveCurrentPrimitive.Enabled = true;
+        }
+
+        private void DisablePrimitiveManagement()
+        {
+            txtCurrentPrimitiveNumber.Text = string.Empty;
+            txtCurrentPrimitiveNumber.Enabled = false;
+            txtCurrentPrimitiveDrawColor.Enabled = false;
+            btnCurrentPrimitiveDrawColor.Enabled = false;
+            btnUpdateCurrentPrimitive.Enabled = false;
+            btnRemoveCurrentPrimitive.Enabled = false;
+        }
+
+        private void EnablePrimitiveNavigation()
+        {
             btnPreviousPrimitive.Enabled = true;
             btnNextPrimitive.Enabled = true;
         }
@@ -819,7 +905,7 @@ namespace VectorCubeAnimationEditor
             txtCircleX0.Text = circle.X0.ToString();
             txtCircleY0.Text = circle.Y0.ToString();
             txtCircleRadius.Text = circle.R.ToString();
-            txtPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(circle.Color);
+            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(circle.Color);
         }
 
         private void SetCircleFromDisplayFields(Circle circle)
@@ -828,7 +914,7 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtCircleX0.Text, out Int16 X0)) return;
             if (!Utility.GetInt16FromString(txtCircleY0.Text, out Int16 Y0)) return;
             if (!Utility.GetInt16FromString(txtCircleRadius.Text, out Int16 R)) return;
-            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
+            if (!Utility.GetUInt16FromRGBString(txtCurrentPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             circle.X0 = X0;
             circle.Y0 = Y0;
@@ -843,7 +929,7 @@ namespace VectorCubeAnimationEditor
             txtQuarterCircleRadius.Text = quarterCircle.R.ToString();
             txtQuarterCircleQuadrants.Text = quarterCircle.Quadrants.ToString();
             txtQuarterCircleDelta.Text = quarterCircle.Delta.ToString();
-            txtPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(quarterCircle.Color);
+            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(quarterCircle.Color);
         }
 
         private void SetQuarterCircleFromDisplayFields(QuarterCircle quarterCircle)
@@ -854,7 +940,7 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtQuarterCircleRadius.Text, out Int16 R)) return;
             if (!Utility.GetByteFromString(txtQuarterCircleQuadrants.Text, out Byte Quadrants)) return;
             if (!Utility.GetInt16FromString(txtQuarterCircleDelta.Text, out Int16 Delta)) return;
-            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
+            if (!Utility.GetUInt16FromRGBString(txtCurrentPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             quarterCircle.X0 = X0;
             quarterCircle.Y0 = Y0;
@@ -872,7 +958,7 @@ namespace VectorCubeAnimationEditor
             txtTriangleY1.Text = triangle.Y1.ToString();
             txtTriangleX2.Text = triangle.X2.ToString();
             txtTriangleY2.Text = triangle.Y2.ToString();
-            txtPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(triangle.Color);
+            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(triangle.Color);
         }
 
         private void SetTriangleFromDisplayFields(Triangle triangle)
@@ -884,7 +970,7 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtTriangleY1.Text, out Int16 Y1)) return;
             if (!Utility.GetInt16FromString(txtTriangleX2.Text, out Int16 X2)) return;
             if (!Utility.GetInt16FromString(txtTriangleY2.Text, out Int16 Y2)) return;
-            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
+            if (!Utility.GetUInt16FromRGBString(txtCurrentPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             triangle.X0 = X0;
             triangle.Y0 = Y0;
@@ -902,7 +988,7 @@ namespace VectorCubeAnimationEditor
             txtRoundRectW.Text = roundRect.W.ToString();
             txtRoundRectH.Text = roundRect.H.ToString();
             txtRoundRectRadius.Text = roundRect.Radius.ToString();
-            txtPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(roundRect.Color);
+            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(roundRect.Color);
         }
 
         private void SetRoundRectFromDisplayFields(RoundRect roundRect)
@@ -913,7 +999,7 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtRoundRectW.Text, out Int16 W)) return;
             if (!Utility.GetInt16FromString(txtRoundRectH.Text, out Int16 H)) return;
             if (!Utility.GetInt16FromString(txtRoundRectRadius.Text, out Int16 Radius)) return;
-            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
+            if (!Utility.GetUInt16FromRGBString(txtCurrentPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             roundRect.X0 = X0;
             roundRect.Y0 = Y0;
@@ -929,7 +1015,7 @@ namespace VectorCubeAnimationEditor
             txtLineY0.Text = line.Y0.ToString();
             txtLineX1.Text = line.X1.ToString();
             txtLineY1.Text = line.Y1.ToString();
-            txtPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(line.Color);
+            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(line.Color);
         }
 
         private void SetLineFromDisplayFields(Line line)
@@ -939,13 +1025,47 @@ namespace VectorCubeAnimationEditor
             if (!Utility.GetInt16FromString(txtLineY0.Text, out Int16 Y0)) return;
             if (!Utility.GetInt16FromString(txtLineX1.Text, out Int16 X1)) return;
             if (!Utility.GetInt16FromString(txtLineY1.Text, out Int16 Y1)) return;
-            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out UInt16 Color)) return;
+            if (!Utility.GetUInt16FromRGBString(txtCurrentPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
             line.X0 = X0;
             line.Y0 = Y0;
             line.X1 = X1;
             line.Y1 = Y1;
             line.Color = Color;
+        }
+
+        //Set tool tips
+
+        private void SetToolTips()
+        {
+            ToolTip ttLoadFile = new System.Windows.Forms.ToolTip();
+            ttLoadFile.SetToolTip(btnLoadFile, "Load animation from file");
+            ToolTip ttSaveFile = new System.Windows.Forms.ToolTip();
+            ttSaveFile.SetToolTip(btnSaveFile, "Save animation as file");
+            ToolTip ttTransmitFile = new System.Windows.Forms.ToolTip();
+            ttTransmitFile.SetToolTip(btnTransmitFile, "Transmit animation to cube at IP Address below");
+            ToolTip ttSaveToHeaderFile = new System.Windows.Forms.ToolTip();
+            ttSaveToHeaderFile.SetToolTip(btnSaveToHeaderFile, "Save animation as C header file");
+            ToolTip ttSendImage = new System.Windows.Forms.ToolTip();
+            ttSendImage.SetToolTip(btnSendImage, "Transmit an image file (jpeg, bitmap) to cube at IP Address below");
+            ToolTip ttAddFrame = new System.Windows.Forms.ToolTip();
+            ttAddFrame.SetToolTip(btnAddFrame, "Add a frame to the animation");
+            ToolTip ttRemoveCurrentFrame = new System.Windows.Forms.ToolTip();
+            ttRemoveCurrentFrame.SetToolTip(btnRemoveCurrentFrame, "Remove the current frame from the animation");
+            ToolTip ttDuplicateCurrentFrame = new System.Windows.Forms.ToolTip();
+            ttDuplicateCurrentFrame.SetToolTip(btnDuplicateCurrentFrame, "Duplicate the current frame");
+            ToolTip ttAddCircle = new System.Windows.Forms.ToolTip();
+            ttAddCircle.SetToolTip(btnAddCircle, "Add a circle");
+            ToolTip ttAddQuarterCircle = new System.Windows.Forms.ToolTip();
+            ttAddQuarterCircle.SetToolTip(btnAddQuarterCircle, "Add a quarter circle");
+            ToolTip ttAddTriangle = new System.Windows.Forms.ToolTip();
+            ttAddTriangle.SetToolTip(btnAddTriangle, "Add a triangle");
+            ToolTip ttAddRoundRectangle = new System.Windows.Forms.ToolTip();
+            ttAddRoundRectangle.SetToolTip(btnAddRoundRectangle, "Add a rounded rectangle");
+            ToolTip ttAddLine = new System.Windows.Forms.ToolTip();
+            ttAddLine.SetToolTip(btnAddLine, "Add a line");
+            ToolTip ttRemoveCurrentPrimitive = new System.Windows.Forms.ToolTip();
+            ttRemoveCurrentPrimitive.SetToolTip(btnRemoveCurrentPrimitive, "Remove the current shape");
         }
 
         //Disabled Text Fields

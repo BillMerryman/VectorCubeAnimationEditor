@@ -121,7 +121,7 @@
   <data name="btnDuplicateCurrentFrame.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vgAADr4B6kKxwAAAADtJREFUOE9jGAjwn0RMMiBFE1UsgLmUWEwQoCsiShMUjFpAEIxaQBAMHgvQMbGA
+        vAAADrwBlbxySQAAADtJREFUOE9jGAjwn0RMMiBFE1UsgLmUWEwQoCsiShMUjFpAEIxaQBAMHgvQMbGA
         FLVwQBcLSMH0BAwMAGsTRrqE6YTXAAAAAElFTkSuQmCC
 </value>
   </data>
@@ -186,6 +186,14 @@
   <metadata name="selectColor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="btnSendImage.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vAAADrwBlbxySQAAAHBJREFUOE/NjgEKwDAIA/v/T29YGshE2yiM7SDY1kQ7/sLVlEzJvGgtwM9OMlAl
+        KqFvF2QDopCdISbyTnzAn7ka6Gce1Ik38t3gHhO9Z94H6iCIibxHOKTIQJXwod2QXS+FQ4oMVImSeVFe
+        0NHbjHEDj9l5h6GZhCgAAAAASUVORK5CYII=
+</value>
+  </data>
   <data name="btnSaveToHeaderFile.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO

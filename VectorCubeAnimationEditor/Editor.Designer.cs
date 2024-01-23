@@ -30,19 +30,20 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             grpbxFrames = new GroupBox();
-            txtAddFrameDuration = new TextBox();
-            lblAddFrameDuration = new Label();
-            btnAddFrameFillColor = new Button();
-            txtAddFrameFillColor = new TextBox();
-            lblAddFillColor = new Label();
-            grpbxCurrentFrame = new GroupBox();
-            btnUpdateCurrentFrame = new Button();
+            btnDuplicateCurrentFrame = new Button();
             txtFrameDuration = new TextBox();
             lblFrameDuration = new Label();
             btnFrameFillColor = new Button();
             txtFrameFillColor = new TextBox();
-            lblFillColor = new Label();
-            txtCurrentFrame = new TextBox();
+            lblAddFillColor = new Label();
+            grpbxCurrentFrame = new GroupBox();
+            btnUpdateCurrentFrame = new Button();
+            txtCurrentFrameDuration = new TextBox();
+            lblCurrentFrameDuration = new Label();
+            btnCurrentFrameFillColor = new Button();
+            txtCurrentFrameFillColor = new TextBox();
+            lblCurrentFrameFillColor = new Label();
+            txtCurrentFrameNumber = new TextBox();
             lblCurrentFrameNumber = new Label();
             btnRemoveCurrentFrame = new Button();
             btnNextFrame = new Button();
@@ -53,8 +54,8 @@
             pctbxCanvas = new PictureBox();
             grpbxPrimitives = new GroupBox();
             btnAddLine = new Button();
-            btnAddPrimitiveDrawColor = new Button();
-            txtAddPrimitiveDrawColor = new TextBox();
+            btnPrimitiveDrawColor = new Button();
+            txtPrimitiveDrawColor = new TextBox();
             lblAddPrimitiveDrawColor = new Label();
             grpbxCurrentPrimitive = new GroupBox();
             grpbxLine = new GroupBox();
@@ -109,10 +110,10 @@
             lblTriangleX1 = new Label();
             lblTriangleX0 = new Label();
             btnUpdateCurrentPrimitive = new Button();
-            btnPrimitiveDrawColor = new Button();
-            txtPrimitiveDrawColor = new TextBox();
-            lblPrimitiveDrawColor = new Label();
-            txtCurrentPrimitive = new TextBox();
+            btnCurrentPrimitiveDrawColor = new Button();
+            txtCurrentPrimitiveDrawColor = new TextBox();
+            lblCurrentPrimitiveDrawColor = new Label();
+            txtCurrentPrimitiveNumber = new TextBox();
             lblCurrentPrimitiveNumber = new Label();
             btnAddRoundRectangle = new Button();
             btnAddTriangle = new Button();
@@ -125,6 +126,7 @@
             lblPrimitiveCount = new Label();
             selectColor = new ColorDialog();
             grpbxFile = new GroupBox();
+            btnSendImage = new Button();
             btnSaveToHeaderFile = new Button();
             lblIPThirdOctetSeperator = new Label();
             lblIPSecondOctetSeperator = new Label();
@@ -139,7 +141,6 @@
             btnLoadFile = new Button();
             openFile = new OpenFileDialog();
             saveFile = new SaveFileDialog();
-            btnDuplicateCurrentFrame = new Button();
             grpbxFrames.SuspendLayout();
             grpbxCurrentFrame.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pctbxCanvas).BeginInit();
@@ -156,10 +157,10 @@
             // grpbxFrames
             // 
             grpbxFrames.Controls.Add(btnDuplicateCurrentFrame);
-            grpbxFrames.Controls.Add(txtAddFrameDuration);
-            grpbxFrames.Controls.Add(lblAddFrameDuration);
-            grpbxFrames.Controls.Add(btnAddFrameFillColor);
-            grpbxFrames.Controls.Add(txtAddFrameFillColor);
+            grpbxFrames.Controls.Add(txtFrameDuration);
+            grpbxFrames.Controls.Add(lblFrameDuration);
+            grpbxFrames.Controls.Add(btnFrameFillColor);
+            grpbxFrames.Controls.Add(txtFrameFillColor);
             grpbxFrames.Controls.Add(lblAddFillColor);
             grpbxFrames.Controls.Add(grpbxCurrentFrame);
             grpbxFrames.Controls.Add(btnRemoveCurrentFrame);
@@ -176,43 +177,55 @@
             grpbxFrames.TabStop = false;
             grpbxFrames.Text = "Frames";
             // 
-            // txtAddFrameDuration
+            // btnDuplicateCurrentFrame
             // 
-            txtAddFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            txtAddFrameDuration.Location = new Point(78, 74);
-            txtAddFrameDuration.Name = "txtAddFrameDuration";
-            txtAddFrameDuration.Size = new Size(48, 22);
-            txtAddFrameDuration.TabIndex = 25;
+            btnDuplicateCurrentFrame.Enabled = false;
+            btnDuplicateCurrentFrame.Font = new Font("Segoe UI", 8.25F);
+            btnDuplicateCurrentFrame.Image = (System.Drawing.Image)resources.GetObject("btnDuplicateCurrentFrame.Image");
+            btnDuplicateCurrentFrame.Location = new Point(84, 226);
+            btnDuplicateCurrentFrame.Name = "btnDuplicateCurrentFrame";
+            btnDuplicateCurrentFrame.Size = new Size(32, 22);
+            btnDuplicateCurrentFrame.TabIndex = 26;
+            btnDuplicateCurrentFrame.UseVisualStyleBackColor = true;
+            btnDuplicateCurrentFrame.Click += btnDuplicateCurrentFrame_Click;
             // 
-            // lblAddFrameDuration
+            // txtFrameDuration
             // 
-            lblAddFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            lblAddFrameDuration.Location = new Point(15, 74);
-            lblAddFrameDuration.Name = "lblAddFrameDuration";
-            lblAddFrameDuration.Size = new Size(63, 22);
-            lblAddFrameDuration.TabIndex = 24;
-            lblAddFrameDuration.Text = "Duration:";
-            lblAddFrameDuration.TextAlign = ContentAlignment.MiddleRight;
+            txtFrameDuration.Font = new Font("Segoe UI", 8.25F);
+            txtFrameDuration.Location = new Point(78, 74);
+            txtFrameDuration.Name = "txtFrameDuration";
+            txtFrameDuration.Size = new Size(48, 22);
+            txtFrameDuration.TabIndex = 25;
             // 
-            // btnAddFrameFillColor
+            // lblFrameDuration
             // 
-            btnAddFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            btnAddFrameFillColor.Location = new Point(132, 46);
-            btnAddFrameFillColor.Name = "btnAddFrameFillColor";
-            btnAddFrameFillColor.Size = new Size(32, 22);
-            btnAddFrameFillColor.TabIndex = 23;
-            btnAddFrameFillColor.Text = "...";
-            btnAddFrameFillColor.TextAlign = ContentAlignment.TopCenter;
-            btnAddFrameFillColor.UseVisualStyleBackColor = true;
-            btnAddFrameFillColor.Click += btnAddFrameFillColor_Click;
+            lblFrameDuration.Font = new Font("Segoe UI", 8.25F);
+            lblFrameDuration.Location = new Point(15, 74);
+            lblFrameDuration.Name = "lblFrameDuration";
+            lblFrameDuration.Size = new Size(63, 22);
+            lblFrameDuration.TabIndex = 24;
+            lblFrameDuration.Text = "Duration:";
+            lblFrameDuration.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // txtAddFrameFillColor
+            // btnFrameFillColor
             // 
-            txtAddFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            txtAddFrameFillColor.Location = new Point(78, 46);
-            txtAddFrameFillColor.Name = "txtAddFrameFillColor";
-            txtAddFrameFillColor.Size = new Size(48, 22);
-            txtAddFrameFillColor.TabIndex = 22;
+            btnFrameFillColor.Font = new Font("Segoe UI", 8.25F);
+            btnFrameFillColor.Location = new Point(132, 46);
+            btnFrameFillColor.Name = "btnFrameFillColor";
+            btnFrameFillColor.Size = new Size(32, 22);
+            btnFrameFillColor.TabIndex = 23;
+            btnFrameFillColor.Text = "...";
+            btnFrameFillColor.TextAlign = ContentAlignment.TopCenter;
+            btnFrameFillColor.UseVisualStyleBackColor = true;
+            btnFrameFillColor.Click += btnFrameFillColor_Click;
+            // 
+            // txtFrameFillColor
+            // 
+            txtFrameFillColor.Font = new Font("Segoe UI", 8.25F);
+            txtFrameFillColor.Location = new Point(78, 46);
+            txtFrameFillColor.Name = "txtFrameFillColor";
+            txtFrameFillColor.Size = new Size(48, 22);
+            txtFrameFillColor.TabIndex = 22;
             // 
             // lblAddFillColor
             // 
@@ -227,12 +240,12 @@
             // grpbxCurrentFrame
             // 
             grpbxCurrentFrame.Controls.Add(btnUpdateCurrentFrame);
-            grpbxCurrentFrame.Controls.Add(txtFrameDuration);
-            grpbxCurrentFrame.Controls.Add(lblFrameDuration);
-            grpbxCurrentFrame.Controls.Add(btnFrameFillColor);
-            grpbxCurrentFrame.Controls.Add(txtFrameFillColor);
-            grpbxCurrentFrame.Controls.Add(lblFillColor);
-            grpbxCurrentFrame.Controls.Add(txtCurrentFrame);
+            grpbxCurrentFrame.Controls.Add(txtCurrentFrameDuration);
+            grpbxCurrentFrame.Controls.Add(lblCurrentFrameDuration);
+            grpbxCurrentFrame.Controls.Add(btnCurrentFrameFillColor);
+            grpbxCurrentFrame.Controls.Add(txtCurrentFrameFillColor);
+            grpbxCurrentFrame.Controls.Add(lblCurrentFrameFillColor);
+            grpbxCurrentFrame.Controls.Add(txtCurrentFrameNumber);
             grpbxCurrentFrame.Controls.Add(lblCurrentFrameNumber);
             grpbxCurrentFrame.Font = new Font("Segoe UI", 8.25F);
             grpbxCurrentFrame.Location = new Point(5, 102);
@@ -253,63 +266,66 @@
             btnUpdateCurrentFrame.UseVisualStyleBackColor = true;
             btnUpdateCurrentFrame.Click += btnUpdateCurrentFrame_Click;
             // 
-            // txtFrameDuration
+            // txtCurrentFrameDuration
             // 
-            txtFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            txtFrameDuration.Location = new Point(65, 66);
-            txtFrameDuration.Name = "txtFrameDuration";
-            txtFrameDuration.Size = new Size(85, 22);
-            txtFrameDuration.TabIndex = 20;
+            txtCurrentFrameDuration.Font = new Font("Segoe UI", 8.25F);
+            txtCurrentFrameDuration.Location = new Point(65, 66);
+            txtCurrentFrameDuration.Name = "txtCurrentFrameDuration";
+            txtCurrentFrameDuration.Size = new Size(85, 22);
+            txtCurrentFrameDuration.TabIndex = 20;
             // 
-            // lblFrameDuration
+            // lblCurrentFrameDuration
             // 
-            lblFrameDuration.AutoSize = true;
-            lblFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            lblFrameDuration.Location = new Point(3, 69);
-            lblFrameDuration.Name = "lblFrameDuration";
-            lblFrameDuration.Size = new Size(56, 13);
-            lblFrameDuration.TabIndex = 19;
-            lblFrameDuration.Text = "Duration:";
-            lblFrameDuration.TextAlign = ContentAlignment.MiddleRight;
+            lblCurrentFrameDuration.AutoSize = true;
+            lblCurrentFrameDuration.Font = new Font("Segoe UI", 8.25F);
+            lblCurrentFrameDuration.Location = new Point(3, 69);
+            lblCurrentFrameDuration.Name = "lblCurrentFrameDuration";
+            lblCurrentFrameDuration.Size = new Size(56, 13);
+            lblCurrentFrameDuration.TabIndex = 19;
+            lblCurrentFrameDuration.Text = "Duration:";
+            lblCurrentFrameDuration.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // btnFrameFillColor
+            // btnCurrentFrameFillColor
             // 
-            btnFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            btnFrameFillColor.Location = new Point(115, 40);
-            btnFrameFillColor.Name = "btnFrameFillColor";
-            btnFrameFillColor.Size = new Size(35, 22);
-            btnFrameFillColor.TabIndex = 18;
-            btnFrameFillColor.Text = "...";
-            btnFrameFillColor.TextAlign = ContentAlignment.TopCenter;
-            btnFrameFillColor.UseVisualStyleBackColor = true;
-            btnFrameFillColor.Click += btnFrameFillColor_Click;
+            btnCurrentFrameFillColor.Enabled = false;
+            btnCurrentFrameFillColor.Font = new Font("Segoe UI", 8.25F);
+            btnCurrentFrameFillColor.Location = new Point(115, 40);
+            btnCurrentFrameFillColor.Name = "btnCurrentFrameFillColor";
+            btnCurrentFrameFillColor.Size = new Size(35, 22);
+            btnCurrentFrameFillColor.TabIndex = 18;
+            btnCurrentFrameFillColor.Text = "...";
+            btnCurrentFrameFillColor.TextAlign = ContentAlignment.TopCenter;
+            btnCurrentFrameFillColor.UseVisualStyleBackColor = true;
+            btnCurrentFrameFillColor.Click += btnCurrentFrameFillColor_Click;
             // 
-            // txtFrameFillColor
+            // txtCurrentFrameFillColor
             // 
-            txtFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            txtFrameFillColor.Location = new Point(65, 40);
-            txtFrameFillColor.Name = "txtFrameFillColor";
-            txtFrameFillColor.Size = new Size(48, 22);
-            txtFrameFillColor.TabIndex = 17;
+            txtCurrentFrameFillColor.Enabled = false;
+            txtCurrentFrameFillColor.Font = new Font("Segoe UI", 8.25F);
+            txtCurrentFrameFillColor.Location = new Point(65, 40);
+            txtCurrentFrameFillColor.Name = "txtCurrentFrameFillColor";
+            txtCurrentFrameFillColor.Size = new Size(48, 22);
+            txtCurrentFrameFillColor.TabIndex = 17;
             // 
-            // lblFillColor
+            // lblCurrentFrameFillColor
             // 
-            lblFillColor.AutoSize = true;
-            lblFillColor.Font = new Font("Segoe UI", 8.25F);
-            lblFillColor.Location = new Point(3, 40);
-            lblFillColor.Name = "lblFillColor";
-            lblFillColor.Size = new Size(56, 13);
-            lblFillColor.TabIndex = 16;
-            lblFillColor.Text = "Fill Color:";
+            lblCurrentFrameFillColor.AutoSize = true;
+            lblCurrentFrameFillColor.Font = new Font("Segoe UI", 8.25F);
+            lblCurrentFrameFillColor.Location = new Point(3, 40);
+            lblCurrentFrameFillColor.Name = "lblCurrentFrameFillColor";
+            lblCurrentFrameFillColor.Size = new Size(56, 13);
+            lblCurrentFrameFillColor.TabIndex = 16;
+            lblCurrentFrameFillColor.Text = "Fill Color:";
             // 
-            // txtCurrentFrame
+            // txtCurrentFrameNumber
             // 
-            txtCurrentFrame.Font = new Font("Segoe UI", 8.25F);
-            txtCurrentFrame.Location = new Point(115, 15);
-            txtCurrentFrame.Name = "txtCurrentFrame";
-            txtCurrentFrame.Size = new Size(35, 22);
-            txtCurrentFrame.TabIndex = 15;
-            txtCurrentFrame.KeyDown += txtCurrentFrame_KeyDown;
+            txtCurrentFrameNumber.Enabled = false;
+            txtCurrentFrameNumber.Font = new Font("Segoe UI", 8.25F);
+            txtCurrentFrameNumber.Location = new Point(115, 15);
+            txtCurrentFrameNumber.Name = "txtCurrentFrameNumber";
+            txtCurrentFrameNumber.Size = new Size(35, 22);
+            txtCurrentFrameNumber.TabIndex = 15;
+            txtCurrentFrameNumber.KeyDown += txtCurrentFrame_KeyDown;
             // 
             // lblCurrentFrameNumber
             // 
@@ -326,7 +342,7 @@
             // 
             btnRemoveCurrentFrame.Enabled = false;
             btnRemoveCurrentFrame.Font = new Font("Segoe UI", 8.25F);
-            btnRemoveCurrentFrame.Image = (Image)resources.GetObject("btnRemoveCurrentFrame.Image");
+            btnRemoveCurrentFrame.Image = (System.Drawing.Image)resources.GetObject("btnRemoveCurrentFrame.Image");
             btnRemoveCurrentFrame.Location = new Point(46, 226);
             btnRemoveCurrentFrame.Name = "btnRemoveCurrentFrame";
             btnRemoveCurrentFrame.Size = new Size(32, 22);
@@ -361,7 +377,7 @@
             // btnAddFrame
             // 
             btnAddFrame.Font = new Font("Segoe UI", 8.25F);
-            btnAddFrame.Image = (Image)resources.GetObject("btnAddFrame.Image");
+            btnAddFrame.Image = (System.Drawing.Image)resources.GetObject("btnAddFrame.Image");
             btnAddFrame.Location = new Point(132, 21);
             btnAddFrame.Margin = new Padding(0);
             btnAddFrame.Name = "btnAddFrame";
@@ -405,8 +421,8 @@
             // grpbxPrimitives
             // 
             grpbxPrimitives.Controls.Add(btnAddLine);
-            grpbxPrimitives.Controls.Add(btnAddPrimitiveDrawColor);
-            grpbxPrimitives.Controls.Add(txtAddPrimitiveDrawColor);
+            grpbxPrimitives.Controls.Add(btnPrimitiveDrawColor);
+            grpbxPrimitives.Controls.Add(txtPrimitiveDrawColor);
             grpbxPrimitives.Controls.Add(lblAddPrimitiveDrawColor);
             grpbxPrimitives.Controls.Add(grpbxCurrentPrimitive);
             grpbxPrimitives.Controls.Add(btnAddRoundRectangle);
@@ -430,7 +446,7 @@
             // 
             btnAddLine.Enabled = false;
             btnAddLine.Font = new Font("Segoe UI", 8.25F);
-            btnAddLine.Image = (Image)resources.GetObject("btnAddLine.Image");
+            btnAddLine.Image = (System.Drawing.Image)resources.GetObject("btnAddLine.Image");
             btnAddLine.Location = new Point(17, 108);
             btnAddLine.Name = "btnAddLine";
             btnAddLine.Size = new Size(32, 22);
@@ -438,25 +454,25 @@
             btnAddLine.UseVisualStyleBackColor = true;
             btnAddLine.Click += btnAddLine_Click;
             // 
-            // btnAddPrimitiveDrawColor
+            // btnPrimitiveDrawColor
             // 
-            btnAddPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            btnAddPrimitiveDrawColor.Location = new Point(132, 46);
-            btnAddPrimitiveDrawColor.Name = "btnAddPrimitiveDrawColor";
-            btnAddPrimitiveDrawColor.Size = new Size(32, 22);
-            btnAddPrimitiveDrawColor.TabIndex = 26;
-            btnAddPrimitiveDrawColor.Text = "...";
-            btnAddPrimitiveDrawColor.TextAlign = ContentAlignment.TopCenter;
-            btnAddPrimitiveDrawColor.UseVisualStyleBackColor = true;
-            btnAddPrimitiveDrawColor.Click += btnAddPrimitiveDrawColor_Click;
+            btnPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
+            btnPrimitiveDrawColor.Location = new Point(132, 46);
+            btnPrimitiveDrawColor.Name = "btnPrimitiveDrawColor";
+            btnPrimitiveDrawColor.Size = new Size(32, 22);
+            btnPrimitiveDrawColor.TabIndex = 26;
+            btnPrimitiveDrawColor.Text = "...";
+            btnPrimitiveDrawColor.TextAlign = ContentAlignment.TopCenter;
+            btnPrimitiveDrawColor.UseVisualStyleBackColor = true;
+            btnPrimitiveDrawColor.Click += btnPrimitiveDrawColor_Click;
             // 
-            // txtAddPrimitiveDrawColor
+            // txtPrimitiveDrawColor
             // 
-            txtAddPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            txtAddPrimitiveDrawColor.Location = new Point(78, 46);
-            txtAddPrimitiveDrawColor.Name = "txtAddPrimitiveDrawColor";
-            txtAddPrimitiveDrawColor.Size = new Size(48, 22);
-            txtAddPrimitiveDrawColor.TabIndex = 25;
+            txtPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
+            txtPrimitiveDrawColor.Location = new Point(78, 46);
+            txtPrimitiveDrawColor.Name = "txtPrimitiveDrawColor";
+            txtPrimitiveDrawColor.Size = new Size(48, 22);
+            txtPrimitiveDrawColor.TabIndex = 25;
             // 
             // lblAddPrimitiveDrawColor
             // 
@@ -476,10 +492,10 @@
             grpbxCurrentPrimitive.Controls.Add(grpbxRoundRect);
             grpbxCurrentPrimitive.Controls.Add(grpbxTriangle);
             grpbxCurrentPrimitive.Controls.Add(btnUpdateCurrentPrimitive);
-            grpbxCurrentPrimitive.Controls.Add(btnPrimitiveDrawColor);
-            grpbxCurrentPrimitive.Controls.Add(txtPrimitiveDrawColor);
-            grpbxCurrentPrimitive.Controls.Add(lblPrimitiveDrawColor);
-            grpbxCurrentPrimitive.Controls.Add(txtCurrentPrimitive);
+            grpbxCurrentPrimitive.Controls.Add(btnCurrentPrimitiveDrawColor);
+            grpbxCurrentPrimitive.Controls.Add(txtCurrentPrimitiveDrawColor);
+            grpbxCurrentPrimitive.Controls.Add(lblCurrentPrimitiveDrawColor);
+            grpbxCurrentPrimitive.Controls.Add(txtCurrentPrimitiveNumber);
             grpbxCurrentPrimitive.Controls.Add(lblCurrentPrimitiveNumber);
             grpbxCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
             grpbxCurrentPrimitive.Location = new Point(6, 133);
@@ -965,44 +981,47 @@
             btnUpdateCurrentPrimitive.UseVisualStyleBackColor = true;
             btnUpdateCurrentPrimitive.Click += btnUpdateCurrentPrimitive_Click;
             // 
-            // btnPrimitiveDrawColor
+            // btnCurrentPrimitiveDrawColor
             // 
-            btnPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            btnPrimitiveDrawColor.Location = new Point(115, 40);
-            btnPrimitiveDrawColor.Name = "btnPrimitiveDrawColor";
-            btnPrimitiveDrawColor.Size = new Size(35, 22);
-            btnPrimitiveDrawColor.TabIndex = 22;
-            btnPrimitiveDrawColor.Text = "...";
-            btnPrimitiveDrawColor.TextAlign = ContentAlignment.TopCenter;
-            btnPrimitiveDrawColor.UseVisualStyleBackColor = true;
-            btnPrimitiveDrawColor.Click += btnPrimitiveDrawColor_Click;
+            btnCurrentPrimitiveDrawColor.Enabled = false;
+            btnCurrentPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
+            btnCurrentPrimitiveDrawColor.Location = new Point(115, 40);
+            btnCurrentPrimitiveDrawColor.Name = "btnCurrentPrimitiveDrawColor";
+            btnCurrentPrimitiveDrawColor.Size = new Size(35, 22);
+            btnCurrentPrimitiveDrawColor.TabIndex = 22;
+            btnCurrentPrimitiveDrawColor.Text = "...";
+            btnCurrentPrimitiveDrawColor.TextAlign = ContentAlignment.TopCenter;
+            btnCurrentPrimitiveDrawColor.UseVisualStyleBackColor = true;
+            btnCurrentPrimitiveDrawColor.Click += btnCurrentPrimitiveDrawColor_Click;
             // 
-            // txtPrimitiveDrawColor
+            // txtCurrentPrimitiveDrawColor
             // 
-            txtPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            txtPrimitiveDrawColor.Location = new Point(65, 40);
-            txtPrimitiveDrawColor.Name = "txtPrimitiveDrawColor";
-            txtPrimitiveDrawColor.Size = new Size(48, 22);
-            txtPrimitiveDrawColor.TabIndex = 21;
+            txtCurrentPrimitiveDrawColor.Enabled = false;
+            txtCurrentPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
+            txtCurrentPrimitiveDrawColor.Location = new Point(65, 40);
+            txtCurrentPrimitiveDrawColor.Name = "txtCurrentPrimitiveDrawColor";
+            txtCurrentPrimitiveDrawColor.Size = new Size(48, 22);
+            txtCurrentPrimitiveDrawColor.TabIndex = 21;
             // 
-            // lblPrimitiveDrawColor
+            // lblCurrentPrimitiveDrawColor
             // 
-            lblPrimitiveDrawColor.AutoSize = true;
-            lblPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
-            lblPrimitiveDrawColor.Location = new Point(21, 40);
-            lblPrimitiveDrawColor.Name = "lblPrimitiveDrawColor";
-            lblPrimitiveDrawColor.Size = new Size(38, 13);
-            lblPrimitiveDrawColor.TabIndex = 20;
-            lblPrimitiveDrawColor.Text = "Color:";
+            lblCurrentPrimitiveDrawColor.AutoSize = true;
+            lblCurrentPrimitiveDrawColor.Font = new Font("Segoe UI", 8.25F);
+            lblCurrentPrimitiveDrawColor.Location = new Point(21, 40);
+            lblCurrentPrimitiveDrawColor.Name = "lblCurrentPrimitiveDrawColor";
+            lblCurrentPrimitiveDrawColor.Size = new Size(38, 13);
+            lblCurrentPrimitiveDrawColor.TabIndex = 20;
+            lblCurrentPrimitiveDrawColor.Text = "Color:";
             // 
-            // txtCurrentPrimitive
+            // txtCurrentPrimitiveNumber
             // 
-            txtCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
-            txtCurrentPrimitive.Location = new Point(115, 15);
-            txtCurrentPrimitive.Name = "txtCurrentPrimitive";
-            txtCurrentPrimitive.Size = new Size(36, 22);
-            txtCurrentPrimitive.TabIndex = 19;
-            txtCurrentPrimitive.KeyDown += txtCurrentPrimitive_KeyDown;
+            txtCurrentPrimitiveNumber.Enabled = false;
+            txtCurrentPrimitiveNumber.Font = new Font("Segoe UI", 8.25F);
+            txtCurrentPrimitiveNumber.Location = new Point(115, 15);
+            txtCurrentPrimitiveNumber.Name = "txtCurrentPrimitiveNumber";
+            txtCurrentPrimitiveNumber.Size = new Size(36, 22);
+            txtCurrentPrimitiveNumber.TabIndex = 19;
+            txtCurrentPrimitiveNumber.KeyDown += txtCurrentPrimitive_KeyDown;
             // 
             // lblCurrentPrimitiveNumber
             // 
@@ -1019,7 +1038,7 @@
             // 
             btnAddRoundRectangle.Enabled = false;
             btnAddRoundRectangle.Font = new Font("Segoe UI", 8.25F);
-            btnAddRoundRectangle.Image = (Image)resources.GetObject("btnAddRoundRectangle.Image");
+            btnAddRoundRectangle.Image = (System.Drawing.Image)resources.GetObject("btnAddRoundRectangle.Image");
             btnAddRoundRectangle.Location = new Point(122, 80);
             btnAddRoundRectangle.Name = "btnAddRoundRectangle";
             btnAddRoundRectangle.Size = new Size(32, 22);
@@ -1031,7 +1050,7 @@
             // 
             btnAddTriangle.Enabled = false;
             btnAddTriangle.Font = new Font("Segoe UI", 8.25F);
-            btnAddTriangle.Image = (Image)resources.GetObject("btnAddTriangle.Image");
+            btnAddTriangle.Image = (System.Drawing.Image)resources.GetObject("btnAddTriangle.Image");
             btnAddTriangle.Location = new Point(87, 80);
             btnAddTriangle.Name = "btnAddTriangle";
             btnAddTriangle.Size = new Size(32, 22);
@@ -1043,7 +1062,7 @@
             // 
             btnAddQuarterCircle.Enabled = false;
             btnAddQuarterCircle.Font = new Font("Segoe UI", 8.25F);
-            btnAddQuarterCircle.Image = (Image)resources.GetObject("btnAddQuarterCircle.Image");
+            btnAddQuarterCircle.Image = (System.Drawing.Image)resources.GetObject("btnAddQuarterCircle.Image");
             btnAddQuarterCircle.Location = new Point(52, 80);
             btnAddQuarterCircle.Name = "btnAddQuarterCircle";
             btnAddQuarterCircle.Size = new Size(32, 22);
@@ -1055,7 +1074,7 @@
             // 
             btnAddCircle.Enabled = false;
             btnAddCircle.Font = new Font("Segoe UI", 8.25F);
-            btnAddCircle.Image = (Image)resources.GetObject("btnAddCircle.Image");
+            btnAddCircle.Image = (System.Drawing.Image)resources.GetObject("btnAddCircle.Image");
             btnAddCircle.Location = new Point(17, 80);
             btnAddCircle.Name = "btnAddCircle";
             btnAddCircle.Size = new Size(32, 22);
@@ -1067,7 +1086,7 @@
             // 
             btnRemoveCurrentPrimitive.Enabled = false;
             btnRemoveCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnRemoveCurrentPrimitive.Image = (Image)resources.GetObject("btnRemoveCurrentPrimitive.Image");
+            btnRemoveCurrentPrimitive.Image = (System.Drawing.Image)resources.GetObject("btnRemoveCurrentPrimitive.Image");
             btnRemoveCurrentPrimitive.Location = new Point(69, 339);
             btnRemoveCurrentPrimitive.Name = "btnRemoveCurrentPrimitive";
             btnRemoveCurrentPrimitive.Size = new Size(32, 22);
@@ -1120,6 +1139,7 @@
             // 
             // grpbxFile
             // 
+            grpbxFile.Controls.Add(btnSendImage);
             grpbxFile.Controls.Add(btnSaveToHeaderFile);
             grpbxFile.Controls.Add(lblIPThirdOctetSeperator);
             grpbxFile.Controls.Add(lblIPSecondOctetSeperator);
@@ -1140,11 +1160,21 @@
             grpbxFile.TabStop = false;
             grpbxFile.Text = "File";
             // 
+            // btnSendImage
+            // 
+            btnSendImage.Image = (System.Drawing.Image)resources.GetObject("btnSendImage.Image");
+            btnSendImage.Location = new Point(134, 21);
+            btnSendImage.Name = "btnSendImage";
+            btnSendImage.Size = new Size(32, 22);
+            btnSendImage.TabIndex = 12;
+            btnSendImage.UseVisualStyleBackColor = true;
+            btnSendImage.Click += btnSendImage_Click;
+            // 
             // btnSaveToHeaderFile
             // 
             btnSaveToHeaderFile.Font = new Font("Segoe UI", 8.25F);
-            btnSaveToHeaderFile.Image = (Image)resources.GetObject("btnSaveToHeaderFile.Image");
-            btnSaveToHeaderFile.Location = new Point(122, 21);
+            btnSaveToHeaderFile.Image = (System.Drawing.Image)resources.GetObject("btnSaveToHeaderFile.Image");
+            btnSaveToHeaderFile.Location = new Point(102, 21);
             btnSaveToHeaderFile.Name = "btnSaveToHeaderFile";
             btnSaveToHeaderFile.Size = new Size(32, 22);
             btnSaveToHeaderFile.TabIndex = 11;
@@ -1233,8 +1263,8 @@
             // btnTransmitFile
             // 
             btnTransmitFile.Font = new Font("Segoe UI", 8.25F);
-            btnTransmitFile.Image = (Image)resources.GetObject("btnTransmitFile.Image");
-            btnTransmitFile.Location = new Point(87, 21);
+            btnTransmitFile.Image = (System.Drawing.Image)resources.GetObject("btnTransmitFile.Image");
+            btnTransmitFile.Location = new Point(70, 21);
             btnTransmitFile.Name = "btnTransmitFile";
             btnTransmitFile.Size = new Size(32, 22);
             btnTransmitFile.TabIndex = 2;
@@ -1244,8 +1274,8 @@
             // btnSaveFile
             // 
             btnSaveFile.Font = new Font("Segoe UI", 8.25F);
-            btnSaveFile.Image = (Image)resources.GetObject("btnSaveFile.Image");
-            btnSaveFile.Location = new Point(52, 21);
+            btnSaveFile.Image = (System.Drawing.Image)resources.GetObject("btnSaveFile.Image");
+            btnSaveFile.Location = new Point(38, 21);
             btnSaveFile.Name = "btnSaveFile";
             btnSaveFile.Size = new Size(32, 22);
             btnSaveFile.TabIndex = 1;
@@ -1255,25 +1285,13 @@
             // btnLoadFile
             // 
             btnLoadFile.Font = new Font("Segoe UI", 8.25F);
-            btnLoadFile.Image = (Image)resources.GetObject("btnLoadFile.Image");
-            btnLoadFile.Location = new Point(17, 21);
+            btnLoadFile.Image = (System.Drawing.Image)resources.GetObject("btnLoadFile.Image");
+            btnLoadFile.Location = new Point(4, 20);
             btnLoadFile.Name = "btnLoadFile";
             btnLoadFile.Size = new Size(32, 22);
             btnLoadFile.TabIndex = 0;
             btnLoadFile.UseVisualStyleBackColor = true;
             btnLoadFile.Click += btnLoadFile_Click;
-            // 
-            // btnDuplicateCurrentFrame
-            // 
-            btnDuplicateCurrentFrame.Enabled = false;
-            btnDuplicateCurrentFrame.Font = new Font("Segoe UI", 8.25F);
-            btnDuplicateCurrentFrame.Image = (Image)resources.GetObject("btnDuplicateCurrentFrame.Image");
-            btnDuplicateCurrentFrame.Location = new Point(84, 226);
-            btnDuplicateCurrentFrame.Name = "btnDuplicateCurrentFrame";
-            btnDuplicateCurrentFrame.Size = new Size(32, 22);
-            btnDuplicateCurrentFrame.TabIndex = 26;
-            btnDuplicateCurrentFrame.UseVisualStyleBackColor = true;
-            btnDuplicateCurrentFrame.Click += btnDuplicateCurrentFrame_Click;
             // 
             // Editor
             // 
@@ -1348,27 +1366,27 @@
         private TextBox txtRoundRectRadius;
         private GroupBox grpbxCurrentFrame;
         private Button btnUpdateCurrentFrame;
+        private TextBox txtCurrentFrameDuration;
+        private Label lblCurrentFrameDuration;
+        private Button btnCurrentFrameFillColor;
+        private TextBox txtCurrentFrameFillColor;
+        private Label lblCurrentFrameFillColor;
+        private TextBox txtCurrentFrameNumber;
+        private Label lblCurrentFrameNumber;
+        private GroupBox grpbxCurrentPrimitive;
+        private Button btnCurrentPrimitiveDrawColor;
+        private TextBox txtCurrentPrimitiveDrawColor;
+        private Label lblCurrentPrimitiveDrawColor;
+        private TextBox txtCurrentPrimitiveNumber;
+        private Label lblCurrentPrimitiveNumber;
         private TextBox txtFrameDuration;
         private Label lblFrameDuration;
         private Button btnFrameFillColor;
         private TextBox txtFrameFillColor;
-        private Label lblFillColor;
-        private TextBox txtCurrentFrame;
-        private Label lblCurrentFrameNumber;
-        private GroupBox grpbxCurrentPrimitive;
-        private Button btnPrimitiveDrawColor;
-        private TextBox txtPrimitiveDrawColor;
-        private Label lblPrimitiveDrawColor;
-        private TextBox txtCurrentPrimitive;
-        private Label lblCurrentPrimitiveNumber;
-        private TextBox txtAddFrameDuration;
-        private Label lblAddFrameDuration;
-        private Button btnAddFrameFillColor;
-        private TextBox txtAddFrameFillColor;
         private Label lblAddFillColor;
         private Button btnUpdateCurrentPrimitive;
-        private Button btnAddPrimitiveDrawColor;
-        private TextBox txtAddPrimitiveDrawColor;
+        private Button btnPrimitiveDrawColor;
+        private TextBox txtPrimitiveDrawColor;
         private Label lblAddPrimitiveDrawColor;
         private TextBox txtQuarterCircleDelta;
         private TextBox txtQuarterCircleQuadrants;
@@ -1423,5 +1441,6 @@
         private Label lblLineX0;
         private Button btnSaveToHeaderFile;
         private Button btnDuplicateCurrentFrame;
+        private Button btnSendImage;
     }
 }

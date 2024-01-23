@@ -11,7 +11,10 @@ namespace VectorCubeAnimationEditor
     internal class AnimationConstants
     {
         public const TransmissionType _Animation = 1;
-        public const TransmissionType _Gif = 2;
+        public const TransmissionType _Image = 2;
+
+        public const UInt16 SCREEN_WIDTH = 128;
+        public const UInt16 SCREEN_HEIGHT = 128;
 
         public const PrimitiveType _Error = 0;
         public const PrimitiveType _Circle = 1;

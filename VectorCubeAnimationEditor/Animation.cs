@@ -98,11 +98,8 @@ namespace VectorCubeAnimationEditor
 
         public byte[] serialize()
         {
-            byte[] animationBytes = new byte[2404];
+            byte[] animationBytes = new byte[2402];
             int bytePosition = 0;
-            UInt16 command = 1;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), command);
-            bytePosition += 2;
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), frameCount);
             bytePosition += 2;
             for (int index = 0; index < frames.Length; index++)
@@ -114,10 +111,8 @@ namespace VectorCubeAnimationEditor
 
         public void deserialize(byte[] animationBytes)
         {
-            if (animationBytes.Length != 2404) return;
+            if (animationBytes.Length != 2402) return;
             int bytePosition = 0;
-            UInt16 command = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-            bytePosition += 2;
             frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
             for (int index = 0; index < frames.Length; index++)

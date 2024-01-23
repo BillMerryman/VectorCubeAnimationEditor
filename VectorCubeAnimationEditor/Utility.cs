@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -13,6 +14,13 @@ namespace VectorCubeAnimationEditor
 
     internal class Utility
     {
+
+        public static byte[] getCommandBytes(UInt16 command)
+        {
+            byte[] commandBytes = new byte[2];
+            BinaryPrimitives.WriteUInt16LittleEndian(commandBytes.AsSpan().Slice(0), command);
+            return commandBytes;
+        }
 
         public static String GetDrawColorStringFromPrimitive(PrimitiveType primitiveType, Primitive primitive)
         {
@@ -34,12 +42,10 @@ namespace VectorCubeAnimationEditor
 
         public static String GetRGBStringFromUIint16(UInt16 _fillColor)
         {
-            // Extract components from RGB565
-            int red = (_fillColor >> 11) & 0x1F;
+            int blue = (_fillColor >> 11) & 0x1F;
             int green = (_fillColor >> 5) & 0x3F;
-            int blue = _fillColor & 0x1F;
+            int red = _fillColor & 0x1F;
 
-            // Scale components to 8 bits
             red = (red * 255) / 31;
             green = (green * 255) / 63;
             blue = (blue * 255) / 31;
@@ -53,18 +59,16 @@ namespace VectorCubeAnimationEditor
         {
             try
             {
-            int red = int.Parse(strRGB.Substring(0, 2), NumberStyles.HexNumber);
-            int green = int.Parse(strRGB.Substring(2, 2), NumberStyles.HexNumber);
-            int blue = int.Parse(strRGB.Substring(4, 2), NumberStyles.HexNumber);
+                int red = int.Parse(strRGB.Substring(0, 2), NumberStyles.HexNumber);
+                int green = int.Parse(strRGB.Substring(2, 2), NumberStyles.HexNumber);
+                int blue = int.Parse(strRGB.Substring(4, 2), NumberStyles.HexNumber);
 
-            // Scale RGB components from 8 bits to the respective RGB565 ranges
-            red = (red * 31) / 255;
-            green = (green * 63) / 255;
-            blue = (blue * 31) / 255;
+                red = (red * 31) / 255;
+                green = (green * 63) / 255;
+                blue = (blue * 31) / 255;
 
-            // Pack components into a 16-bit RGB565 value
-            uint16 = (UInt16)((red << 11) | (green << 5) | blue);
-            return true;
+                uint16 = (UInt16)((blue << 11) | (green << 5) | red);
+                return true;
             } 
             catch
             {
@@ -75,12 +79,10 @@ namespace VectorCubeAnimationEditor
 
         public static Color GetColorFromUIint16(UInt16 _fillColor)
         {
-            // Extract components from RGB565
-            int red = (_fillColor >> 11) & 0x1F;
+            int blue = (_fillColor >> 11) & 0x1F;
             int green = (_fillColor >> 5) & 0x3F;
-            int blue = _fillColor & 0x1F;
+            int red = _fillColor & 0x1F;
 
-            // Scale components to 8 bits
             red = (red * 255) / 31;
             green = (green * 255) / 63;
             blue = (blue * 255) / 31;
@@ -276,6 +278,21 @@ namespace VectorCubeAnimationEditor
             int centerX = (triangle.X0 + triangle.X1 + triangle.X2) / 3;
             int centerY = (triangle.Y0 + triangle.Y1 + triangle.Y2) / 3;
             return new Point(centerX, centerY);
+        }
+
+        public static void ConvertToRGB565(Bitmap image, UInt16[,] buffer)
+        {
+            for (int y = 0; y < image.Height; y++)
+            {
+                for (int x = 0; x < image.Width; x++)
+                {
+                    Color pixelColor = image.GetPixel(x, y);
+                    ushort rgb565Value = (ushort)(((pixelColor.B & 0xF8) << 8) |
+                                                    ((pixelColor.G & 0xFC) << 3) |
+                                                    (pixelColor.R >> 3));
+                    buffer[y, x] = rgb565Value;
+                }
+            }
         }
 
     }
