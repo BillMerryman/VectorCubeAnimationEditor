@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace VectorCubeAnimationEditor
 {
+    using PrimitiveType = UInt16;
+
     internal class AnimationFrame
     {
         private UInt32 duration = 0;
@@ -72,11 +75,31 @@ namespace VectorCubeAnimationEditor
             return primitives[primitiveNumber - 1];
         }
 
-        public Primitive? AddPrimitive()
+        public Primitive? AddPrimitive(PrimitiveType primitiveType, UInt16 color)
         {
             if (primitiveCount > AnimationConstants._MaxPrimitiveCount) return null;
             primitiveCount++;
-            return primitives[primitiveCount - 1];
+            Primitive primitive = primitives[primitiveCount - 1];
+            primitive.Type = primitiveType;
+            switch (primitiveType)
+            {
+                case AnimationConstants._Circle:
+                    primitive.Circle.Color = color;
+                    break;
+                case AnimationConstants._QuarterCircle:
+                    primitive.QuarterCircle.Color = color;
+                    break;
+                case AnimationConstants._Triangle:
+                    primitive.Triangle.Color = color;
+                    break;
+                case AnimationConstants._RoundRect:
+                    primitive.RoundRect.Color = color;
+                    break;
+                case AnimationConstants._Line:
+                    primitive.Line.Color = color;
+                    break;
+            }
+            return primitive;
         }
 
         public int RemovePrimitive(Primitive? primitive)

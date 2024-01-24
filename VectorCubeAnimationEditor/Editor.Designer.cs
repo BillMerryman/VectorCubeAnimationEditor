@@ -257,6 +257,7 @@
             // 
             // btnUpdateCurrentFrame
             // 
+            btnUpdateCurrentFrame.Enabled = false;
             btnUpdateCurrentFrame.Font = new Font("Segoe UI", 8.25F);
             btnUpdateCurrentFrame.Location = new Point(10, 92);
             btnUpdateCurrentFrame.Name = "btnUpdateCurrentFrame";
@@ -268,6 +269,7 @@
             // 
             // txtCurrentFrameDuration
             // 
+            txtCurrentFrameDuration.Enabled = false;
             txtCurrentFrameDuration.Font = new Font("Segoe UI", 8.25F);
             txtCurrentFrameDuration.Location = new Point(65, 66);
             txtCurrentFrameDuration.Name = "txtCurrentFrameDuration";
@@ -1302,6 +1304,7 @@
             Controls.Add(grpbxPrimitives);
             Controls.Add(pctbxCanvas);
             Controls.Add(grpbxFrames);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "Editor";
             Text = "Vector Cube Animation Editor";
             Load += Editor_Load;

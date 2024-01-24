@@ -32,7 +32,7 @@ namespace VectorCubeAnimationEditor
 
         public AnimationFrame? GetFrameNumber(int frameNumber)
         {
-            if(frameNumber < 0 ||  frameNumber >= frames.Length) return null;
+            if(frameNumber < 1 || frameNumber > frameCount) return null;
             return frames[frameNumber - 1];
         }
 
