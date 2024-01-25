@@ -63,7 +63,7 @@ namespace VectorCubeAnimationEditor
             int newFrameIndex = newFrameNumber - 1;
             for (int index = AnimationConstants._MaxFrameCount - 1; index > newFrameIndex; index--)
             {
-                frames[index - 1] = frames[index];
+                frames[index] = frames[index - 1];
             }
             AnimationFrame newFrame = new AnimationFrame(frame);
             frames[newFrameIndex] = newFrame;

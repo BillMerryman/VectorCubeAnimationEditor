@@ -45,6 +45,7 @@ namespace VectorCubeAnimationEditor
             this.duration = frame.duration;
             this.fillColor = frame.fillColor;
             this.primitiveCount = frame.primitiveCount;
+            primitives = new Primitive[AnimationConstants._MaxPrimitiveCount];
             for (int i = 0; i < primitives.Length; i++)
             {
                 primitives[i] = new Primitive(frame.primitives[i]);
