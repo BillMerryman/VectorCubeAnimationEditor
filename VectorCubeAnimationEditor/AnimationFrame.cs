@@ -1,13 +1,4 @@
-﻿using System;
-using System.Buffers.Binary;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Buffers.Binary;
 
 namespace VectorCubeAnimationEditor
 {
@@ -15,10 +6,10 @@ namespace VectorCubeAnimationEditor
 
     internal class AnimationFrame
     {
-        private UInt32 duration = 0;
-        private UInt16 fillColor = 0x0000;
-        private UInt16 primitiveCount = 0;
-        private Primitive[] primitives = new Primitive[AnimationConstants._MaxPrimitiveCount];
+        private UInt32 duration;
+        private UInt16 fillColor;
+        private UInt16 primitiveCount;
+        private Primitive[] primitives;
 
         public UInt32 Duration
         {
@@ -39,6 +30,10 @@ namespace VectorCubeAnimationEditor
 
         public AnimationFrame()
         {
+            duration = 0;
+            fillColor = 0x0000;
+            primitiveCount = 0;
+            primitives = new Primitive[AnimationConstants._MaxPrimitiveCount];
             for(int i = 0; i < primitives.Length; i++)
             {
                 primitives[i] = new Primitive();
@@ -56,6 +51,12 @@ namespace VectorCubeAnimationEditor
             }
         }
 
+        public Primitive? GetPrimitiveNumber(int primitiveNumber)
+        {
+            if (primitiveNumber < 1 || primitiveNumber > primitiveCount) return null;
+            return primitives[primitiveNumber - 1];
+        }
+
         public int GetNumberOfPrimitive(Primitive? primitive)
         {
             if (primitive == null) return -1;
@@ -69,17 +70,11 @@ namespace VectorCubeAnimationEditor
             return -1;
         }
 
-        public Primitive? GetPrimitiveNumber(int primitiveNumber)
-        {
-            if(primitiveNumber < 1 || primitiveNumber > primitiveCount) return null;
-            return primitives[primitiveNumber - 1];
-        }
-
         public Primitive? AddPrimitive(PrimitiveType primitiveType, UInt16 color)
         {
             if (primitiveCount > AnimationConstants._MaxPrimitiveCount) return null;
-            primitiveCount++;
-            Primitive primitive = primitives[primitiveCount - 1];
+            Primitive primitive = new Primitive();
+            primitives[primitiveCount] = primitive;
             primitive.Type = primitiveType;
             switch (primitiveType)
             {
@@ -99,12 +94,13 @@ namespace VectorCubeAnimationEditor
                     primitive.Line.Color = color;
                     break;
             }
+            primitiveCount++;
             return primitive;
         }
 
         public int RemovePrimitive(Primitive? primitive)
         {
-            if(primitive == null) return -1;
+            if (primitive == null) return -1;
             for (int index = 0; index < primitives.Length; index++)
             {
                 if (object.ReferenceEquals(primitive, primitives[index]))
@@ -121,7 +117,17 @@ namespace VectorCubeAnimationEditor
             return -1;
         }
 
-        public void serialize(ref int bytePosition, byte[] animationBytes)
+        public bool MovePrimitiveUp(Primitive? primitive)
+        {
+            return false;
+        }
+
+        public bool MovePrimitiveDown(Primitive? primitive)
+        {
+            return false;
+        }
+
+        public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan().Slice(bytePosition), duration);
             bytePosition += 4;
@@ -131,11 +137,11 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             for (int index = 0; index < primitives.Length; index++)
             {
-                primitives[index].serialize(ref bytePosition, animationBytes);
+                primitives[index].Serialize(ref bytePosition, animationBytes);
             }
         }
 
-        public void deserialize(ref int bytePosition, byte[] animationBytes)
+        public void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
             duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 4;
@@ -145,7 +151,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             for (int index = 0; index < primitives.Length; index++)
             {
-                primitives[index].deserialize(ref bytePosition, animationBytes);
+                primitives[index].Deserialize(ref bytePosition, animationBytes);
             }
         }
 

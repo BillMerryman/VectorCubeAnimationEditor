@@ -1,18 +1,11 @@
-﻿using System;
-using System.Buffers.Binary;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Buffers.Binary;
 
 namespace VectorCubeAnimationEditor
 {
     internal class Animation
     {
 
-        private UInt16 frameCount = 0;
+        private UInt16 frameCount;
         private AnimationFrame []frames;
 
         public UInt16 FrameCount
@@ -23,6 +16,7 @@ namespace VectorCubeAnimationEditor
 
         public Animation()
         {
+            frameCount = 0;
             frames = new AnimationFrame[AnimationConstants._MaxFrameCount];
             for(int i = 0; i < frames.Length; i++)
             {
@@ -79,12 +73,12 @@ namespace VectorCubeAnimationEditor
 
         public int RemoveFrame(AnimationFrame? frame)
         {
-            if(frame == null) return -1;
-            for(int index = 0; index < frames.Length; index++)
+            if (frame == null) return -1;
+            for (int index = 0; index < frames.Length; index++)
             {
                 if (object.ReferenceEquals(frame, frames[index]))
                 {
-                    for(int innerIndex = index;  innerIndex < frames.Length - 1; innerIndex++)
+                    for (int innerIndex = index;  innerIndex < frames.Length - 1; innerIndex++)
                     {
                         frames[innerIndex] = frames[innerIndex + 1];
                     }
@@ -96,7 +90,31 @@ namespace VectorCubeAnimationEditor
             return -1;
         }
 
-        public byte[] serialize()
+        public bool MoveFrameUp(AnimationFrame frame)
+        {
+            int frameNumber = GetNumberOfFrame(frame);
+            if (frameNumber < 1) return false;
+            if (frameNumber == FrameCount) return false;
+            int frameIndex = frameNumber - 1;
+            AnimationFrame animationFrame = frames[frameIndex];
+            frames[frameIndex] = frames[frameIndex + 1];
+            frames[frameIndex + 1] = animationFrame;
+            return true;
+        }
+
+        public bool MoveFrameDown(AnimationFrame frame)
+        {
+            int frameNumber = GetNumberOfFrame(frame);
+            if (frameNumber < 1) return false;
+            if (frameNumber == 1) return false;
+            int frameIndex = frameNumber - 1;
+            AnimationFrame animationFrame = frames[frameIndex];
+            frames[frameIndex] = frames[frameIndex - 1];
+            frames[frameIndex - 1] = animationFrame;
+            return true;
+        }
+
+        public byte[] Serialize()
         {
             byte[] animationBytes = new byte[2402];
             int bytePosition = 0;
@@ -104,12 +122,12 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             for (int index = 0; index < frames.Length; index++)
             {
-                frames[index].serialize(ref bytePosition, animationBytes);
+                frames[index].Serialize(ref bytePosition, animationBytes);
             }
             return animationBytes;
         }
 
-        public void deserialize(byte[] animationBytes)
+        public void Deserialize(byte[] animationBytes)
         {
             if (animationBytes.Length != 2402) return;
             int bytePosition = 0;
@@ -117,7 +135,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             for (int index = 0; index < frames.Length; index++)
             {
-                frames[index].deserialize(ref bytePosition, animationBytes);
+                frames[index].Deserialize(ref bytePosition, animationBytes);
             }
         }
 

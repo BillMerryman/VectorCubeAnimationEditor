@@ -22,25 +22,7 @@ namespace VectorCubeAnimationEditor
             return commandBytes;
         }
 
-        public static String GetDrawColorStringFromPrimitive(PrimitiveType primitiveType, Primitive primitive)
-        {
-            switch (primitiveType)
-            {
-                case AnimationConstants._Circle:
-                    return Utility.GetRGBStringFromUIint16(primitive.Circle.Color);
-                case AnimationConstants._QuarterCircle:
-                    return Utility.GetRGBStringFromUIint16(primitive.QuarterCircle.Color);
-                case AnimationConstants._Triangle:
-                    return Utility.GetRGBStringFromUIint16(primitive.Triangle.Color);
-                case AnimationConstants._RoundRect:
-                    return Utility.GetRGBStringFromUIint16(primitive.RoundRect.Color);
-                case AnimationConstants._Line:
-                    return Utility.GetRGBStringFromUIint16(primitive.Line.Color);
-            }
-            return String.Empty;
-        }
-
-        public static String GetRGBStringFromUIint16(UInt16 _fillColor)
+        public static Color GetColorFromUIint16(UInt16 _fillColor)
         {
             int blue = (_fillColor >> 11) & 0x1F;
             int green = (_fillColor >> 5) & 0x3F;
@@ -50,9 +32,16 @@ namespace VectorCubeAnimationEditor
             green = (green * 255) / 63;
             blue = (blue * 255) / 31;
 
-            return red.ToString("X2") +
-                    green.ToString("X2") +
-                    blue.ToString("X2");
+            return Color.FromArgb(255, red, green, blue);
+        }
+
+        public static String GetRGBStringFromUIint16(UInt16 _fillColor)
+        {
+            Color color = GetColorFromUIint16(_fillColor);
+
+            return color.R.ToString("X2") +
+                    color.G.ToString("X2") +
+                    color.B.ToString("X2");
         }
 
         public static bool GetUInt16FromRGBString(String strRGB, out UInt16 uint16)
@@ -75,19 +64,6 @@ namespace VectorCubeAnimationEditor
                 uint16 = 0;
                 return false;
             }
-        }
-
-        public static Color GetColorFromUIint16(UInt16 _fillColor)
-        {
-            int blue = (_fillColor >> 11) & 0x1F;
-            int green = (_fillColor >> 5) & 0x3F;
-            int red = _fillColor & 0x1F;
-
-            red = (red * 255) / 31;
-            green = (green * 255) / 63;
-            blue = (blue * 255) / 31;
-
-            return Color.FromArgb(255, red, green, blue);
         }
 
         public static bool GetByteFromString(String str, out Byte _byte)

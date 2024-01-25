@@ -81,7 +81,7 @@ namespace VectorCubeAnimationEditor
             color = triangle.Color;
         }
 
-        public void serialize(ref int bytePosition, byte[] animationBytes)
+        public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);
             bytePosition += 2;
@@ -99,7 +99,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
         }
 
-        public void deserialize(ref int bytePosition, byte[] animationBytes)
+        public void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
             x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;

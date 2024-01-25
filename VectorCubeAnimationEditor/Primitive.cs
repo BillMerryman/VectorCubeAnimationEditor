@@ -69,26 +69,26 @@ namespace VectorCubeAnimationEditor
             line = new Line(primitive.Line);
         }
 
-        public void serialize(ref int bytePosition, byte[] animationBytes)
+        public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), type);
             bytePosition += 2;
             switch (type)
             {
                 case AnimationConstants._Circle:
-                    circle.serialize(ref bytePosition, animationBytes);
+                    circle.Serialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._QuarterCircle:
-                    quarterCircle.serialize(ref bytePosition, animationBytes);
+                    quarterCircle.Serialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._Triangle:
-                    triangle.serialize(ref bytePosition, animationBytes);
+                    triangle.Serialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._RoundRect:
-                    roundRect.serialize(ref bytePosition, animationBytes);
+                    roundRect.Serialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._Line:
-                    line.serialize(ref bytePosition, animationBytes);
+                    line.Serialize(ref bytePosition, animationBytes);
                     break;
                 default:
                     bytePosition += 14;
@@ -96,26 +96,26 @@ namespace VectorCubeAnimationEditor
             }
         }
 
-        public void deserialize(ref int bytePosition, byte[] animationBytes)
+        public void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
             type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
             switch (type)
             {
                 case AnimationConstants._Circle:
-                    circle.deserialize(ref bytePosition, animationBytes);
+                    circle.Deserialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._QuarterCircle:
-                    quarterCircle.deserialize(ref bytePosition, animationBytes);
+                    quarterCircle.Deserialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._Triangle:
-                    triangle.deserialize(ref bytePosition, animationBytes);
+                    triangle.Deserialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._RoundRect:
-                    roundRect.deserialize(ref bytePosition, animationBytes);
+                    roundRect.Deserialize(ref bytePosition, animationBytes);
                     break;
                 case AnimationConstants._Line:
-                    line.deserialize(ref bytePosition, animationBytes);
+                    line.Deserialize(ref bytePosition, animationBytes);
                     break;
                 default:
                     bytePosition += 14;

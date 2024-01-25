@@ -139,11 +139,27 @@
         GAVDETAwAABSXCpZyFIqcgAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="btnUpdateCurrentFrame.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vgAADr4B6kKxwAAAAF5JREFUOE9jGDRAaaPPfyiTNgBkAU0sgRmMjJHFwYrIBYQMxCZGNMBmGJSJAUi2
+        hBxXkaRn1AKiAD4N6HLkOAgMQBqxGQYTwyZPMsBmIDIGK6ImoJnByIDmFhAPGBgAG/thZXFEfQ8AAAAA
+        SUVORK5CYII=
+</value>
+  </data>
   <data name="btnAddLine.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         vAAADrwBlbxySQAAADtJREFUOE9jGAW0AP+hNE3B4LaEFI1kWUKqJqLVgxSiY2IBKWpJU4wEiNZHrgUg
         QIleosGoJYMKMDAAAKSEE+2NljgNAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="btnUpdateCurrentPrimitive.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAYAAAAMJL+VAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vgAADr4B6kKxwAAAAF5JREFUOE9jGDRAaaPPfyiTNgBkAU0sgRmMjJHFwYrIBYQMxCZGNMBmGJSJAUi2
+        hBxXkaRn1AKiAD4N6HLkOAgMQBqxGQYTwyZPMsBmIDIGK6ImoJnByIDmFhAPGBgAG/thZXFEfQ8AAAAA
+        SUVORK5CYII=
 </value>
   </data>
   <data name="btnAddRoundRectangle.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -232,6 +248,6 @@
     <value>237, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>48</value>
+    <value>32</value>
   </metadata>
 </root>
