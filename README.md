@@ -5,6 +5,7 @@ This project is intended to be a companion to the [Vector-Cube-TFT] project. You
 Here it is responding to a [Custom Intent].
 Here it is being used with the [Animation Editor].
 
+[Vector-Cube-TFT]: <https://github.com/BillMerryman/Vector-Cube-TFT>
 [Animation Editor]: <https://youtube.com/watch/Wk3Y-pQeBDk>
 [Custom Intent]: <https://youtube.com/watch/aNmvLydM4h4>
 [Vector Cube Animation Editor]: <https://github.com/BillMerryman/VectorCubeAnimationEditor>
