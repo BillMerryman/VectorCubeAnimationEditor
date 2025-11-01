@@ -29,7 +29,7 @@ namespace VectorCubeAnimationEditor
         public Int16 R 
         { 
             get { return r; } 
-            set { r = value; } 
+            set { r = (value < 1) ? (Int16)1 : value; } 
         }
 
         public UInt16 Color

@@ -11,6 +11,7 @@ namespace VectorCubeAnimationEditor
         Animation animation;
         AnimationFrame? currentFrame;
         Primitive? currentPrimitive;
+        bool highlightCurrent = false;
         bool isResizing = false;
         bool isMoving = false;
         int isVertexMoving = -1;
@@ -23,6 +24,7 @@ namespace VectorCubeAnimationEditor
             SetToolTips();
         }
 
+        #region Control Delegates
         private void Editor_Load(object sender, EventArgs e)
         {
             txtFrameCount.Text = animation.FrameCount.ToString();
@@ -474,6 +476,27 @@ namespace VectorCubeAnimationEditor
             pctbxCanvas.Refresh();
         }
 
+        private void primitiveHighlightTimer_Tick(object sender, EventArgs e)
+        {
+            highlightCurrent = !highlightCurrent;
+            pctbxCanvas.Refresh();
+        }
+
+        private void chkHighlightCurrentPrimitive_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked)
+            {
+                primitiveHighlightTimer.Enabled = true;
+            }
+            else
+            {
+                primitiveHighlightTimer.Enabled = false;
+                highlightCurrent = false;
+                pctbxCanvas.Refresh();
+            }
+        }
+
         private void pctbxCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             if (currentPrimitive == null) return;
@@ -544,14 +567,22 @@ namespace VectorCubeAnimationEditor
                 {
                     case AnimationConstants._Circle:
                         Circle circle = currentPrimitive.Circle;
-                        int cRadius = circle.R;
-                        if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
+                        //Old way of resizing...
+                        //int cRadius = circle.R;
+                        //if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
+                        int circleXOffset = ((circle.X0 * AnimationConstants._ScaleFactor) - e.Location.X) / AnimationConstants._ScaleFactor;
+                        int circleYOffset = ((circle.Y0 * AnimationConstants._ScaleFactor) - e.Location.Y) / AnimationConstants._ScaleFactor;
+                        circle.R = (short)Math.Sqrt((circleXOffset * circleXOffset) + (circleYOffset * circleYOffset));
                         SetDisplayFieldsFromCircle(circle);
                         break;
                     case AnimationConstants._QuarterCircle:
                         QuarterCircle quarterCircle = currentPrimitive.QuarterCircle;
-                        int qcRadius = quarterCircle.R;
-                        if (qcRadius + primitiveDeltaY > 0) quarterCircle.R += (Int16)primitiveDeltaY;
+                        //Old way of resizing...
+                        //int cRadius = circle.R;
+                        //if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
+                        int quarterCircleXOffset = ((quarterCircle.X0 * AnimationConstants._ScaleFactor) - e.Location.X) / AnimationConstants._ScaleFactor;
+                        int quarterCircleYOffset = ((quarterCircle.Y0 * AnimationConstants._ScaleFactor) - e.Location.Y) / AnimationConstants._ScaleFactor;
+                        quarterCircle.R = (short)Math.Sqrt((quarterCircleXOffset * quarterCircleXOffset) + (quarterCircleYOffset * quarterCircleYOffset));
                         SetDisplayFieldsFromQuarterCircle(quarterCircle);
                         break;
                     case AnimationConstants._RoundRect:
@@ -674,7 +705,7 @@ namespace VectorCubeAnimationEditor
                         Primitive? Primitive = currentFrame.GetPrimitiveNumber(index);
                         if (Primitive != null)
                         {
-                            Utility.DrawPrimitive(e.Graphics, Primitive);
+                            Utility.DrawPrimitive(e.Graphics, Primitive, object.ReferenceEquals(Primitive, currentPrimitive) && highlightCurrent);
                         }
                     }
                 }
@@ -682,12 +713,37 @@ namespace VectorCubeAnimationEditor
             else
             {
                 e.Graphics.Clear(Color.Black);
+                Utility.DrawRotatedRectangle(e.Graphics);
             }
         }
 
-        //Non-delegate functions
+        #region Disabled Text Fields
 
-        //For frames
+        private void txtFrameCount_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+        }
+
+        private void txtCurrentFrame_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+        }
+
+        private void txtPrimitiveCount_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+        }
+
+        private void txtCurrentPrimitive_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Object Management Functions
 
         private void AddFrame()
         {
@@ -704,7 +760,8 @@ namespace VectorCubeAnimationEditor
             {
                 MessageBox.Show("Enter a valid frame duration", "Alert!");
                 return;
-            };
+            }
+            ;
 
             //Make frame
             AnimationFrame? newFrame = animation.AddFrame(fillColor, duration);
@@ -1141,27 +1198,7 @@ namespace VectorCubeAnimationEditor
             ttRemoveCurrentPrimitive.SetToolTip(btnRemoveCurrentPrimitive, "Remove the current shape");
         }
 
-        //Disabled Text Fields
-
-        private void txtFrameCount_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.SuppressKeyPress = true;
-        }
-
-        private void txtCurrentFrame_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.SuppressKeyPress = true;
-        }
-
-        private void txtPrimitiveCount_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.SuppressKeyPress = true;
-        }
-
-        private void txtCurrentPrimitive_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.SuppressKeyPress = true;
-        }
+        #endregion
 
     }
 }

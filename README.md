@@ -11,4 +11,5 @@ This project is intended to be a companion to the [Vector-Cube-TFT] project. You
 [the animation editor manipulating and transmitting an animation]: <https://youtu.be/6XQODFT1Ack>
 
 [Vector-Cube-TFT]: <https://github.com/BillMerryman/Vector-Cube-TFT>
+[Vector Cube Animation Editor]: <https://github.com/BillMerryman/VectorCubeAnimationEditor>
 [Vector Cube Customized With Screen]: <https://www.thingiverse.com/thing:6344837>

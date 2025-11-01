@@ -17,11 +17,13 @@ namespace VectorCubeAnimationEditor
         public const UInt16 SCREEN_HEIGHT = 128;
 
         public const PrimitiveType _Error = 0;
+        public const PrimitiveType _Line = 5;
+        public const PrimitiveType _Rect = 6;
+        public const PrimitiveType _RoundRect = 4;
+        public const PrimitiveType _Triangle = 3;
         public const PrimitiveType _Circle = 1;
         public const PrimitiveType _QuarterCircle = 2;
-        public const PrimitiveType _Triangle = 3;
-        public const PrimitiveType _RoundRect = 4;
-        public const PrimitiveType _Line = 5;
+
 
         public static UInt16 _MaxFrameCount = 12;
         public static UInt16 _MaxPrimitiveCount = 12;

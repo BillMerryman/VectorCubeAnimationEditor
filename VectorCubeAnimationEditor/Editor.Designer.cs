@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             grpbxFrames = new GroupBox();
             btnDuplicateCurrentFrame = new Button();
@@ -143,6 +144,8 @@
             btnLoadFile = new Button();
             openFile = new OpenFileDialog();
             saveFile = new SaveFileDialog();
+            primitiveHighlightTimer = new System.Windows.Forms.Timer(components);
+            chkHighlightCurrentPrimitive = new CheckBox();
             grpbxFrames.SuspendLayout();
             grpbxCurrentFrame.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pctbxCanvas).BeginInit();
@@ -1323,11 +1326,28 @@
             btnLoadFile.UseVisualStyleBackColor = true;
             btnLoadFile.Click += btnLoadFile_Click;
             // 
+            // primitiveHighlightTimer
+            // 
+            primitiveHighlightTimer.Interval = 200;
+            primitiveHighlightTimer.Tick += primitiveHighlightTimer_Tick;
+            // 
+            // chkHighlightCurrentPrimitive
+            // 
+            chkHighlightCurrentPrimitive.AutoSize = true;
+            chkHighlightCurrentPrimitive.Location = new Point(585, 362);
+            chkHighlightCurrentPrimitive.Name = "chkHighlightCurrentPrimitive";
+            chkHighlightCurrentPrimitive.Size = new Size(119, 19);
+            chkHighlightCurrentPrimitive.TabIndex = 5;
+            chkHighlightCurrentPrimitive.Text = "Highlight Current";
+            chkHighlightCurrentPrimitive.UseVisualStyleBackColor = true;
+            chkHighlightCurrentPrimitive.CheckedChanged += chkHighlightCurrentPrimitive_CheckedChanged;
+            // 
             // Editor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(786, 414);
+            Controls.Add(chkHighlightCurrentPrimitive);
             Controls.Add(grpbxFile);
             Controls.Add(grpbxPrimitives);
             Controls.Add(pctbxCanvas);
@@ -1358,6 +1378,7 @@
             grpbxFile.ResumeLayout(false);
             grpbxFile.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -1475,5 +1496,7 @@
         private Button btnSendImage;
         private Button btnMoveFrameUp;
         private Button btnMoveFrameDown;
+        private System.Windows.Forms.Timer primitiveHighlightTimer;
+        private CheckBox chkHighlightCurrentPrimitive;
     }
 }
