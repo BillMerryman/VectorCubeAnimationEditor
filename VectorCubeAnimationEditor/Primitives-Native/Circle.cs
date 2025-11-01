@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VectorCubeAnimationEditor;
 
-namespace VectorCubeAnimationEditor
+namespace Adafruit
 {
     internal class Circle
     {
@@ -40,9 +41,9 @@ namespace VectorCubeAnimationEditor
 
         public Circle()
         {
-            x0 = 63; 
-            y0 = 63; 
-            r = 10; 
+            r = AnimationConstants.DEFAULT_PRIMITIVE_RADIUS;
+            x0 = AnimationConstants.SCREEN_CENTER_X; 
+            y0 = AnimationConstants.SCREEN_CENTER_Y;
             color = 0;
         }
 

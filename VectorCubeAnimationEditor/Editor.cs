@@ -926,6 +926,7 @@ namespace VectorCubeAnimationEditor
             Primitive primitive = currentFrame.GetPrimitiveNumber(currentPrimitiveNumber);
 
             SetCurrentPrimitive(primitive);
+            pctbxCanvas.Refresh();
         }
 
         private void SetCurrentPrimitive(Primitive primitive)

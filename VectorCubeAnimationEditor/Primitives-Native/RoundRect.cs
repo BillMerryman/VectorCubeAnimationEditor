@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VectorCubeAnimationEditor;
 
-namespace VectorCubeAnimationEditor
+namespace Adafruit
 {
-    internal class QuarterCircle
+    internal class RoundRect
     {
         private Int16 x0;
         private Int16 y0;
-        private Int16 r;
-        private byte quadrants;
-        private Int16 delta;
+        private Int16 w;
+        private Int16 h;
+        private Int16 radius;
         private UInt16 color;
 
         public Int16 X0
@@ -28,22 +29,22 @@ namespace VectorCubeAnimationEditor
             set { y0 = value; }
         }
 
-        public Int16 R
+        public Int16 W
         {
-            get { return r; }
-            set { r = (value < 1) ? (Int16)1 : value; }
+            get { return w; }
+            set { w = value; }
         }
 
-        public byte Quadrants
+        public Int16 H
         {
-            get { return quadrants; }
-            set { quadrants = value; }
+            get { return h; }
+            set { h = value; }
         }
 
-        public Int16 Delta
+        public Int16 Radius
         {
-            get { return delta; }
-            set { delta = value; }
+            get { return radius; }
+            set { radius = value; }
         }
 
         public UInt16 Color
@@ -52,24 +53,24 @@ namespace VectorCubeAnimationEditor
             set { color = value; }
         }
 
-        public QuarterCircle()
+        public RoundRect()
         {
-            x0 = 63;
-            y0 = 63;
-            r = 10;
-            quadrants = 15;
-            delta = 0;
+            x0 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
+            y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
+            w = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
+            h = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
+            radius = 8;
             color = 0;
         }
 
-        public QuarterCircle(QuarterCircle quarterCircle)
+        public RoundRect(RoundRect roundRect)
         {
-            x0 = quarterCircle.X0;
-            y0 = quarterCircle.Y0;
-            r = quarterCircle.R;
-            quadrants = quarterCircle.Quadrants;
-            delta = quarterCircle.Delta;
-            color = quarterCircle.Color;
+            x0 = roundRect.X0;
+            y0 = roundRect.Y0;
+            w = roundRect.W;
+            h = roundRect.H;
+            radius = roundRect.Radius;
+            color = roundRect.Color;
         }
 
         public void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -78,14 +79,14 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), y0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), r);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), w);
             bytePosition += 2;
-            animationBytes[bytePosition] = quadrants;
-            bytePosition += 1;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), delta);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), h);
+            bytePosition += 2;
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), radius);
             bytePosition += 2;
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), color);
-            bytePosition += 5;
+            bytePosition += 4;
         }
 
         public void Deserialize(ref int bytePosition, byte[] animationBytes)
@@ -94,14 +95,14 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            r = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            w = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            quadrants = animationBytes[bytePosition];
-            bytePosition += 1;
-            delta = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            h = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            radius = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
             color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-            bytePosition += 5;
+            bytePosition += 4;
         }
 
     }

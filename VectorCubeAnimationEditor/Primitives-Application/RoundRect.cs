@@ -54,10 +54,10 @@ namespace VectorCubeAnimationEditor
 
         public RoundRect()
         {
-            x0 = 20;
-            y0 = 30;
-            w = 40;
-            h = 40;
+            x0 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
+            y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
+            w = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
+            h = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
             radius = 8;
             color = 0;
         }

@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VectorCubeAnimationEditor;
 
-namespace VectorCubeAnimationEditor
+namespace Adafruit
 {
     internal class Triangle
     {
@@ -61,12 +62,12 @@ namespace VectorCubeAnimationEditor
 
         public Triangle()
         {
-            x0 = 63;
-            y0 = 53;
-            x1 = 43;
-            y1 = 73;
-            x2 = 73;
-            y2 = 73;
+            x0 = AnimationConstants.SCREEN_CENTER_X;
+            y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
+            x1 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
+            y1 = AnimationConstants.DEFAULT_PRIMITIVE_BOTTOM;
+            x2 = AnimationConstants.DEFAULT_PRIMITIVE_RIGHT;
+            y2 = AnimationConstants.DEFAULT_PRIMITIVE_BOTTOM;
             color = 0;
         }
 
