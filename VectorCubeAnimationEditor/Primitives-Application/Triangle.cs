@@ -1,8 +1,10 @@
-﻿using System.Buffers.Binary;
+﻿using ST7735Point85;
+using System.Buffers.Binary;
+using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
 {
-    internal class Triangle
+    internal class Triangle : Primitive
     {
         private Int16 x0;
         private Int16 y0;
@@ -48,7 +50,7 @@ namespace VectorCubeAnimationEditor
             set { y2 = value; }
         }
 
-        public UInt16 Color
+        public override UInt16 Color
         {
             get { return color; }
             set { color = value; }
@@ -76,8 +78,102 @@ namespace VectorCubeAnimationEditor
             color = triangle.Color;
         }
 
-        public void Serialize(ref int bytePosition, byte[] animationBytes)
+        public override Primitive Clone()
         {
+            return new Triangle(this);
+        }
+
+        public override void Move(Point offset)
+        {
+            x0 += (Int16)offset.X;
+            y0 += (Int16)offset.Y;
+            x1 += (Int16)offset.X;
+            y1 += (Int16)offset.Y;
+            x2 += (Int16)offset.X;
+            y2 += (Int16)offset.Y;
+        }
+
+        public void MoveVertex(int vertexNum, Point offset)
+        {
+            if (vertexNum < 0 || vertexNum > 2) return;
+            if (vertexNum == 0)
+            {
+                x0 += (Int16)offset.X;
+                y0 += (Int16)offset.Y;
+            }
+            if (vertexNum == 1)
+            {
+                x1 += (Int16)offset.X;
+                y1 += (Int16)offset.Y;
+            }
+            if (vertexNum == 2)
+            {
+                x2 += (Int16)offset.X;
+                y2 += (Int16)offset.Y;
+            }
+        }
+
+        public override void Draw(Graphics e, bool isHighlighted)
+        {
+
+            Point[] trianglePoints = {
+                new Point(x0 * AnimationConstants._ScaleFactor, y0 * AnimationConstants._ScaleFactor),
+                new Point(x1 * AnimationConstants._ScaleFactor, y1 * AnimationConstants._ScaleFactor),
+                new Point(x2 * AnimationConstants._ScaleFactor, y2 * AnimationConstants._ScaleFactor)
+            };
+
+            Color drawColor = Utility.GetColorFromUIint16(color);
+            Brush brush = new SolidBrush(drawColor);
+            Pen pen = new Pen(drawColor.ColorToInverse());
+            pen.DashStyle = DashStyle.Dash;
+            e.FillPolygon(brush, trianglePoints);
+            if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
+        }
+
+        public Point[] GetVerticesScreen()
+        {
+            Point vertex0 = new Point(x0 * AnimationConstants._ScaleFactor, y0 * AnimationConstants._ScaleFactor);
+            Point vertex1 = new Point(x1 * AnimationConstants._ScaleFactor, y1 * AnimationConstants._ScaleFactor);
+            Point vertex2 = new Point(x2 * AnimationConstants._ScaleFactor, y2 * AnimationConstants._ScaleFactor);
+
+            Point[] vertices = new Point[] { vertex0, vertex1, vertex2 };
+
+            return vertices;
+        }
+
+        public int IsPointNearVertex(Point point, Double margin)
+        {
+            Point[] vertices = GetVerticesScreen();
+            int selectedVertex = -1;
+            for (int index = 0; index < vertices.Length; index++)
+            {
+                if (Utility.ArePointsWithinMargin(point, vertices[index], margin))
+                {
+                    selectedVertex = index;
+                }
+
+            }
+            return selectedVertex;
+        }
+
+        public bool IsPointNearCentroid(Point point, Double margin)
+        {
+            Point centroid = GetCentroid();
+            return (Math.Abs(point.X - (centroid.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
+                && Math.Abs(point.Y - (centroid.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin);
+        }
+
+        public Point GetCentroid()
+        {
+            int centerX = (x0 + x1 + x2) / 3;
+            int centerY = (y0 + y1 + y2) / 3;
+            return new Point(centerX, centerY);
+        }
+
+        public override void Serialize(ref int bytePosition, byte[] animationBytes)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._Triangle);
+            bytePosition += 2;
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);
             bytePosition += 2;
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), y0);
@@ -94,7 +190,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
         }
 
-        public void Deserialize(ref int bytePosition, byte[] animationBytes)
+        public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
             x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;

@@ -1,7 +1,7 @@
 ﻿using System.Buffers.Binary;
 using VectorCubeAnimationEditor;
 
-namespace Adafruit
+namespace ST7735Point85
 {
     internal class QuarterCircle
     {
@@ -11,6 +11,11 @@ namespace Adafruit
         private byte quadrants;
         private Int16 delta;
         private UInt16 color;
+
+        public const byte TopLeft = 1;
+        public const byte TopRight = 2;
+        public const byte BottomRight = 4;
+        public const byte BottomLeft = 8;
 
         public Int16 X0
         {
@@ -53,7 +58,7 @@ namespace Adafruit
             r = AnimationConstants.DEFAULT_PRIMITIVE_RADIUS;
             x0 = AnimationConstants.SCREEN_CENTER_X;
             y0 = AnimationConstants.SCREEN_CENTER_Y;
-            quadrants = 15;
+            quadrants = BottomLeft | BottomRight | TopRight | TopLeft;
             delta = 0;
             color = 0;
         }

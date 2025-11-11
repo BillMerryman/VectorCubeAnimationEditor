@@ -1,8 +1,9 @@
 ﻿using System.Buffers.Binary;
+using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
 {
-    internal class Line
+    internal class Line : Primitive
     {
         private Int16 x0;
         private Int16 y0;
@@ -34,7 +35,7 @@ namespace VectorCubeAnimationEditor
             set { y1 = value; }
         }
 
-        public UInt16 Color
+        public override UInt16 Color
         {
             get { return color; }
             set { color = value; }
@@ -58,8 +59,55 @@ namespace VectorCubeAnimationEditor
             color = line.Color;
         }
 
-        public void Serialize(ref int bytePosition, byte[] animationBytes)
+        public override Primitive Clone()
         {
+            return new Line(this);
+        }
+
+        public override void Move(Point offset)
+        {
+            x0 += (Int16)offset.X;
+            y0 += (Int16)offset.Y;
+            x1 += (Int16)offset.X;
+            y1 += (Int16)offset.Y;
+        }
+
+        public void MoveVertex(int vertexNum, Point offset)
+        {
+            if (vertexNum < 0 || vertexNum > 1) return;
+            if (vertexNum == 0)
+            {
+                x0 += (Int16)offset.X;
+                y0 += (Int16)offset.Y;
+            }
+            if (vertexNum == 1)
+            {
+                x1 += (Int16)offset.X;
+                y1 += (Int16)offset.Y;
+            }
+        }
+
+        public override void Draw(Graphics e, bool isHighlighted)
+        {
+            Color drawColor = Utility.GetColorFromUIint16(color);
+            Pen pen = new Pen(drawColor);
+            if (isHighlighted) pen.DashStyle = DashStyle.Dash;
+            e.DrawLine(pen, X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor, X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor);
+            pen.Dispose();
+        }
+        public int IsPointNearVertex(Point point, Double margin)
+        {
+            if (Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
+                && Math.Abs(point.Y - (y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 0;
+            if (Math.Abs(point.X - (x1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
+                && Math.Abs(point.Y - (y1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 1;
+            return -1;
+        }
+
+        public override void Serialize(ref int bytePosition, byte[] animationBytes)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._Line);
+            bytePosition += 2;
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);
             bytePosition += 2;
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), y0);
@@ -72,7 +120,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 6;
         }
 
-        public void Deserialize(ref int bytePosition, byte[] animationBytes)
+        public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
             x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;

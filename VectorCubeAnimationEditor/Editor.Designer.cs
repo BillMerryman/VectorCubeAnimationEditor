@@ -56,38 +56,23 @@
             lblFrameCount = new Label();
             pctbxCanvas = new PictureBox();
             grpbxPrimitives = new GroupBox();
+            btnAddRotatedRect = new Button();
             btnAddLine = new Button();
             btnPrimitiveDrawColor = new Button();
             txtPrimitiveDrawColor = new TextBox();
             lblAddPrimitiveDrawColor = new Label();
             grpbxCurrentPrimitive = new GroupBox();
-            grpbxLine = new GroupBox();
-            txtLineY1 = new TextBox();
-            txtLineY0 = new TextBox();
-            txtLineX1 = new TextBox();
-            txtLineX0 = new TextBox();
-            lblLineY1 = new Label();
-            lblLineY0 = new Label();
-            lblLineX1 = new Label();
-            lblLineX0 = new Label();
-            grpbxCircle = new GroupBox();
-            txtCircleRadius = new TextBox();
-            txtCircleY0 = new TextBox();
-            txtCircleX0 = new TextBox();
-            lblCircleRadius = new Label();
-            lblCircleY0 = new Label();
-            lblCircleX0 = new Label();
-            grpbxQuarterCircle = new GroupBox();
-            txtQuarterCircleRadius = new TextBox();
-            txtQuarterCircleDelta = new TextBox();
-            txtQuarterCircleQuadrants = new TextBox();
-            txtQuarterCircleY0 = new TextBox();
-            txtQuarterCircleX0 = new TextBox();
-            lblQuarterCircleRadius = new Label();
-            lblQuarterCircleDelta = new Label();
-            lblQuarterCircleQuadrants = new Label();
-            lblQuarterCircleY0 = new Label();
-            lblQuarterCircleX0 = new Label();
+            grpbxRotatedRect = new GroupBox();
+            txtRotatedRectAngleDeg = new TextBox();
+            txtRotatedRectH = new TextBox();
+            txtRotatedRectW = new TextBox();
+            txtRotatedRectCenY = new TextBox();
+            txtRotatedRectCenX = new TextBox();
+            lblRotatedRectAngleDeg = new Label();
+            lblRotatedRectH = new Label();
+            lblRotatedRectW = new Label();
+            lblRotatedRectCenY = new Label();
+            lblRotatedRectCenX = new Label();
             grpbxRoundRect = new GroupBox();
             txtRoundRectRadius = new TextBox();
             txtRoundRectH = new TextBox();
@@ -99,6 +84,20 @@
             lblRoundRectW = new Label();
             lblRoundRectY0 = new Label();
             lblRoundRectX0 = new Label();
+            grpbxCircle = new GroupBox();
+            chkCircleTopLeft = new CheckBox();
+            chkCircleTopRight = new CheckBox();
+            chkCircleBottomLeft = new CheckBox();
+            chkCircleBottomRight = new CheckBox();
+            txtCircleR = new TextBox();
+            txtCircleDelta = new TextBox();
+            txtCircleY0 = new TextBox();
+            txtCircleX0 = new TextBox();
+            lblCircleR = new Label();
+            lblCircleDelta = new Label();
+            lblCircleQuadrants = new Label();
+            lblCircleY0 = new Label();
+            lblCircleX0 = new Label();
             grpbxTriangle = new GroupBox();
             txtTriangleY1 = new TextBox();
             txtTriangleY0 = new TextBox();
@@ -112,15 +111,23 @@
             lblTriangleY0 = new Label();
             lblTriangleX1 = new Label();
             lblTriangleX0 = new Label();
+            grpbxLine = new GroupBox();
+            txtLineY1 = new TextBox();
+            txtLineY0 = new TextBox();
+            txtLineX1 = new TextBox();
+            txtLineX0 = new TextBox();
+            lblLineY1 = new Label();
+            lblLineY0 = new Label();
+            lblLineX1 = new Label();
+            lblLineX0 = new Label();
             btnUpdateCurrentPrimitive = new Button();
             btnCurrentPrimitiveDrawColor = new Button();
             txtCurrentPrimitiveDrawColor = new TextBox();
             lblCurrentPrimitiveDrawColor = new Label();
             txtCurrentPrimitiveNumber = new TextBox();
             lblCurrentPrimitiveNumber = new Label();
-            btnAddRoundRectangle = new Button();
+            btnAddRoundRect = new Button();
             btnAddTriangle = new Button();
-            btnAddQuarterCircle = new Button();
             btnAddCircle = new Button();
             btnRemoveCurrentPrimitive = new Button();
             btnNextPrimitive = new Button();
@@ -151,11 +158,11 @@
             ((System.ComponentModel.ISupportInitialize)pctbxCanvas).BeginInit();
             grpbxPrimitives.SuspendLayout();
             grpbxCurrentPrimitive.SuspendLayout();
-            grpbxLine.SuspendLayout();
-            grpbxCircle.SuspendLayout();
-            grpbxQuarterCircle.SuspendLayout();
+            grpbxRotatedRect.SuspendLayout();
             grpbxRoundRect.SuspendLayout();
+            grpbxCircle.SuspendLayout();
             grpbxTriangle.SuspendLayout();
+            grpbxLine.SuspendLayout();
             grpbxFile.SuspendLayout();
             SuspendLayout();
             // 
@@ -354,7 +361,7 @@
             // 
             txtCurrentFrameNumber.Enabled = false;
             txtCurrentFrameNumber.Font = new Font("Segoe UI", 8.25F);
-            txtCurrentFrameNumber.Location = new Point(115, 15);
+            txtCurrentFrameNumber.Location = new Point(65, 15);
             txtCurrentFrameNumber.Name = "txtCurrentFrameNumber";
             txtCurrentFrameNumber.Size = new Size(35, 22);
             txtCurrentFrameNumber.TabIndex = 15;
@@ -364,7 +371,7 @@
             // 
             lblCurrentFrameNumber.AutoSize = true;
             lblCurrentFrameNumber.Font = new Font("Segoe UI", 8.25F);
-            lblCurrentFrameNumber.Location = new Point(58, 18);
+            lblCurrentFrameNumber.Location = new Point(8, 18);
             lblCurrentFrameNumber.Name = "lblCurrentFrameNumber";
             lblCurrentFrameNumber.Size = new Size(51, 13);
             lblCurrentFrameNumber.TabIndex = 14;
@@ -453,14 +460,14 @@
             // 
             // grpbxPrimitives
             // 
+            grpbxPrimitives.Controls.Add(btnAddRotatedRect);
             grpbxPrimitives.Controls.Add(btnAddLine);
             grpbxPrimitives.Controls.Add(btnPrimitiveDrawColor);
             grpbxPrimitives.Controls.Add(txtPrimitiveDrawColor);
             grpbxPrimitives.Controls.Add(lblAddPrimitiveDrawColor);
             grpbxPrimitives.Controls.Add(grpbxCurrentPrimitive);
-            grpbxPrimitives.Controls.Add(btnAddRoundRectangle);
+            grpbxPrimitives.Controls.Add(btnAddRoundRect);
             grpbxPrimitives.Controls.Add(btnAddTriangle);
-            grpbxPrimitives.Controls.Add(btnAddQuarterCircle);
             grpbxPrimitives.Controls.Add(btnAddCircle);
             grpbxPrimitives.Controls.Add(btnRemoveCurrentPrimitive);
             grpbxPrimitives.Controls.Add(btnNextPrimitive);
@@ -470,17 +477,29 @@
             grpbxPrimitives.Font = new Font("Segoe UI", 8.25F);
             grpbxPrimitives.Location = new Point(585, 10);
             grpbxPrimitives.Name = "grpbxPrimitives";
-            grpbxPrimitives.Size = new Size(170, 346);
+            grpbxPrimitives.Size = new Size(170, 367);
             grpbxPrimitives.TabIndex = 3;
             grpbxPrimitives.TabStop = false;
             grpbxPrimitives.Text = "Primitives";
+            // 
+            // btnAddRotatedRect
+            // 
+            btnAddRotatedRect.Enabled = false;
+            btnAddRotatedRect.Font = new Font("Segoe UI", 8.25F);
+            btnAddRotatedRect.Image = (System.Drawing.Image)resources.GetObject("btnAddRotatedRect.Image");
+            btnAddRotatedRect.Location = new Point(100, 80);
+            btnAddRotatedRect.Name = "btnAddRotatedRect";
+            btnAddRotatedRect.Size = new Size(32, 22);
+            btnAddRotatedRect.TabIndex = 28;
+            btnAddRotatedRect.UseVisualStyleBackColor = true;
+            btnAddRotatedRect.Click += btnAddRotatedRect_Click;
             // 
             // btnAddLine
             // 
             btnAddLine.Enabled = false;
             btnAddLine.Font = new Font("Segoe UI", 8.25F);
             btnAddLine.Image = (System.Drawing.Image)resources.GetObject("btnAddLine.Image");
-            btnAddLine.Location = new Point(134, 80);
+            btnAddLine.Location = new Point(4, 80);
             btnAddLine.Name = "btnAddLine";
             btnAddLine.Size = new Size(32, 22);
             btnAddLine.TabIndex = 27;
@@ -519,10 +538,10 @@
             // 
             // grpbxCurrentPrimitive
             // 
+            grpbxCurrentPrimitive.Controls.Add(grpbxRoundRect);
+            grpbxCurrentPrimitive.Controls.Add(grpbxRotatedRect);
             grpbxCurrentPrimitive.Controls.Add(grpbxLine);
             grpbxCurrentPrimitive.Controls.Add(grpbxCircle);
-            grpbxCurrentPrimitive.Controls.Add(grpbxQuarterCircle);
-            grpbxCurrentPrimitive.Controls.Add(grpbxRoundRect);
             grpbxCurrentPrimitive.Controls.Add(grpbxTriangle);
             grpbxCurrentPrimitive.Controls.Add(btnUpdateCurrentPrimitive);
             grpbxCurrentPrimitive.Controls.Add(btnCurrentPrimitiveDrawColor);
@@ -533,256 +552,110 @@
             grpbxCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
             grpbxCurrentPrimitive.Location = new Point(6, 110);
             grpbxCurrentPrimitive.Name = "grpbxCurrentPrimitive";
-            grpbxCurrentPrimitive.Size = new Size(160, 197);
+            grpbxCurrentPrimitive.Size = new Size(160, 223);
             grpbxCurrentPrimitive.TabIndex = 23;
             grpbxCurrentPrimitive.TabStop = false;
             grpbxCurrentPrimitive.Text = "Current Primitive";
             // 
-            // grpbxLine
+            // grpbxRotatedRect
             // 
-            grpbxLine.Controls.Add(txtLineY1);
-            grpbxLine.Controls.Add(txtLineY0);
-            grpbxLine.Controls.Add(txtLineX1);
-            grpbxLine.Controls.Add(txtLineX0);
-            grpbxLine.Controls.Add(lblLineY1);
-            grpbxLine.Controls.Add(lblLineY0);
-            grpbxLine.Controls.Add(lblLineX1);
-            grpbxLine.Controls.Add(lblLineX0);
-            grpbxLine.Location = new Point(10, 70);
-            grpbxLine.Name = "grpbxLine";
-            grpbxLine.Size = new Size(140, 96);
-            grpbxLine.TabIndex = 32;
-            grpbxLine.TabStop = false;
-            grpbxLine.Text = "Line";
-            grpbxLine.Visible = false;
+            grpbxRotatedRect.Controls.Add(txtRotatedRectAngleDeg);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectH);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectW);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectCenY);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectCenX);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectAngleDeg);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectH);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectW);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectCenY);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectCenX);
+            grpbxRotatedRect.Location = new Point(8, 70);
+            grpbxRotatedRect.Name = "grpbxRotatedRect";
+            grpbxRotatedRect.Size = new Size(146, 119);
+            grpbxRotatedRect.TabIndex = 33;
+            grpbxRotatedRect.TabStop = false;
+            grpbxRotatedRect.Text = "Rotated Rectangle";
+            grpbxRotatedRect.Visible = false;
             // 
-            // txtLineY1
+            // txtRotatedRectAngleDeg
             // 
-            txtLineY1.Location = new Point(102, 40);
-            txtLineY1.Name = "txtLineY1";
-            txtLineY1.Size = new Size(30, 22);
-            txtLineY1.TabIndex = 17;
+            txtRotatedRectAngleDeg.Location = new Point(109, 64);
+            txtRotatedRectAngleDeg.Name = "txtRotatedRectAngleDeg";
+            txtRotatedRectAngleDeg.Size = new Size(30, 22);
+            txtRotatedRectAngleDeg.TabIndex = 9;
             // 
-            // txtLineY0
+            // txtRotatedRectH
             // 
-            txtLineY0.Location = new Point(102, 16);
-            txtLineY0.Name = "txtLineY0";
-            txtLineY0.Size = new Size(30, 22);
-            txtLineY0.TabIndex = 16;
+            txtRotatedRectH.Location = new Point(109, 40);
+            txtRotatedRectH.Name = "txtRotatedRectH";
+            txtRotatedRectH.Size = new Size(30, 22);
+            txtRotatedRectH.TabIndex = 8;
             // 
-            // txtLineX1
+            // txtRotatedRectW
             // 
-            txtLineX1.Location = new Point(35, 40);
-            txtLineX1.Name = "txtLineX1";
-            txtLineX1.Size = new Size(30, 22);
-            txtLineX1.TabIndex = 15;
+            txtRotatedRectW.Location = new Point(35, 40);
+            txtRotatedRectW.Name = "txtRotatedRectW";
+            txtRotatedRectW.Size = new Size(30, 22);
+            txtRotatedRectW.TabIndex = 7;
             // 
-            // txtLineX0
+            // txtRotatedRectCenY
             // 
-            txtLineX0.Location = new Point(35, 16);
-            txtLineX0.Name = "txtLineX0";
-            txtLineX0.Size = new Size(30, 22);
-            txtLineX0.TabIndex = 14;
+            txtRotatedRectCenY.Location = new Point(109, 16);
+            txtRotatedRectCenY.Name = "txtRotatedRectCenY";
+            txtRotatedRectCenY.Size = new Size(30, 22);
+            txtRotatedRectCenY.TabIndex = 6;
             // 
-            // lblLineY1
+            // txtRotatedRectCenX
             // 
-            lblLineY1.AutoSize = true;
-            lblLineY1.Location = new Point(77, 43);
-            lblLineY1.Name = "lblLineY1";
-            lblLineY1.Size = new Size(21, 13);
-            lblLineY1.TabIndex = 13;
-            lblLineY1.Text = "Y1:";
+            txtRotatedRectCenX.Location = new Point(35, 16);
+            txtRotatedRectCenX.Name = "txtRotatedRectCenX";
+            txtRotatedRectCenX.Size = new Size(30, 22);
+            txtRotatedRectCenX.TabIndex = 5;
             // 
-            // lblLineY0
+            // lblRotatedRectAngleDeg
             // 
-            lblLineY0.AutoSize = true;
-            lblLineY0.Location = new Point(77, 19);
-            lblLineY0.Name = "lblLineY0";
-            lblLineY0.Size = new Size(21, 13);
-            lblLineY0.TabIndex = 2;
-            lblLineY0.Text = "Y0:";
+            lblRotatedRectAngleDeg.AutoSize = true;
+            lblRotatedRectAngleDeg.Location = new Point(51, 67);
+            lblRotatedRectAngleDeg.Name = "lblRotatedRectAngleDeg";
+            lblRotatedRectAngleDeg.Size = new Size(61, 13);
+            lblRotatedRectAngleDeg.TabIndex = 4;
+            lblRotatedRectAngleDeg.Text = "AngleDeg:";
             // 
-            // lblLineX1
+            // lblRotatedRectH
             // 
-            lblLineX1.AutoSize = true;
-            lblLineX1.Location = new Point(6, 43);
-            lblLineX1.Name = "lblLineX1";
-            lblLineX1.Size = new Size(22, 13);
-            lblLineX1.TabIndex = 1;
-            lblLineX1.Text = "X1:";
+            lblRotatedRectH.AutoSize = true;
+            lblRotatedRectH.Location = new Point(94, 43);
+            lblRotatedRectH.Name = "lblRotatedRectH";
+            lblRotatedRectH.Size = new Size(18, 13);
+            lblRotatedRectH.TabIndex = 3;
+            lblRotatedRectH.Text = "H:";
             // 
-            // lblLineX0
+            // lblRotatedRectW
             // 
-            lblLineX0.AutoSize = true;
-            lblLineX0.Location = new Point(6, 19);
-            lblLineX0.Name = "lblLineX0";
-            lblLineX0.Size = new Size(22, 13);
-            lblLineX0.TabIndex = 0;
-            lblLineX0.Text = "X0:";
+            lblRotatedRectW.AutoSize = true;
+            lblRotatedRectW.Location = new Point(6, 45);
+            lblRotatedRectW.Name = "lblRotatedRectW";
+            lblRotatedRectW.Size = new Size(21, 13);
+            lblRotatedRectW.TabIndex = 2;
+            lblRotatedRectW.Text = "W:";
             // 
-            // grpbxCircle
+            // lblRotatedRectCenY
             // 
-            grpbxCircle.Controls.Add(txtCircleRadius);
-            grpbxCircle.Controls.Add(txtCircleY0);
-            grpbxCircle.Controls.Add(txtCircleX0);
-            grpbxCircle.Controls.Add(lblCircleRadius);
-            grpbxCircle.Controls.Add(lblCircleY0);
-            grpbxCircle.Controls.Add(lblCircleX0);
-            grpbxCircle.Location = new Point(10, 70);
-            grpbxCircle.Name = "grpbxCircle";
-            grpbxCircle.Size = new Size(140, 96);
-            grpbxCircle.TabIndex = 30;
-            grpbxCircle.TabStop = false;
-            grpbxCircle.Text = "Circle";
-            grpbxCircle.Visible = false;
+            lblRotatedRectCenY.AutoSize = true;
+            lblRotatedRectCenY.Location = new Point(77, 19);
+            lblRotatedRectCenY.Name = "lblRotatedRectCenY";
+            lblRotatedRectCenY.Size = new Size(35, 13);
+            lblRotatedRectCenY.TabIndex = 1;
+            lblRotatedRectCenY.Text = "CenY:";
             // 
-            // txtCircleRadius
+            // lblRotatedRectCenX
             // 
-            txtCircleRadius.Location = new Point(102, 40);
-            txtCircleRadius.Name = "txtCircleRadius";
-            txtCircleRadius.Size = new Size(30, 22);
-            txtCircleRadius.TabIndex = 17;
-            // 
-            // txtCircleY0
-            // 
-            txtCircleY0.Location = new Point(102, 16);
-            txtCircleY0.Name = "txtCircleY0";
-            txtCircleY0.Size = new Size(30, 22);
-            txtCircleY0.TabIndex = 16;
-            // 
-            // txtCircleX0
-            // 
-            txtCircleX0.Location = new Point(35, 16);
-            txtCircleX0.Name = "txtCircleX0";
-            txtCircleX0.Size = new Size(30, 22);
-            txtCircleX0.TabIndex = 14;
-            // 
-            // lblCircleRadius
-            // 
-            lblCircleRadius.AutoSize = true;
-            lblCircleRadius.Location = new Point(54, 45);
-            lblCircleRadius.Name = "lblCircleRadius";
-            lblCircleRadius.Size = new Size(45, 13);
-            lblCircleRadius.TabIndex = 13;
-            lblCircleRadius.Text = "Radius:";
-            // 
-            // lblCircleY0
-            // 
-            lblCircleY0.AutoSize = true;
-            lblCircleY0.Location = new Point(77, 19);
-            lblCircleY0.Name = "lblCircleY0";
-            lblCircleY0.Size = new Size(21, 13);
-            lblCircleY0.TabIndex = 2;
-            lblCircleY0.Text = "Y0:";
-            // 
-            // lblCircleX0
-            // 
-            lblCircleX0.AutoSize = true;
-            lblCircleX0.Location = new Point(6, 19);
-            lblCircleX0.Name = "lblCircleX0";
-            lblCircleX0.Size = new Size(22, 13);
-            lblCircleX0.TabIndex = 0;
-            lblCircleX0.Text = "X0:";
-            // 
-            // grpbxQuarterCircle
-            // 
-            grpbxQuarterCircle.Controls.Add(txtQuarterCircleRadius);
-            grpbxQuarterCircle.Controls.Add(txtQuarterCircleDelta);
-            grpbxQuarterCircle.Controls.Add(txtQuarterCircleQuadrants);
-            grpbxQuarterCircle.Controls.Add(txtQuarterCircleY0);
-            grpbxQuarterCircle.Controls.Add(txtQuarterCircleX0);
-            grpbxQuarterCircle.Controls.Add(lblQuarterCircleRadius);
-            grpbxQuarterCircle.Controls.Add(lblQuarterCircleDelta);
-            grpbxQuarterCircle.Controls.Add(lblQuarterCircleQuadrants);
-            grpbxQuarterCircle.Controls.Add(lblQuarterCircleY0);
-            grpbxQuarterCircle.Controls.Add(lblQuarterCircleX0);
-            grpbxQuarterCircle.Location = new Point(10, 70);
-            grpbxQuarterCircle.Name = "grpbxQuarterCircle";
-            grpbxQuarterCircle.Size = new Size(140, 96);
-            grpbxQuarterCircle.TabIndex = 31;
-            grpbxQuarterCircle.TabStop = false;
-            grpbxQuarterCircle.Text = "Quarter Circle";
-            grpbxQuarterCircle.Visible = false;
-            // 
-            // txtQuarterCircleRadius
-            // 
-            txtQuarterCircleRadius.Location = new Point(102, 64);
-            txtQuarterCircleRadius.Name = "txtQuarterCircleRadius";
-            txtQuarterCircleRadius.Size = new Size(30, 22);
-            txtQuarterCircleRadius.TabIndex = 9;
-            // 
-            // txtQuarterCircleDelta
-            // 
-            txtQuarterCircleDelta.Location = new Point(102, 40);
-            txtQuarterCircleDelta.Name = "txtQuarterCircleDelta";
-            txtQuarterCircleDelta.Size = new Size(30, 22);
-            txtQuarterCircleDelta.TabIndex = 8;
-            // 
-            // txtQuarterCircleQuadrants
-            // 
-            txtQuarterCircleQuadrants.Location = new Point(35, 40);
-            txtQuarterCircleQuadrants.Name = "txtQuarterCircleQuadrants";
-            txtQuarterCircleQuadrants.Size = new Size(30, 22);
-            txtQuarterCircleQuadrants.TabIndex = 7;
-            // 
-            // txtQuarterCircleY0
-            // 
-            txtQuarterCircleY0.Location = new Point(102, 16);
-            txtQuarterCircleY0.Name = "txtQuarterCircleY0";
-            txtQuarterCircleY0.Size = new Size(30, 22);
-            txtQuarterCircleY0.TabIndex = 6;
-            // 
-            // txtQuarterCircleX0
-            // 
-            txtQuarterCircleX0.Location = new Point(35, 16);
-            txtQuarterCircleX0.Name = "txtQuarterCircleX0";
-            txtQuarterCircleX0.Size = new Size(30, 22);
-            txtQuarterCircleX0.TabIndex = 5;
-            // 
-            // lblQuarterCircleRadius
-            // 
-            lblQuarterCircleRadius.AutoSize = true;
-            lblQuarterCircleRadius.Location = new Point(51, 67);
-            lblQuarterCircleRadius.Name = "lblQuarterCircleRadius";
-            lblQuarterCircleRadius.Size = new Size(45, 13);
-            lblQuarterCircleRadius.TabIndex = 4;
-            lblQuarterCircleRadius.Text = "Radius:";
-            // 
-            // lblQuarterCircleDelta
-            // 
-            lblQuarterCircleDelta.AutoSize = true;
-            lblQuarterCircleDelta.Location = new Point(77, 43);
-            lblQuarterCircleDelta.Name = "lblQuarterCircleDelta";
-            lblQuarterCircleDelta.Size = new Size(18, 13);
-            lblQuarterCircleDelta.TabIndex = 3;
-            lblQuarterCircleDelta.Text = "D:";
-            // 
-            // lblQuarterCircleQuadrants
-            // 
-            lblQuarterCircleQuadrants.AutoSize = true;
-            lblQuarterCircleQuadrants.Location = new Point(7, 43);
-            lblQuarterCircleQuadrants.Name = "lblQuarterCircleQuadrants";
-            lblQuarterCircleQuadrants.Size = new Size(18, 13);
-            lblQuarterCircleQuadrants.TabIndex = 2;
-            lblQuarterCircleQuadrants.Text = "Q:";
-            // 
-            // lblQuarterCircleY0
-            // 
-            lblQuarterCircleY0.AutoSize = true;
-            lblQuarterCircleY0.Location = new Point(75, 19);
-            lblQuarterCircleY0.Name = "lblQuarterCircleY0";
-            lblQuarterCircleY0.Size = new Size(21, 13);
-            lblQuarterCircleY0.TabIndex = 1;
-            lblQuarterCircleY0.Text = "Y0:";
-            // 
-            // lblQuarterCircleX0
-            // 
-            lblQuarterCircleX0.AutoSize = true;
-            lblQuarterCircleX0.Location = new Point(6, 19);
-            lblQuarterCircleX0.Name = "lblQuarterCircleX0";
-            lblQuarterCircleX0.Size = new Size(22, 13);
-            lblQuarterCircleX0.TabIndex = 0;
-            lblQuarterCircleX0.Text = "X0:";
+            lblRotatedRectCenX.AutoSize = true;
+            lblRotatedRectCenX.Location = new Point(0, 19);
+            lblRotatedRectCenX.Name = "lblRotatedRectCenX";
+            lblRotatedRectCenX.Size = new Size(36, 13);
+            lblRotatedRectCenX.TabIndex = 0;
+            lblRotatedRectCenX.Text = "CenX:";
             // 
             // grpbxRoundRect
             // 
@@ -796,24 +669,24 @@
             grpbxRoundRect.Controls.Add(lblRoundRectW);
             grpbxRoundRect.Controls.Add(lblRoundRectY0);
             grpbxRoundRect.Controls.Add(lblRoundRectX0);
-            grpbxRoundRect.Location = new Point(10, 70);
+            grpbxRoundRect.Location = new Point(8, 70);
             grpbxRoundRect.Name = "grpbxRoundRect";
-            grpbxRoundRect.Size = new Size(140, 96);
+            grpbxRoundRect.Size = new Size(146, 119);
             grpbxRoundRect.TabIndex = 26;
             grpbxRoundRect.TabStop = false;
-            grpbxRoundRect.Text = "Round Rectangle";
+            grpbxRoundRect.Text = "Rectangle";
             grpbxRoundRect.Visible = false;
             // 
             // txtRoundRectRadius
             // 
-            txtRoundRectRadius.Location = new Point(102, 64);
+            txtRoundRectRadius.Location = new Point(109, 64);
             txtRoundRectRadius.Name = "txtRoundRectRadius";
             txtRoundRectRadius.Size = new Size(30, 22);
             txtRoundRectRadius.TabIndex = 9;
             // 
             // txtRoundRectH
             // 
-            txtRoundRectH.Location = new Point(102, 40);
+            txtRoundRectH.Location = new Point(109, 40);
             txtRoundRectH.Name = "txtRoundRectH";
             txtRoundRectH.Size = new Size(30, 22);
             txtRoundRectH.TabIndex = 8;
@@ -827,7 +700,7 @@
             // 
             // txtRoundRectY0
             // 
-            txtRoundRectY0.Location = new Point(102, 16);
+            txtRoundRectY0.Location = new Point(109, 16);
             txtRoundRectY0.Name = "txtRoundRectY0";
             txtRoundRectY0.Size = new Size(30, 22);
             txtRoundRectY0.TabIndex = 6;
@@ -842,7 +715,7 @@
             // lblRoundRectRadius
             // 
             lblRoundRectRadius.AutoSize = true;
-            lblRoundRectRadius.Location = new Point(51, 67);
+            lblRoundRectRadius.Location = new Point(67, 67);
             lblRoundRectRadius.Name = "lblRoundRectRadius";
             lblRoundRectRadius.Size = new Size(45, 13);
             lblRoundRectRadius.TabIndex = 4;
@@ -851,7 +724,7 @@
             // lblRoundRectH
             // 
             lblRoundRectH.AutoSize = true;
-            lblRoundRectH.Location = new Point(77, 45);
+            lblRoundRectH.Location = new Point(94, 43);
             lblRoundRectH.Name = "lblRoundRectH";
             lblRoundRectH.Size = new Size(18, 13);
             lblRoundRectH.TabIndex = 3;
@@ -869,7 +742,7 @@
             // lblRoundRectY0
             // 
             lblRoundRectY0.AutoSize = true;
-            lblRoundRectY0.Location = new Point(77, 19);
+            lblRoundRectY0.Location = new Point(91, 19);
             lblRoundRectY0.Name = "lblRoundRectY0";
             lblRoundRectY0.Size = new Size(21, 13);
             lblRoundRectY0.TabIndex = 1;
@@ -883,6 +756,174 @@
             lblRoundRectX0.Size = new Size(22, 13);
             lblRoundRectX0.TabIndex = 0;
             lblRoundRectX0.Text = "X0:";
+            // 
+            // grpbxCircle
+            // 
+            grpbxCircle.Controls.Add(chkCircleTopLeft);
+            grpbxCircle.Controls.Add(chkCircleTopRight);
+            grpbxCircle.Controls.Add(chkCircleBottomLeft);
+            grpbxCircle.Controls.Add(chkCircleBottomRight);
+            grpbxCircle.Controls.Add(txtCircleR);
+            grpbxCircle.Controls.Add(txtCircleDelta);
+            grpbxCircle.Controls.Add(txtCircleY0);
+            grpbxCircle.Controls.Add(txtCircleX0);
+            grpbxCircle.Controls.Add(lblCircleR);
+            grpbxCircle.Controls.Add(lblCircleDelta);
+            grpbxCircle.Controls.Add(lblCircleQuadrants);
+            grpbxCircle.Controls.Add(lblCircleY0);
+            grpbxCircle.Controls.Add(lblCircleX0);
+            grpbxCircle.Location = new Point(8, 70);
+            grpbxCircle.Name = "grpbxCircle";
+            grpbxCircle.Size = new Size(146, 119);
+            grpbxCircle.TabIndex = 31;
+            grpbxCircle.TabStop = false;
+            grpbxCircle.Text = "Circle";
+            grpbxCircle.Visible = false;
+            // 
+            // chkCircleTopLeft
+            // 
+            chkCircleTopLeft.Appearance = Appearance.Button;
+            chkCircleTopLeft.AutoSize = true;
+            chkCircleTopLeft.CheckAlign = ContentAlignment.MiddleCenter;
+            chkCircleTopLeft.FlatAppearance.CheckedBackColor = Color.LightGreen;
+            chkCircleTopLeft.FlatStyle = FlatStyle.Flat;
+            chkCircleTopLeft.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            chkCircleTopLeft.Image = (System.Drawing.Image)resources.GetObject("chkCircleTopLeft.Image");
+            chkCircleTopLeft.ImageAlign = ContentAlignment.TopLeft;
+            chkCircleTopLeft.Location = new Point(107, 77);
+            chkCircleTopLeft.Margin = new Padding(0);
+            chkCircleTopLeft.Name = "chkCircleTopLeft";
+            chkCircleTopLeft.Size = new Size(18, 18);
+            chkCircleTopLeft.TabIndex = 15;
+            chkCircleTopLeft.UseVisualStyleBackColor = true;
+            chkCircleTopLeft.CheckedChanged += chkCircleTopLeft_CheckedChanged;
+            // 
+            // chkCircleTopRight
+            // 
+            chkCircleTopRight.Appearance = Appearance.Button;
+            chkCircleTopRight.AutoSize = true;
+            chkCircleTopRight.CheckAlign = ContentAlignment.MiddleCenter;
+            chkCircleTopRight.FlatAppearance.CheckedBackColor = Color.LightGreen;
+            chkCircleTopRight.FlatStyle = FlatStyle.Flat;
+            chkCircleTopRight.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            chkCircleTopRight.Image = (System.Drawing.Image)resources.GetObject("chkCircleTopRight.Image");
+            chkCircleTopRight.ImageAlign = ContentAlignment.TopRight;
+            chkCircleTopRight.Location = new Point(125, 77);
+            chkCircleTopRight.Margin = new Padding(0);
+            chkCircleTopRight.Name = "chkCircleTopRight";
+            chkCircleTopRight.Size = new Size(18, 18);
+            chkCircleTopRight.TabIndex = 16;
+            chkCircleTopRight.UseVisualStyleBackColor = true;
+            chkCircleTopRight.CheckedChanged += chkCircleTopRight_CheckedChanged;
+            // 
+            // chkCircleBottomLeft
+            // 
+            chkCircleBottomLeft.Appearance = Appearance.Button;
+            chkCircleBottomLeft.AutoSize = true;
+            chkCircleBottomLeft.CheckAlign = ContentAlignment.MiddleCenter;
+            chkCircleBottomLeft.FlatAppearance.CheckedBackColor = Color.LightGreen;
+            chkCircleBottomLeft.FlatStyle = FlatStyle.Flat;
+            chkCircleBottomLeft.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            chkCircleBottomLeft.Image = (System.Drawing.Image)resources.GetObject("chkCircleBottomLeft.Image");
+            chkCircleBottomLeft.ImageAlign = ContentAlignment.BottomLeft;
+            chkCircleBottomLeft.Location = new Point(107, 95);
+            chkCircleBottomLeft.Margin = new Padding(0);
+            chkCircleBottomLeft.Name = "chkCircleBottomLeft";
+            chkCircleBottomLeft.Size = new Size(18, 18);
+            chkCircleBottomLeft.TabIndex = 17;
+            chkCircleBottomLeft.UseVisualStyleBackColor = true;
+            chkCircleBottomLeft.CheckedChanged += chkCircleBottomLeft_CheckedChanged;
+            // 
+            // chkCircleBottomRight
+            // 
+            chkCircleBottomRight.Appearance = Appearance.Button;
+            chkCircleBottomRight.AutoSize = true;
+            chkCircleBottomRight.CheckAlign = ContentAlignment.MiddleCenter;
+            chkCircleBottomRight.FlatAppearance.CheckedBackColor = Color.LightGreen;
+            chkCircleBottomRight.FlatStyle = FlatStyle.Flat;
+            chkCircleBottomRight.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            chkCircleBottomRight.Image = (System.Drawing.Image)resources.GetObject("chkCircleBottomRight.Image");
+            chkCircleBottomRight.ImageAlign = ContentAlignment.BottomRight;
+            chkCircleBottomRight.Location = new Point(125, 95);
+            chkCircleBottomRight.Margin = new Padding(0);
+            chkCircleBottomRight.Name = "chkCircleBottomRight";
+            chkCircleBottomRight.Size = new Size(18, 18);
+            chkCircleBottomRight.TabIndex = 18;
+            chkCircleBottomRight.UseVisualStyleBackColor = true;
+            chkCircleBottomRight.CheckedChanged += chkCircleBottomRight_CheckedChanged;
+            // 
+            // txtCircleR
+            // 
+            txtCircleR.Location = new Point(50, 40);
+            txtCircleR.Name = "txtCircleR";
+            txtCircleR.Size = new Size(30, 22);
+            txtCircleR.TabIndex = 9;
+            // 
+            // txtCircleDelta
+            // 
+            txtCircleDelta.Location = new Point(109, 40);
+            txtCircleDelta.Name = "txtCircleDelta";
+            txtCircleDelta.Size = new Size(30, 22);
+            txtCircleDelta.TabIndex = 8;
+            // 
+            // txtCircleY0
+            // 
+            txtCircleY0.Location = new Point(109, 16);
+            txtCircleY0.Name = "txtCircleY0";
+            txtCircleY0.Size = new Size(30, 22);
+            txtCircleY0.TabIndex = 6;
+            // 
+            // txtCircleX0
+            // 
+            txtCircleX0.Location = new Point(50, 16);
+            txtCircleX0.Name = "txtCircleX0";
+            txtCircleX0.Size = new Size(30, 22);
+            txtCircleX0.TabIndex = 5;
+            // 
+            // lblCircleR
+            // 
+            lblCircleR.AutoSize = true;
+            lblCircleR.Location = new Point(34, 45);
+            lblCircleR.Name = "lblCircleR";
+            lblCircleR.Size = new Size(17, 13);
+            lblCircleR.TabIndex = 4;
+            lblCircleR.Text = "R:";
+            // 
+            // lblCircleDelta
+            // 
+            lblCircleDelta.AutoSize = true;
+            lblCircleDelta.Location = new Point(94, 45);
+            lblCircleDelta.Name = "lblCircleDelta";
+            lblCircleDelta.Size = new Size(18, 13);
+            lblCircleDelta.TabIndex = 3;
+            lblCircleDelta.Text = "D:";
+            // 
+            // lblCircleQuadrants
+            // 
+            lblCircleQuadrants.AutoSize = true;
+            lblCircleQuadrants.Location = new Point(41, 89);
+            lblCircleQuadrants.Name = "lblCircleQuadrants";
+            lblCircleQuadrants.Size = new Size(64, 13);
+            lblCircleQuadrants.TabIndex = 2;
+            lblCircleQuadrants.Text = "Quadrants:";
+            // 
+            // lblCircleY0
+            // 
+            lblCircleY0.AutoSize = true;
+            lblCircleY0.Location = new Point(91, 19);
+            lblCircleY0.Name = "lblCircleY0";
+            lblCircleY0.Size = new Size(21, 13);
+            lblCircleY0.TabIndex = 1;
+            lblCircleY0.Text = "Y0:";
+            // 
+            // lblCircleX0
+            // 
+            lblCircleX0.AutoSize = true;
+            lblCircleX0.Location = new Point(29, 19);
+            lblCircleX0.Name = "lblCircleX0";
+            lblCircleX0.Size = new Size(22, 13);
+            lblCircleX0.TabIndex = 0;
+            lblCircleX0.Text = "X0:";
             // 
             // grpbxTriangle
             // 
@@ -898,9 +939,9 @@
             grpbxTriangle.Controls.Add(lblTriangleY0);
             grpbxTriangle.Controls.Add(lblTriangleX1);
             grpbxTriangle.Controls.Add(lblTriangleX0);
-            grpbxTriangle.Location = new Point(10, 70);
+            grpbxTriangle.Location = new Point(8, 70);
             grpbxTriangle.Name = "grpbxTriangle";
-            grpbxTriangle.Size = new Size(140, 96);
+            grpbxTriangle.Size = new Size(146, 119);
             grpbxTriangle.TabIndex = 29;
             grpbxTriangle.TabStop = false;
             grpbxTriangle.Text = "Triangle";
@@ -1002,12 +1043,94 @@
             lblTriangleX0.TabIndex = 0;
             lblTriangleX0.Text = "X0:";
             // 
+            // grpbxLine
+            // 
+            grpbxLine.Controls.Add(txtLineY1);
+            grpbxLine.Controls.Add(txtLineY0);
+            grpbxLine.Controls.Add(txtLineX1);
+            grpbxLine.Controls.Add(txtLineX0);
+            grpbxLine.Controls.Add(lblLineY1);
+            grpbxLine.Controls.Add(lblLineY0);
+            grpbxLine.Controls.Add(lblLineX1);
+            grpbxLine.Controls.Add(lblLineX0);
+            grpbxLine.Location = new Point(8, 70);
+            grpbxLine.Name = "grpbxLine";
+            grpbxLine.Size = new Size(146, 119);
+            grpbxLine.TabIndex = 32;
+            grpbxLine.TabStop = false;
+            grpbxLine.Text = "Line";
+            grpbxLine.Visible = false;
+            // 
+            // txtLineY1
+            // 
+            txtLineY1.Location = new Point(109, 40);
+            txtLineY1.Name = "txtLineY1";
+            txtLineY1.Size = new Size(30, 22);
+            txtLineY1.TabIndex = 17;
+            // 
+            // txtLineY0
+            // 
+            txtLineY0.Location = new Point(109, 16);
+            txtLineY0.Name = "txtLineY0";
+            txtLineY0.Size = new Size(30, 22);
+            txtLineY0.TabIndex = 16;
+            // 
+            // txtLineX1
+            // 
+            txtLineX1.Location = new Point(35, 40);
+            txtLineX1.Name = "txtLineX1";
+            txtLineX1.Size = new Size(30, 22);
+            txtLineX1.TabIndex = 15;
+            // 
+            // txtLineX0
+            // 
+            txtLineX0.Location = new Point(35, 16);
+            txtLineX0.Name = "txtLineX0";
+            txtLineX0.Size = new Size(30, 22);
+            txtLineX0.TabIndex = 14;
+            // 
+            // lblLineY1
+            // 
+            lblLineY1.AutoSize = true;
+            lblLineY1.Location = new Point(77, 43);
+            lblLineY1.Name = "lblLineY1";
+            lblLineY1.Size = new Size(21, 13);
+            lblLineY1.TabIndex = 13;
+            lblLineY1.Text = "Y1:";
+            // 
+            // lblLineY0
+            // 
+            lblLineY0.AutoSize = true;
+            lblLineY0.Location = new Point(77, 19);
+            lblLineY0.Name = "lblLineY0";
+            lblLineY0.Size = new Size(21, 13);
+            lblLineY0.TabIndex = 2;
+            lblLineY0.Text = "Y0:";
+            // 
+            // lblLineX1
+            // 
+            lblLineX1.AutoSize = true;
+            lblLineX1.Location = new Point(6, 43);
+            lblLineX1.Name = "lblLineX1";
+            lblLineX1.Size = new Size(22, 13);
+            lblLineX1.TabIndex = 1;
+            lblLineX1.Text = "X1:";
+            // 
+            // lblLineX0
+            // 
+            lblLineX0.AutoSize = true;
+            lblLineX0.Location = new Point(6, 19);
+            lblLineX0.Name = "lblLineX0";
+            lblLineX0.Size = new Size(22, 13);
+            lblLineX0.TabIndex = 0;
+            lblLineX0.Text = "X0:";
+            // 
             // btnUpdateCurrentPrimitive
             // 
             btnUpdateCurrentPrimitive.Enabled = false;
             btnUpdateCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
             btnUpdateCurrentPrimitive.Image = (System.Drawing.Image)resources.GetObject("btnUpdateCurrentPrimitive.Image");
-            btnUpdateCurrentPrimitive.Location = new Point(64, 170);
+            btnUpdateCurrentPrimitive.Location = new Point(64, 195);
             btnUpdateCurrentPrimitive.Name = "btnUpdateCurrentPrimitive";
             btnUpdateCurrentPrimitive.Size = new Size(32, 22);
             btnUpdateCurrentPrimitive.TabIndex = 23;
@@ -1067,48 +1190,36 @@
             lblCurrentPrimitiveNumber.Text = "Number:";
             lblCurrentPrimitiveNumber.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // btnAddRoundRectangle
+            // btnAddRoundRect
             // 
-            btnAddRoundRectangle.Enabled = false;
-            btnAddRoundRectangle.Font = new Font("Segoe UI", 8.25F);
-            btnAddRoundRectangle.Image = (System.Drawing.Image)resources.GetObject("btnAddRoundRectangle.Image");
-            btnAddRoundRectangle.Location = new Point(102, 80);
-            btnAddRoundRectangle.Name = "btnAddRoundRectangle";
-            btnAddRoundRectangle.Size = new Size(32, 22);
-            btnAddRoundRectangle.TabIndex = 21;
-            btnAddRoundRectangle.UseVisualStyleBackColor = true;
-            btnAddRoundRectangle.Click += btnAddRoundRectangle_Click;
+            btnAddRoundRect.Enabled = false;
+            btnAddRoundRect.Font = new Font("Segoe UI", 8.25F);
+            btnAddRoundRect.Image = (System.Drawing.Image)resources.GetObject("btnAddRoundRect.Image");
+            btnAddRoundRect.Location = new Point(68, 80);
+            btnAddRoundRect.Name = "btnAddRoundRect";
+            btnAddRoundRect.Size = new Size(32, 22);
+            btnAddRoundRect.TabIndex = 21;
+            btnAddRoundRect.UseVisualStyleBackColor = true;
+            btnAddRoundRect.Click += btnAddRoundRect_Click;
             // 
             // btnAddTriangle
             // 
             btnAddTriangle.Enabled = false;
             btnAddTriangle.Font = new Font("Segoe UI", 8.25F);
             btnAddTriangle.Image = (System.Drawing.Image)resources.GetObject("btnAddTriangle.Image");
-            btnAddTriangle.Location = new Point(70, 80);
+            btnAddTriangle.Location = new Point(36, 80);
             btnAddTriangle.Name = "btnAddTriangle";
             btnAddTriangle.Size = new Size(32, 22);
             btnAddTriangle.TabIndex = 20;
             btnAddTriangle.UseVisualStyleBackColor = true;
             btnAddTriangle.Click += btnAddTriangle_Click;
             // 
-            // btnAddQuarterCircle
-            // 
-            btnAddQuarterCircle.Enabled = false;
-            btnAddQuarterCircle.Font = new Font("Segoe UI", 8.25F);
-            btnAddQuarterCircle.Image = (System.Drawing.Image)resources.GetObject("btnAddQuarterCircle.Image");
-            btnAddQuarterCircle.Location = new Point(38, 80);
-            btnAddQuarterCircle.Name = "btnAddQuarterCircle";
-            btnAddQuarterCircle.Size = new Size(32, 22);
-            btnAddQuarterCircle.TabIndex = 19;
-            btnAddQuarterCircle.UseVisualStyleBackColor = true;
-            btnAddQuarterCircle.Click += btnAddQuarterCircle_Click;
-            // 
             // btnAddCircle
             // 
             btnAddCircle.Enabled = false;
             btnAddCircle.Font = new Font("Segoe UI", 8.25F);
             btnAddCircle.Image = (System.Drawing.Image)resources.GetObject("btnAddCircle.Image");
-            btnAddCircle.Location = new Point(4, 80);
+            btnAddCircle.Location = new Point(134, 80);
             btnAddCircle.Name = "btnAddCircle";
             btnAddCircle.Size = new Size(32, 22);
             btnAddCircle.TabIndex = 18;
@@ -1120,7 +1231,7 @@
             btnRemoveCurrentPrimitive.Enabled = false;
             btnRemoveCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
             btnRemoveCurrentPrimitive.Image = (System.Drawing.Image)resources.GetObject("btnRemoveCurrentPrimitive.Image");
-            btnRemoveCurrentPrimitive.Location = new Point(71, 313);
+            btnRemoveCurrentPrimitive.Location = new Point(70, 339);
             btnRemoveCurrentPrimitive.Name = "btnRemoveCurrentPrimitive";
             btnRemoveCurrentPrimitive.Size = new Size(32, 22);
             btnRemoveCurrentPrimitive.TabIndex = 14;
@@ -1131,7 +1242,7 @@
             // 
             btnNextPrimitive.Enabled = false;
             btnNextPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnNextPrimitive.Location = new Point(128, 313);
+            btnNextPrimitive.Location = new Point(127, 339);
             btnNextPrimitive.Name = "btnNextPrimitive";
             btnNextPrimitive.Size = new Size(32, 22);
             btnNextPrimitive.TabIndex = 13;
@@ -1143,7 +1254,7 @@
             // 
             btnPreviousPrimitive.Enabled = false;
             btnPreviousPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnPreviousPrimitive.Location = new Point(10, 313);
+            btnPreviousPrimitive.Location = new Point(9, 339);
             btnPreviousPrimitive.Name = "btnPreviousPrimitive";
             btnPreviousPrimitive.Size = new Size(32, 22);
             btnPreviousPrimitive.TabIndex = 12;
@@ -1334,7 +1445,7 @@
             // chkHighlightCurrentPrimitive
             // 
             chkHighlightCurrentPrimitive.AutoSize = true;
-            chkHighlightCurrentPrimitive.Location = new Point(585, 362);
+            chkHighlightCurrentPrimitive.Location = new Point(585, 383);
             chkHighlightCurrentPrimitive.Name = "chkHighlightCurrentPrimitive";
             chkHighlightCurrentPrimitive.Size = new Size(119, 19);
             chkHighlightCurrentPrimitive.TabIndex = 5;
@@ -1365,16 +1476,16 @@
             grpbxPrimitives.PerformLayout();
             grpbxCurrentPrimitive.ResumeLayout(false);
             grpbxCurrentPrimitive.PerformLayout();
-            grpbxLine.ResumeLayout(false);
-            grpbxLine.PerformLayout();
-            grpbxCircle.ResumeLayout(false);
-            grpbxCircle.PerformLayout();
-            grpbxQuarterCircle.ResumeLayout(false);
-            grpbxQuarterCircle.PerformLayout();
+            grpbxRotatedRect.ResumeLayout(false);
+            grpbxRotatedRect.PerformLayout();
             grpbxRoundRect.ResumeLayout(false);
             grpbxRoundRect.PerformLayout();
+            grpbxCircle.ResumeLayout(false);
+            grpbxCircle.PerformLayout();
             grpbxTriangle.ResumeLayout(false);
             grpbxTriangle.PerformLayout();
+            grpbxLine.ResumeLayout(false);
+            grpbxLine.PerformLayout();
             grpbxFile.ResumeLayout(false);
             grpbxFile.PerformLayout();
             ResumeLayout(false);
@@ -1400,9 +1511,8 @@
         private Button btnLoadFile;
         private TextBox txtIPFirstOctet;
         private Label lblIPAddress;
-        private Button btnAddRoundRectangle;
+        private Button btnAddRoundRect;
         private Button btnAddTriangle;
-        private Button btnAddQuarterCircle;
         private Button btnAddCircle;
         private OpenFileDialog openFile;
         private GroupBox grpbxRoundRect;
@@ -1440,18 +1550,17 @@
         private Button btnPrimitiveDrawColor;
         private TextBox txtPrimitiveDrawColor;
         private Label lblAddPrimitiveDrawColor;
-        private TextBox txtQuarterCircleDelta;
-        private TextBox txtQuarterCircleQuadrants;
-        private TextBox txtQuarterCircleY0;
-        private TextBox txtQuarterCircleX0;
-        private Label lblQuarterCircleDelta;
         private GroupBox grpbxCircle;
-        private TextBox txtCircleRadius;
+        private TextBox txtCircleDelta;
+        private TextBox txtCircleQuadrants;
         private TextBox txtCircleY0;
         private TextBox txtCircleX0;
-        private Label lblCircleRadius;
+        private TextBox txtCircleR;
         private Label lblCircleY0;
         private Label lblCircleX0;
+        private Label lblCircleDelta;
+        private Label lblCircleR;
+        private Label lblCircleQuadrants;
         private GroupBox grpbxTriangle;
         private TextBox txtTriangleY1;
         private TextBox txtTriangleY0;
@@ -1465,12 +1574,6 @@
         private Label lblTriangleY0;
         private Label lblTriangleX1;
         private Label lblTriangleX0;
-        private GroupBox grpbxQuarterCircle;
-        private TextBox txtQuarterCircleRadius;
-        private Label lblQuarterCircleRadius;
-        private Label lblQuarterCircleQuadrants;
-        private Label lblQuarterCircleY0;
-        private Label lblQuarterCircleX0;
         private SaveFileDialog saveFile;
         private TextBox txtIPFourthOctet;
         private TextBox txtIPThirdOctet;
@@ -1498,5 +1601,21 @@
         private Button btnMoveFrameDown;
         private System.Windows.Forms.Timer primitiveHighlightTimer;
         private CheckBox chkHighlightCurrentPrimitive;
+        private CheckBox chkCircleTopLeft;
+        private CheckBox chkCircleTopRight;
+        private CheckBox chkCircleBottomLeft;
+        private CheckBox chkCircleBottomRight;
+        private Button btnAddRotatedRect;
+        private GroupBox grpbxRotatedRect;
+        private TextBox txtRotatedRectAngleDeg;
+        private TextBox txtRotatedRectH;
+        private TextBox txtRotatedRectW;
+        private TextBox txtRotatedRectCenY;
+        private TextBox txtRotatedRectCenX;
+        private Label lblRotatedRectAngleDeg;
+        private Label lblRotatedRectH;
+        private Label lblRotatedRectW;
+        private Label lblRotatedRectCenY;
+        private Label lblRotatedRectCenX;
     }
 }

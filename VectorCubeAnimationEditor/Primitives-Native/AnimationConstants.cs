@@ -1,5 +1,5 @@
 ﻿
-namespace VectorCubeAnimationEditor
+namespace ST7735Point85
 {
     using TransmissionType = UInt16;
     using PrimitiveType = UInt16;
@@ -27,9 +27,8 @@ namespace VectorCubeAnimationEditor
         public const PrimitiveType _Triangle = 3;
         public const PrimitiveType _Circle = 1;
         public const PrimitiveType _QuarterCircle = 2;
-        public const PrimitiveType _RotatedRect = 7;
 
-        public static UInt16 _CommandWidth = 2;
+
         public static UInt16 _MaxFrameCount = 12;
         public static UInt16 _MaxPrimitiveCount = 12;
         public static int _ScaleFactor = 3;

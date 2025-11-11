@@ -1,7 +1,7 @@
 ﻿using System.Buffers.Binary;
 using VectorCubeAnimationEditor;
 
-namespace Adafruit
+namespace ST7735Point85
 {
     using PrimitiveType = UInt16;
 

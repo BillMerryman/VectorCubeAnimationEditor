@@ -1,12 +1,15 @@
 ﻿using System.Buffers.Binary;
+using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
 using System.Globalization;
+using System.Reflection;
 
 namespace VectorCubeAnimationEditor
 {
     using PrimitiveType = UInt16;
 
-    internal class Utility
+    internal static class Utility
     {
 
         public static byte[] getCommandBytes(UInt16 command)
@@ -102,202 +105,6 @@ namespace VectorCubeAnimationEditor
             }
         }
 
-        public static void DrawPrimitive(Graphics e, Primitive primitive, bool isHighlighted)
-        {
-            switch (primitive.Type)
-            {
-                case AnimationConstants._Circle:
-                    Utility.DrawCircle(e, primitive.Circle, isHighlighted);
-                    break;
-                case AnimationConstants._QuarterCircle:
-                    Utility.DrawQuarterCircle(e, primitive.QuarterCircle, isHighlighted);
-                    break;
-                case AnimationConstants._Triangle:
-                    Utility.DrawTriangle(e, primitive.Triangle, isHighlighted);
-                    break;
-                case AnimationConstants._RoundRect:
-                    Utility.DrawRoundRect(e, primitive.RoundRect, isHighlighted);
-                    break;
-                case AnimationConstants._Line:
-                    Utility.DrawLine(e, primitive.Line, isHighlighted);
-                    break;
-            }
-        }
-
-        public static void DrawCircle(Graphics e, Circle circle,bool isHighlighted)
-        {
-            Brush brush = new SolidBrush(GetColorFromUIint16(circle.Color));
-            Pen pen = new Pen(Color.White);
-            pen.DashStyle = DashStyle.Dash;
-            int ScreenX = circle.X0 * AnimationConstants._ScaleFactor;
-            int ScreenY = circle.Y0 * AnimationConstants._ScaleFactor;
-            int ScreenR = circle.R * AnimationConstants._ScaleFactor;
-            int boundingX = ScreenX - ScreenR;
-            int boundingY = ScreenY - ScreenR;
-            e.FillEllipse(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR);
-            if(isHighlighted) e.DrawEllipse(pen, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR);
-        }
-
-        public static void DrawQuarterCircle(Graphics e,  QuarterCircle quarterCircle, bool isHighlighted)
-        {
-            Brush brush = new SolidBrush(GetColorFromUIint16(quarterCircle.Color));
-            Pen pen = new Pen(Color.White);
-            pen.DashStyle = DashStyle.Dash;
-            int ScreenX = quarterCircle.X0 * AnimationConstants._ScaleFactor;
-            int ScreenY = quarterCircle.Y0 * AnimationConstants._ScaleFactor;
-            int ScreenR = quarterCircle.R * AnimationConstants._ScaleFactor;
-            int boundingX = ScreenX - ScreenR;
-            int boundingY = ScreenY - ScreenR;
-            if ((quarterCircle.Quadrants & 1) == 1)
-            {
-                e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 180, 90);
-                if (isHighlighted) e.DrawPie(pen, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 180, 90);
-            }
-            if ((quarterCircle.Quadrants & 2) == 2)
-            {
-                e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 270, 90);
-                if (isHighlighted) e.DrawPie(pen, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 270, 90);
-            }
-            if ((quarterCircle.Quadrants & 4) == 4)
-            {
-                e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 0, 90);
-                if (isHighlighted) e.DrawPie(pen, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 0, 90);
-            }
-            if ((quarterCircle.Quadrants & 8) == 8)
-            {
-                e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 90, 90);
-                if (isHighlighted) e.DrawPie(pen, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 90, 90);
-            }
-
-        }
-
-        public static void DrawTriangle(Graphics e, Triangle triangle, bool isHighlighted)
-        {
-
-            Point[] trianglePoints = {
-                new Point(triangle.X0 * AnimationConstants._ScaleFactor, triangle.Y0 * AnimationConstants._ScaleFactor),
-                new Point(triangle.X1 * AnimationConstants._ScaleFactor, triangle.Y1 * AnimationConstants._ScaleFactor),
-                new Point(triangle.X2 * AnimationConstants._ScaleFactor, triangle.Y2 * AnimationConstants._ScaleFactor)
-            };
-
-            Brush brush = new SolidBrush(GetColorFromUIint16(triangle.Color));
-            Pen pen = new Pen(Color.White);
-            pen.DashStyle = DashStyle.Dash;
-            e.FillPolygon(brush, trianglePoints);
-            if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
-        }
-
-        public static void DrawRoundRect(Graphics e, RoundRect roundRect, bool isHighlighted)
-        {
-            GraphicsPath path = GetRoundRectPath(roundRect);
-            Brush brush = new SolidBrush(GetColorFromUIint16(roundRect.Color));
-            Pen pen = new Pen(Color.White);
-            pen.DashStyle = DashStyle.Dash;
-            e.FillPath(brush, path);
-            if (isHighlighted) e.DrawPath(pen, path);
-        }
-
-        public static void DrawLine(Graphics e, Line line, bool isHighlighted)
-        {
-            Pen pen = new Pen(GetColorFromUIint16(line.Color), 3);
-            if (isHighlighted) pen.DashStyle = DashStyle.Dash;
-            e.DrawLine(pen, line.X0 * AnimationConstants._ScaleFactor, line.Y0 * AnimationConstants._ScaleFactor, line.X1 * AnimationConstants._ScaleFactor, line.Y1 * AnimationConstants._ScaleFactor);
-            pen.Dispose();
-        }
-
-        //Abstract out 'GetRotatedRectangle'. It takes a rectangle and a rotation, and returns two triangles
-        //that represent the same volume. Also add the topLeft offsets to the location when finished, since we
-        //aren't rotating around the location, but the center point of the initial rectangle
-        public static void DrawRotatedRectangle(Graphics e)
-        {
-            Point location = new Point(200, 200);
-            Point wh = new Point(40 * AnimationConstants._ScaleFactor, 20 * AnimationConstants._ScaleFactor);
-            float rotation = 45;
-
-            Point center = new Point(wh.X / 2, wh.Y / 2);
-            Point topLeft = new Point(center.X - wh.X, center.Y - wh.Y);
-            Point topRight = new Point(wh.X - center.X, center.Y - wh.Y);
-            Point bottomRight = new Point(wh.X - center.X, wh.Y - center.Y);
-            Point bottomLeft = new Point(center.X - wh.X, wh.Y - center.Y);
-
-            // Split rectangle into two triangles (diagonal from top-left to bottom-right)
-            Point[] triangle1 = new Point[] { topLeft, topRight, bottomRight };
-            Point[] triangle2 = new Point[] { topLeft, bottomLeft, bottomRight };
-
-            Matrix matrix = new Matrix();
-            matrix.Rotate(rotation);
-            matrix.TransformPoints(triangle1);
-            matrix.TransformPoints(triangle2);
-            matrix.Reset();
-            matrix.Translate(location.X, location.Y);
-            matrix.TransformPoints(triangle1);
-            matrix.TransformPoints(triangle2);
-            Brush brush = new SolidBrush(Color.White);
-            e.FillPolygon(brush, triangle1);
-            e.FillPolygon(brush, triangle2);
-        }
-
-        public static GraphicsPath GetRoundRectPath(RoundRect roundRect)
-        {
-            Rectangle bounds = new Rectangle(roundRect.X0 * AnimationConstants._ScaleFactor,
-                                            roundRect.Y0 * AnimationConstants._ScaleFactor,
-                                            roundRect.W * AnimationConstants._ScaleFactor,
-                                            roundRect.H * AnimationConstants._ScaleFactor);
-            int radius = roundRect.Radius * AnimationConstants._ScaleFactor;
-            int diameter = radius * 2;
-            Size size = new Size(diameter, diameter);
-            Rectangle arc = new Rectangle(bounds.Location, size);
-            GraphicsPath path = new GraphicsPath();
-
-            if (radius == 0)
-            {
-                path.AddRectangle(bounds);
-            }
-            else
-            {
-                path.AddArc(arc, 180, 90);
-                arc.X = bounds.Right - diameter;
-                path.AddArc(arc, 270, 90);
-                arc.Y = bounds.Bottom - diameter;
-                path.AddArc(arc, 0, 90);
-                arc.X = bounds.Left;
-                path.AddArc(arc, 90, 90);
-                path.CloseFigure();
-            }
-            return path;
-        }
-
-        public static bool IsPointInsideRoundRect(Point point, RoundRect roundRect)
-        {
-            GraphicsPath path = GetRoundRectPath(roundRect);
-            return path.IsVisible(point);
-        }
-
-        public static bool IsScreenPointOnRadius(Point screenPoint, Point primitivePoint, Int16 radius) 
-        {
-            int c = radius * AnimationConstants._ScaleFactor;
-            int a = ((primitivePoint.X * AnimationConstants._ScaleFactor) - screenPoint.X);
-            int b = ((primitivePoint.Y * AnimationConstants._ScaleFactor) - screenPoint.Y);
-            int cSquare = c * c;
-            int aSquare = a * a;
-            int bSquare = b * b;
-            if ((aSquare + bSquare > cSquare * .9) && (aSquare + bSquare < cSquare * 1.1))return true;
-            return false;
-        }
-
-        public static bool IsScreenPointNearPoint(Point mouseLocation, Point vertex)
-        {
-            return Math.Abs(mouseLocation.X - (vertex.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2
-                && Math.Abs(mouseLocation.Y - (vertex.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2;
-        }
-
-        public static Point GetCentroid(Triangle triangle)
-        {
-            int centerX = (triangle.X0 + triangle.X1 + triangle.X2) / 3;
-            int centerY = (triangle.Y0 + triangle.Y1 + triangle.Y2) / 3;
-            return new Point(centerX, centerY);
-        }
-
         public static void ConvertToRGB565(Bitmap image, UInt16[,] buffer)
         {
             for (int y = 0; y < image.Height; y++)
@@ -311,6 +118,55 @@ namespace VectorCubeAnimationEditor
                     buffer[y, x] = rgb565Value;
                 }
             }
+        }
+
+        public static Color ColorToInverse(this Color color)
+        {
+            int invertedR = 255 - color.R;
+            int invertedG = 255 - color.G;
+            int invertedB = 255 - color.B;
+
+            return Color.FromArgb(color.A, invertedR, invertedG, invertedB);
+        }
+
+        public static bool IsPointOnRadius(Point point1, Point point2, Int16 radius, int margin)
+        {
+            int a = (point2.X - point1.X);
+            int b = (point2.Y - point1.Y);
+            int aSquare = a * a;
+            int bSquare = b * b;
+            int h = (int)Math.Sqrt(aSquare + bSquare);
+            if (h > radius - margin && h < radius + margin) return true;
+            return false;
+        }
+
+        public static bool ArePointsWithinMargin(Point point1, Point point2, Double margin)
+        {
+            return Math.Abs(point1.X - point2.X) < AnimationConstants._ScaleFactor * margin
+                && Math.Abs(point1.Y - point2.Y) < AnimationConstants._ScaleFactor * margin;
+        }
+
+        public static Int16 GetAngleFromReferencePoint(Point referencePoint, Point point)
+        {
+            double pointDeltaX = point.X - referencePoint.X;
+            double pointDeltaY = point.Y - referencePoint.Y;
+
+            double angle = 360 - (Math.Atan2(-pointDeltaY, pointDeltaX) + Math.PI) * (180 / Math.PI);
+
+            return (Int16)angle;
+        }
+
+        public static Point RotateFromReferencePoint(Point referencePoint, Point point, Int16 angleDeg)
+        {
+            point.X -= referencePoint.X;
+            point.Y -= referencePoint.Y;
+
+            Point[] points = new Point[] { point };
+
+            Matrix matrix = new Matrix();
+            matrix.Rotate(angleDeg);
+            matrix.TransformPoints(points);
+            return points[0];
         }
 
     }

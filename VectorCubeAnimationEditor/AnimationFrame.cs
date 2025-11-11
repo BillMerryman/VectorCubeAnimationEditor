@@ -8,8 +8,9 @@ namespace VectorCubeAnimationEditor
     {
         private UInt32 duration;
         private UInt16 fillColor;
-        private UInt16 primitiveCount;
-        private Primitive[] primitives;
+        private List<Primitive> primitives;
+
+        const int LARGEST_PRIMITIVE_BYTE_COUNT = 14;
 
         public UInt32 Duration
         {
@@ -23,99 +24,55 @@ namespace VectorCubeAnimationEditor
             get { return fillColor; }
         }
 
-        public UInt16 PrimitiveCount
+        public int PrimitiveCount
         {
-            get { return primitiveCount; }
+            get { return primitives.Count; }
         }
 
         public AnimationFrame()
         {
             duration = 0;
             fillColor = 0x0000;
-            primitiveCount = 0;
-            primitives = new Primitive[AnimationConstants._MaxPrimitiveCount];
-            for(int i = 0; i < primitives.Length; i++)
-            {
-                primitives[i] = new Primitive();
-            }
+            primitives = new List<Primitive>();
         }
 
         public AnimationFrame(AnimationFrame frame)
         {
             this.duration = frame.duration;
             this.fillColor = frame.fillColor;
-            this.primitiveCount = frame.primitiveCount;
-            primitives = new Primitive[AnimationConstants._MaxPrimitiveCount];
-            for (int i = 0; i < primitives.Length; i++)
-            {
-                primitives[i] = new Primitive(frame.primitives[i]);
-            }
+            primitives = frame.primitives.Select(item => item.Clone()).ToList();
         }
 
-        public Primitive? GetPrimitiveNumber(int primitiveNumber)
+        public Primitive? GetPrimitive(int primitiveIndex)
         {
-            if (primitiveNumber < 1 || primitiveNumber > primitiveCount) return null;
-            return primitives[primitiveNumber - 1];
+            if (primitiveIndex < 0 || primitiveIndex > primitives.Count - 1) return null;
+            return primitives[primitiveIndex];
         }
 
-        public int GetNumberOfPrimitive(Primitive? primitive)
+        public int GetIndexOfPrimitive(Primitive? primitive)
         {
             if (primitive == null) return -1;
-            for (int index = 0; index < primitives.Length; index++)
-            {
-                if (object.ReferenceEquals(primitive, primitives[index]))
-                {
-                    return index + 1;
-                }
-            }
-            return -1;
+            return primitives.IndexOf(primitive);
         }
 
-        public Primitive? AddPrimitive(PrimitiveType primitiveType, UInt16 color)
+        public Primitive? AddPrimitive(Type primitiveType, UInt16 color)
         {
-            if (primitiveCount > AnimationConstants._MaxPrimitiveCount) return null;
-            Primitive primitive = new Primitive();
-            primitives[primitiveCount] = primitive;
-            primitive.Type = primitiveType;
-            switch (primitiveType)
+            if (PrimitiveCount > AnimationConstants._MaxPrimitiveCount) return null;
+            Primitive? primitive = (Primitive?)Activator.CreateInstance(primitiveType);
+            if (primitive != null)
             {
-                case AnimationConstants._Circle:
-                    primitive.Circle.Color = color;
-                    break;
-                case AnimationConstants._QuarterCircle:
-                    primitive.QuarterCircle.Color = color;
-                    break;
-                case AnimationConstants._Triangle:
-                    primitive.Triangle.Color = color;
-                    break;
-                case AnimationConstants._RoundRect:
-                    primitive.RoundRect.Color = color;
-                    break;
-                case AnimationConstants._Line:
-                    primitive.Line.Color = color;
-                    break;
+                primitive.Color = color;
+                primitives.Add(primitive);
             }
-            primitiveCount++;
             return primitive;
         }
 
         public int RemovePrimitive(Primitive? primitive)
         {
             if (primitive == null) return -1;
-            for (int index = 0; index < primitives.Length; index++)
-            {
-                if (object.ReferenceEquals(primitive, primitives[index]))
-                {
-                    for (int innerIndex = index; innerIndex < primitives.Length - 1; innerIndex++)
-                    {
-                        primitives[innerIndex] = primitives[innerIndex + 1];
-                    }
-                    primitives[^1] = new Primitive();
-                    primitiveCount--;
-                    return index + 1;
-                }
-            }
-            return -1;
+            int index = primitives.IndexOf(primitive);
+            primitives.Remove(primitive);
+            return index;
         }
 
         public bool MovePrimitiveUp(Primitive? primitive)
@@ -134,11 +91,16 @@ namespace VectorCubeAnimationEditor
             bytePosition += 4;
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), fillColor);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), primitiveCount);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), (ushort)primitives.Count);
             bytePosition += 2;
-            for (int index = 0; index < primitives.Length; index++)
+            for (int index = 0; index < primitives.Count; index++)
             {
                 primitives[index].Serialize(ref bytePosition, animationBytes);
+            }
+            for (int index = primitives.Count; index < AnimationConstants._MaxPrimitiveCount; index++)
+            {
+                bytePosition += AnimationConstants._CommandWidth;
+                bytePosition += LARGEST_PRIMITIVE_BYTE_COUNT;
             }
         }
 
@@ -148,11 +110,39 @@ namespace VectorCubeAnimationEditor
             bytePosition += 4;
             fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            UInt16 primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            for (int index = 0; index < primitives.Length; index++)
+            for (int index = 0; index < primitiveCount; index++)
             {
-                primitives[index].Deserialize(ref bytePosition, animationBytes);
+                PrimitiveType type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+                bytePosition += AnimationConstants._CommandWidth;
+                Primitive newPrimitive = null;
+                switch (type)
+                {
+                    case AnimationConstants._Line:
+                        newPrimitive = new Line();
+                        break;
+                    case AnimationConstants._Triangle:
+                        newPrimitive = new Triangle();
+                        break;
+                    case AnimationConstants._RoundRect:
+                        newPrimitive = new RoundRect();
+                        break;
+                    case AnimationConstants._Circle:
+                        newPrimitive = new Circle();
+                        break;
+                }
+                if (newPrimitive != null)
+                {
+                    newPrimitive.Deserialize(ref bytePosition, animationBytes);
+                    primitives.Add(newPrimitive);
+                }
+
+            }
+            for (int index = primitiveCount; index < AnimationConstants._MaxPrimitiveCount; index++)
+            {
+                bytePosition += AnimationConstants._CommandWidth;
+                bytePosition += LARGEST_PRIMITIVE_BYTE_COUNT;
             }
         }
 
