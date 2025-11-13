@@ -36,6 +36,7 @@ namespace VectorCubeAnimationEditor
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 byte[] animationBytes = File.ReadAllBytes(openFile.FileName);
+                animation = new Animation();
                 animation.Deserialize(animationBytes);
 
                 if (animation.FrameCount == 0)
@@ -50,7 +51,7 @@ namespace VectorCubeAnimationEditor
                     pctbxCanvas.Refresh();
                     return;
                 }
-                AnimationFrame? frame = animation.GetFrameNumber(1);
+                AnimationFrame? frame = animation.GetFrame(0);
                 if (frame != null)
                 {
                     SetCurrentFrame(frame);
@@ -317,7 +318,7 @@ namespace VectorCubeAnimationEditor
         private void btnMoveFrameDown_Click(object sender, EventArgs e)
         {
             animation.MoveFrameDown(currentFrame);
-            int currentFrameNumber = animation.GetNumberOfFrame(currentFrame);
+            int currentFrameNumber = animation.IndexOf(currentFrame) + 1;
             txtCurrentFrameNumber.Text = currentFrameNumber.ToString();
             SetFrameNavigation();
         }
@@ -345,18 +346,17 @@ namespace VectorCubeAnimationEditor
         private void btnMoveFrameUp_Click(object sender, EventArgs e)
         {
             animation.MoveFrameUp(currentFrame);
-            int currentFrameNumber = animation.GetNumberOfFrame(currentFrame);
+            int currentFrameNumber = animation.IndexOf(currentFrame) + 1;
             txtCurrentFrameNumber.Text = currentFrameNumber.ToString();
             SetFrameNavigation();
         }
 
         private void btnPreviousFrame_Click(object sender, EventArgs e)
         {
-            int currentFrameNumber = animation.GetNumberOfFrame(currentFrame);
-            if (currentFrameNumber < 0) return;
-            if (currentFrameNumber == 1) return;
-            currentFrameNumber--;
-            AnimationFrame animationFrame = animation.GetFrameNumber(currentFrameNumber);
+            int currentFrameIndex = animation.IndexOf(currentFrame);
+            if (currentFrameIndex < 1) return;
+            currentFrameIndex--;
+            AnimationFrame animationFrame = animation.GetFrame(currentFrameIndex);
             SetCurrentFrame(animationFrame);
         }
 
@@ -373,16 +373,16 @@ namespace VectorCubeAnimationEditor
             SetFrameNavigation();
 
             txtFrameCount.Text = animation.FrameCount.ToString();
-            txtCurrentFrameNumber.Text = animation.GetNumberOfFrame(newFrame).ToString();
+            txtCurrentFrameNumber.Text = (animation.IndexOf(newFrame) + 1).ToString();
             SetCurrentFrame(newFrame);
         }
 
         private void btnNextFrame_Click(object sender, EventArgs e)
         {
-            int currentFrameNumber = animation.GetNumberOfFrame(currentFrame);
-            if (currentFrameNumber == animation.FrameCount) return;
-            currentFrameNumber++;
-            AnimationFrame animationFrame = animation.GetFrameNumber(currentFrameNumber);
+            int currentFrameIndex = animation.IndexOf(currentFrame);
+            if (currentFrameIndex == animation.FrameCount - 1) return;
+            currentFrameIndex++;
+            AnimationFrame animationFrame = animation.GetFrame(currentFrameIndex);
             SetCurrentFrame(animationFrame);
         }
 
@@ -436,7 +436,7 @@ namespace VectorCubeAnimationEditor
             if (currentFrame == null) return;
             if (currentFrame.PrimitiveCount < 2) return;
             if (currentPrimitive == null) return;
-            int currentPrimitiveIndex = currentFrame.GetIndexOfPrimitive(currentPrimitive);
+            int currentPrimitiveIndex = currentFrame.IndexOf(currentPrimitive);
             if (currentPrimitiveIndex < 1) return;
             currentPrimitiveIndex--;
             txtCurrentPrimitiveNumber.Text = (currentPrimitiveIndex + 1).ToString();
@@ -447,7 +447,7 @@ namespace VectorCubeAnimationEditor
         private void btnNextPrimitive_Click(object sender, EventArgs e)
         {
             if (currentFrame == null) return;
-            int currentPrimitiveIndex = currentFrame.GetIndexOfPrimitive(currentPrimitive);
+            int currentPrimitiveIndex = currentFrame.IndexOf(currentPrimitive);
             if (currentPrimitiveIndex == currentFrame.PrimitiveCount - 1) return;
             currentPrimitiveIndex++;
             txtCurrentPrimitiveNumber.Text = (currentPrimitiveIndex + 1).ToString();
@@ -564,6 +564,8 @@ namespace VectorCubeAnimationEditor
         }
 
         #endregion
+
+        #region Canvas handling delegates
 
         private void pctbxCanvas_MouseDown(object sender, MouseEventArgs e)
         {
@@ -755,7 +757,9 @@ namespace VectorCubeAnimationEditor
             }
         }
 
-        #region Disabled Text Fields
+        #endregion
+
+        #region Disabled text field delegates
 
         private void txtFrameCount_KeyDown(object sender, KeyEventArgs e)
         {
@@ -813,7 +817,7 @@ namespace VectorCubeAnimationEditor
 
         private void RemoveCurrentFrame()
         {
-            int currentFrameNumber = animation.RemoveFrame(currentFrame);
+            int currentFrameIndex = animation.RemoveFrame(currentFrame);
             txtFrameCount.Text = animation.FrameCount.ToString();
 
             if (animation.FrameCount < 2) DisableFrameNavigation();
@@ -829,8 +833,8 @@ namespace VectorCubeAnimationEditor
                 return;
             }
 
-            while (currentFrameNumber > animation.FrameCount) --currentFrameNumber;
-            AnimationFrame animationFrame = animation.GetFrameNumber(currentFrameNumber);
+            while (currentFrameIndex >= animation.FrameCount) --currentFrameIndex;
+            AnimationFrame animationFrame = animation.GetFrame(currentFrameIndex);
 
             SetCurrentFrame(animationFrame);
         }
@@ -838,7 +842,7 @@ namespace VectorCubeAnimationEditor
         private void SetCurrentFrame(AnimationFrame frame)
         {
             currentFrame = frame;
-            int currentFrameNumber = animation.GetNumberOfFrame(currentFrame);
+            int currentFrameNumber = animation.IndexOf(currentFrame) + 1;
             txtCurrentFrameNumber.Text = currentFrameNumber.ToString();
             txtCurrentFrameFillColor.Text = Utility.GetRGBStringFromUIint16(frame.FillColor);
             txtCurrentFrameDuration.Text = frame.Duration.ToString();
@@ -898,19 +902,19 @@ namespace VectorCubeAnimationEditor
 
         private void SetFrameNavigation()
         {
-            int currentFrameNumber = animation.GetNumberOfFrame(currentFrame);
+            int currentFrameIndex = animation.IndexOf(currentFrame);
             btnMoveFrameDown.Enabled = false;
             btnMoveFrameUp.Enabled = false;
             btnPreviousFrame.Enabled = false;
             btnNextFrame.Enabled = false;
 
 
-            if (currentFrameNumber > 1)
+            if (currentFrameIndex > 0)
             {
                 btnPreviousFrame.Enabled = true;
                 btnMoveFrameDown.Enabled = true;
             }
-            if (currentFrameNumber < animation.FrameCount)
+            if (currentFrameIndex < animation.FrameCount - 1)
             {
                 btnNextFrame.Enabled = true;
                 btnMoveFrameUp.Enabled = true;
@@ -974,7 +978,7 @@ namespace VectorCubeAnimationEditor
         private void SetCurrentPrimitive(Primitive primitive)
         {
             currentPrimitive = primitive;
-            int currentPrimitiveIndex = currentFrame.GetIndexOfPrimitive(primitive);
+            int currentPrimitiveIndex = currentFrame.IndexOf(primitive);
             txtCurrentPrimitiveNumber.Text = (currentPrimitiveIndex + 1).ToString();
             HideAllPrimitiveFields();
             switch (primitive)

@@ -93,6 +93,23 @@ namespace VectorCubeAnimationEditor
             y2 += (Int16)offset.Y;
         }
 
+        public override void Draw(Graphics e, bool isHighlighted)
+        {
+
+            Point[] trianglePoints = {
+                new Point(x0 * AnimationConstants._ScaleFactor, y0 * AnimationConstants._ScaleFactor),
+                new Point(x1 * AnimationConstants._ScaleFactor, y1 * AnimationConstants._ScaleFactor),
+                new Point(x2 * AnimationConstants._ScaleFactor, y2 * AnimationConstants._ScaleFactor)
+            };
+
+            Color drawColor = Utility.GetColorFromUIint16(color);
+            Brush brush = new SolidBrush(drawColor);
+            Pen pen = new Pen(drawColor.ColorToInverse());
+            pen.DashStyle = DashStyle.Dash;
+            e.FillPolygon(brush, trianglePoints);
+            if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
+        }
+
         public void MoveVertex(int vertexNum, Point offset)
         {
             if (vertexNum < 0 || vertexNum > 2) return;
@@ -111,23 +128,6 @@ namespace VectorCubeAnimationEditor
                 x2 += (Int16)offset.X;
                 y2 += (Int16)offset.Y;
             }
-        }
-
-        public override void Draw(Graphics e, bool isHighlighted)
-        {
-
-            Point[] trianglePoints = {
-                new Point(x0 * AnimationConstants._ScaleFactor, y0 * AnimationConstants._ScaleFactor),
-                new Point(x1 * AnimationConstants._ScaleFactor, y1 * AnimationConstants._ScaleFactor),
-                new Point(x2 * AnimationConstants._ScaleFactor, y2 * AnimationConstants._ScaleFactor)
-            };
-
-            Color drawColor = Utility.GetColorFromUIint16(color);
-            Brush brush = new SolidBrush(drawColor);
-            Pen pen = new Pen(drawColor.ColorToInverse());
-            pen.DashStyle = DashStyle.Dash;
-            e.FillPolygon(brush, trianglePoints);
-            if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
         }
 
         public Point[] GetVerticesScreen()

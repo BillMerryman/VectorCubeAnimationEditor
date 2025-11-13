@@ -1,101 +1,70 @@
-﻿using System.Buffers.Binary;
+﻿using ST7735Point85;
+using System.Buffers.Binary;
 
 namespace VectorCubeAnimationEditor
 {
     internal class Animation
     {
 
-        private UInt16 frameCount;
-        private AnimationFrame []frames;
+        private List<AnimationFrame> frames;
 
-        public UInt16 FrameCount
+        public int FrameCount
         {
-            get { return frameCount; }
-            set { frameCount = value; }
+            get { return frames.Count; }
         }
 
         public Animation()
         {
-            frameCount = 0;
-            frames = new AnimationFrame[AnimationConstants._MaxFrameCount];
-            for(int i = 0; i < frames.Length; i++)
-            {
-                frames[i] = new AnimationFrame();
-            }
+            frames = new List<AnimationFrame>();
         }
 
-        public AnimationFrame? GetFrameNumber(int frameNumber)
+        public AnimationFrame? GetFrame(int frameIndex)
         {
-            if(frameNumber < 1 || frameNumber > frameCount) return null;
-            return frames[frameNumber - 1];
+            if(frameIndex < 0 || frameIndex > frames.Count - 1) return null;
+            return frames[frameIndex];
         }
 
-        public int GetNumberOfFrame(AnimationFrame? frame)
+        public int IndexOf(AnimationFrame? frame)
         {
-            if(frame == null) return -1;
-            for(int index = 0; index < frames.Length; index++)
-            {
-                if (object.ReferenceEquals(frame, frames[index]))
-                {
-                    return index + 1;
-                }
-            }
-            return -1;
+            if (frame == null) return -1;
+            return frames.IndexOf(frame);
         }
 
         public AnimationFrame? AddFrame(UInt16 fillColor, UInt32 duration)
         {
-            if(frameCount >= AnimationConstants._MaxFrameCount) return null;
+            if (FrameCount >= AnimationConstants._MaxFrameCount) return null;
             AnimationFrame frame = new AnimationFrame();
-            frames[frameCount] = frame;
             frame.FillColor = fillColor;
             frame.Duration = duration;
-            frameCount++;
+            frames.Add(frame);
             return frame;
         }
 
         public AnimationFrame? DuplicateFrame(AnimationFrame frame)
         {
             if(frame == null) return null;
-            if (frameCount >= AnimationConstants._MaxFrameCount) return null;
-            int frameNumber = GetNumberOfFrame(frame);
-            int newFrameNumber = frameNumber + 1;
-            int newFrameIndex = newFrameNumber - 1;
-            for (int index = AnimationConstants._MaxFrameCount - 1; index > newFrameIndex; index--)
-            {
-                frames[index] = frames[index - 1];
-            }
+            if (FrameCount >= AnimationConstants._MaxFrameCount) return null;
+            int frameIndex = IndexOf(frame);
+            if (frameIndex < 0) return null;
             AnimationFrame newFrame = new AnimationFrame(frame);
-            frames[newFrameIndex] = newFrame;
-            frameCount++;
+            frames.Insert(frameIndex + 1, newFrame);
             return newFrame;
         }
 
         public int RemoveFrame(AnimationFrame? frame)
         {
             if (frame == null) return -1;
-            for (int index = 0; index < frames.Length; index++)
-            {
-                if (object.ReferenceEquals(frame, frames[index]))
-                {
-                    for (int innerIndex = index;  innerIndex < frames.Length - 1; innerIndex++)
-                    {
-                        frames[innerIndex] = frames[innerIndex + 1];
-                    }
-                    frames[^1] = new AnimationFrame();
-                    frameCount--;
-                    return index + 1;
-                }
-            }
-            return -1;
+            int frameIndex = IndexOf(frame);
+            frames.Remove(frame);
+            if (frameIndex > FrameCount - 1) return frameIndex - 1;
+            return frameIndex;
         }
 
         public bool MoveFrameUp(AnimationFrame frame)
         {
-            int frameNumber = GetNumberOfFrame(frame);
-            if (frameNumber < 1) return false;
-            if (frameNumber == FrameCount) return false;
-            int frameIndex = frameNumber - 1;
+            int frameIndex = IndexOf(frame);
+            if (frameIndex < 0) return false;
+            if (frameIndex == FrameCount - 1) return false;
             AnimationFrame animationFrame = frames[frameIndex];
             frames[frameIndex] = frames[frameIndex + 1];
             frames[frameIndex + 1] = animationFrame;
@@ -104,10 +73,8 @@ namespace VectorCubeAnimationEditor
 
         public bool MoveFrameDown(AnimationFrame frame)
         {
-            int frameNumber = GetNumberOfFrame(frame);
-            if (frameNumber < 1) return false;
-            if (frameNumber == 1) return false;
-            int frameIndex = frameNumber - 1;
+            int frameIndex = IndexOf(frame);
+            if (frameIndex < 1) return false;
             AnimationFrame animationFrame = frames[frameIndex];
             frames[frameIndex] = frames[frameIndex - 1];
             frames[frameIndex - 1] = animationFrame;
@@ -118,11 +85,19 @@ namespace VectorCubeAnimationEditor
         {
             byte[] animationBytes = new byte[2402];
             int bytePosition = 0;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), frameCount);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), (ushort)frames.Count);
             bytePosition += 2;
-            for (int index = 0; index < frames.Length; index++)
+            for (int index = 0; index < frames.Count; index++)
             {
                 frames[index].Serialize(ref bytePosition, animationBytes);
+            }
+            for (int index = frames.Count; index < AnimationConstants._MaxFrameCount; index++)
+            {
+                for (int primitiveIndex = 0; primitiveIndex < AnimationConstants._MaxPrimitiveCount; primitiveIndex++)
+                {
+                    bytePosition += AnimationConstants._PrimitiveTypeWidth;
+                    bytePosition += AnimationConstants._LargestPrimitiveByteCount;
+                }
             }
             return animationBytes;
         }
@@ -131,10 +106,11 @@ namespace VectorCubeAnimationEditor
         {
             if (animationBytes.Length != 2402) return;
             int bytePosition = 0;
-            frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            UInt16 frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            for (int index = 0; index < frames.Length; index++)
+            for (int index = 0; index < frameCount; index++)
             {
+                AddFrame(0, 0);
                 frames[index].Deserialize(ref bytePosition, animationBytes);
             }
         }

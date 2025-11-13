@@ -10,8 +10,6 @@ namespace VectorCubeAnimationEditor
         private UInt16 fillColor;
         private List<Primitive> primitives;
 
-        const int LARGEST_PRIMITIVE_BYTE_COUNT = 14;
-
         public UInt32 Duration
         {
             set { duration = value; }
@@ -49,7 +47,7 @@ namespace VectorCubeAnimationEditor
             return primitives[primitiveIndex];
         }
 
-        public int GetIndexOfPrimitive(Primitive? primitive)
+        public int IndexOf(Primitive? primitive)
         {
             if (primitive == null) return -1;
             return primitives.IndexOf(primitive);
@@ -57,7 +55,7 @@ namespace VectorCubeAnimationEditor
 
         public Primitive? AddPrimitive(Type primitiveType, UInt16 color)
         {
-            if (PrimitiveCount > AnimationConstants._MaxPrimitiveCount) return null;
+            if (PrimitiveCount >= AnimationConstants._MaxPrimitiveCount) return null;
             Primitive? primitive = (Primitive?)Activator.CreateInstance(primitiveType);
             if (primitive != null)
             {
@@ -99,8 +97,8 @@ namespace VectorCubeAnimationEditor
             }
             for (int index = primitives.Count; index < AnimationConstants._MaxPrimitiveCount; index++)
             {
-                bytePosition += AnimationConstants._CommandWidth;
-                bytePosition += LARGEST_PRIMITIVE_BYTE_COUNT;
+                bytePosition += AnimationConstants._PrimitiveTypeWidth;
+                bytePosition += AnimationConstants._LargestPrimitiveByteCount;
             }
         }
 
@@ -115,7 +113,7 @@ namespace VectorCubeAnimationEditor
             for (int index = 0; index < primitiveCount; index++)
             {
                 PrimitiveType type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-                bytePosition += AnimationConstants._CommandWidth;
+                bytePosition += AnimationConstants._PrimitiveTypeWidth;
                 Primitive newPrimitive = null;
                 switch (type)
                 {
@@ -142,7 +140,7 @@ namespace VectorCubeAnimationEditor
             for (int index = primitiveCount; index < AnimationConstants._MaxPrimitiveCount; index++)
             {
                 bytePosition += AnimationConstants._CommandWidth;
-                bytePosition += LARGEST_PRIMITIVE_BYTE_COUNT;
+                bytePosition += AnimationConstants._LargestPrimitiveByteCount;
             }
         }
 

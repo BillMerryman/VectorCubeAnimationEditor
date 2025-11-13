@@ -65,12 +65,12 @@ namespace VectorCubeAnimationEditor
             get { return (Int16)(cenY * AnimationConstants._ScaleFactor); }
         }
 
-        public Int16 ScreenCenW
+        public Int16 ScreenW
         {
             get { return (Int16)(w * AnimationConstants._ScaleFactor); }
         }
 
-        public Int16 ScreenCenH
+        public Int16 ScreenH
         {
             get { return (Int16)(h * AnimationConstants._ScaleFactor); }
         }
@@ -156,7 +156,7 @@ namespace VectorCubeAnimationEditor
             matrix.Scale(AnimationConstants._ScaleFactor, AnimationConstants._ScaleFactor);
             matrix.TransformPoints(vertices);
             matrix.Reset();
-            matrix.Translate(cenX * AnimationConstants._ScaleFactor, cenY * AnimationConstants._ScaleFactor);
+            matrix.Translate(ScreenCenX, ScreenCenY);
             matrix.TransformPoints(vertices);
 
             return vertices;

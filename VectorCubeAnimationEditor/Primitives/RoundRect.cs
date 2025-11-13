@@ -91,12 +91,34 @@ namespace VectorCubeAnimationEditor
             if (isHighlighted) e.DrawPath(pen, path);
         }
 
+        public Point ScreenCen
+        {
+            get { return new Point(ScreenX, ScreenY); }
+        }
+
+        public Int16 ScreenX
+        {
+            get { return (Int16)(x0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenY
+        {
+            get { return (Int16)(y0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenW
+        {
+            get { return (Int16)(w * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenH
+        {
+            get { return (Int16)(h * AnimationConstants._ScaleFactor); }
+        }
+
         public GraphicsPath GetRectanglePath()
         {
-            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(x0 * AnimationConstants._ScaleFactor,
-                                                                            y0 * AnimationConstants._ScaleFactor,
-                                                                            w * AnimationConstants._ScaleFactor,
-                                                                            h * AnimationConstants._ScaleFactor);
+            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX, ScreenY, ScreenW, ScreenH);
             int _radius = radius * AnimationConstants._ScaleFactor;
             int diameter = 2 * _radius;
             Size size = new Size(diameter, diameter);

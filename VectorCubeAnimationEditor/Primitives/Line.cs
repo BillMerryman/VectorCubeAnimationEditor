@@ -72,6 +72,15 @@ namespace VectorCubeAnimationEditor
             y1 += (Int16)offset.Y;
         }
 
+        public override void Draw(Graphics e, bool isHighlighted)
+        {
+            Color drawColor = Utility.GetColorFromUIint16(color);
+            Pen pen = new Pen(drawColor);
+            if (isHighlighted) pen.DashStyle = DashStyle.Dash;
+            e.DrawLine(pen, X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor, X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor);
+            pen.Dispose();
+        }
+
         public void MoveVertex(int vertexNum, Point offset)
         {
             if (vertexNum < 0 || vertexNum > 1) return;
@@ -87,14 +96,6 @@ namespace VectorCubeAnimationEditor
             }
         }
 
-        public override void Draw(Graphics e, bool isHighlighted)
-        {
-            Color drawColor = Utility.GetColorFromUIint16(color);
-            Pen pen = new Pen(drawColor);
-            if (isHighlighted) pen.DashStyle = DashStyle.Dash;
-            e.DrawLine(pen, X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor, X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor);
-            pen.Dispose();
-        }
         public int IsPointNearVertex(Point point, Double margin)
         {
             if (Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin

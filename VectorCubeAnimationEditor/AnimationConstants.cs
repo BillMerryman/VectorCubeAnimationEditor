@@ -21,17 +21,18 @@ namespace VectorCubeAnimationEditor
         public const Int16 DEFAULT_PRIMITIVE_BOTTOM = SCREEN_CENTER_Y + DEFAULT_PRIMITIVE_RADIUS;
 
         public const PrimitiveType _Error = 0;
-        public const PrimitiveType _Line = 5;
-        public const PrimitiveType _Rect = 6;
-        public const PrimitiveType _RoundRect = 4;
-        public const PrimitiveType _Triangle = 3;
-        public const PrimitiveType _Circle = 1;
-        public const PrimitiveType _QuarterCircle = 2;
-        public const PrimitiveType _RotatedRect = 7;
+        public const PrimitiveType _Line = 10;
+        public const PrimitiveType _Triangle = 25;
+        public const PrimitiveType _RoundRect = 35;
+        public const PrimitiveType _RotatedRect = 45;
+        public const PrimitiveType _Circle = 55;
+        public const PrimitiveType _QuarterCircle = 65;
 
         public static UInt16 _CommandWidth = 2;
+        public static UInt16 _PrimitiveTypeWidth = 2;
         public static UInt16 _MaxFrameCount = 12;
         public static UInt16 _MaxPrimitiveCount = 12;
+        public static UInt16 _LargestPrimitiveByteCount = 14;
         public static int _ScaleFactor = 3;
     }
 }

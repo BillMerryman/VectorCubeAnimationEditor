@@ -161,7 +161,7 @@ namespace VectorCubeAnimationEditor
             point.X -= referencePoint.X;
             point.Y -= referencePoint.Y;
 
-            Point[] points = new Point[] { point };
+            Point[] points = [point];
 
             Matrix matrix = new Matrix();
             matrix.Rotate(angleDeg);
