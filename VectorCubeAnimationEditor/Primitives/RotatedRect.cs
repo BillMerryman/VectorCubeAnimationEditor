@@ -50,41 +50,6 @@ namespace VectorCubeAnimationEditor
             set { color = value; }
         }
 
-        public Point ScreenCen
-        {
-            get { return new Point(ScreenCenX, ScreenCenY); }
-        }
-
-        public Int16 ScreenCenX
-        {
-            get { return (Int16)(cenX * AnimationConstants._ScaleFactor); }
-        }
-
-        public Int16 ScreenCenY
-        {
-            get { return (Int16)(cenY * AnimationConstants._ScaleFactor); }
-        }
-
-        public Int16 ScreenW
-        {
-            get { return (Int16)(w * AnimationConstants._ScaleFactor); }
-        }
-
-        public Int16 ScreenH
-        {
-            get { return (Int16)(h * AnimationConstants._ScaleFactor); }
-        }
-
-        public Point ScreenRectangleCenter
-        {
-            get { return new Point((w / 2) * AnimationConstants._ScaleFactor, (h / 2) * AnimationConstants._ScaleFactor); }
-        }
-
-        public Int16 ScreenHalfDiagonal
-        {
-            get { return (Int16)(Math.Sqrt(Math.Pow(ScreenRectangleCenter.X + 1, 2) + Math.Pow(ScreenRectangleCenter.Y + 1, 2))); }
-        }
-
         public RotatedRect()
         {
             cenX = AnimationConstants.SCREEN_CENTER_X;
@@ -110,12 +75,6 @@ namespace VectorCubeAnimationEditor
             return new RotatedRect(this);
         }
 
-        public override void Move(Point offset)
-        {
-            cenX += (Int16)offset.X;
-            cenY += (Int16)offset.Y;
-        }
-
         public override void Draw(Graphics e, bool isHighlighted)
         {
             Color drawColor = Utility.GetColorFromUIint16(color);
@@ -124,7 +83,7 @@ namespace VectorCubeAnimationEditor
             pen.DashStyle = DashStyle.Dash;
 
             // Split rectangle into two triangles (diagonal from top-left to bottom-right)
-            Point[] corners = GetVerticesScreen();
+            Point[] corners = ScreenGetVertices();
             Point[] triangle1 = new Point[] { corners[0], corners[1], corners[2] };
             Point[] triangle2 = new Point[] { corners[1], corners[2], corners[3] };
             e.FillPolygon(brush, triangle1);
@@ -139,7 +98,13 @@ namespace VectorCubeAnimationEditor
             }
         }
 
-        public Point[] GetVerticesScreen()
+        public override void Move(Point offset)
+        {
+            cenX += (Int16)offset.X;
+            cenY += (Int16)offset.Y;
+        }
+
+        public Point[] GetVertices()
         {
             Point center = new Point(w / 2, h / 2);
             Point topLeft = new Point(center.X - w, center.Y - h);
@@ -152,44 +117,7 @@ namespace VectorCubeAnimationEditor
             Matrix matrix = new Matrix();
             matrix.Rotate(angleDeg);
             matrix.TransformPoints(vertices);
-            matrix.Reset();
-            matrix.Scale(AnimationConstants._ScaleFactor, AnimationConstants._ScaleFactor);
-            matrix.TransformPoints(vertices);
-            matrix.Reset();
-            matrix.Translate(ScreenCenX, ScreenCenY);
-            matrix.TransformPoints(vertices);
-
             return vertices;
-        }
-
-        public bool IsPointNearCenter(Point point, Double margin)
-        {
-            return Utility.ArePointsWithinMargin(point, ScreenCen, margin);
-        }
-
-        public bool IsPointOnRadius(Point point, int margin)
-        {
-            return Utility.IsPointOnRadius(ScreenCen, point, ScreenHalfDiagonal, margin);
-        }
-
-        public int IsPointNearVertex(Point point, Double margin)
-        {
-            Point[] vertices = GetVerticesScreen();
-            int selectedVertex = -1;
-            for(int index = 0; index < vertices.Length; index++)
-            {
-                if (Utility.ArePointsWithinMargin(point, vertices[index], margin))
-                {
-                    selectedVertex = index;
-                }
-
-            }
-            return selectedVertex;
-        }
-
-        public Int16 GetAngle(Point point)
-        {
-            return Utility.GetAngleFromReferencePoint(ScreenCen, point);
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -225,6 +153,89 @@ namespace VectorCubeAnimationEditor
             color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 4;
         }
+
+        #region Screen mapped methods
+
+        public Point ScreenCen
+        {
+            get { return new Point(ScreenCenX, ScreenCenY); }
+        }
+
+        public Int16 ScreenCenX
+        {
+            get { return (Int16)(cenX * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenCenY
+        {
+            get { return (Int16)(cenY * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenW
+        {
+            get { return (Int16)(w * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenH
+        {
+            get { return (Int16)(h * AnimationConstants._ScaleFactor); }
+        }
+
+        public Point ScreenRectangleCenter
+        {
+            get { return new Point((w / 2) * AnimationConstants._ScaleFactor, (h / 2) * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenHalfDiagonal
+        {
+            get { return (Int16)(Math.Sqrt(Math.Pow(ScreenRectangleCenter.X + 1, 2) + Math.Pow(ScreenRectangleCenter.Y + 1, 2))); }
+        }
+
+        public Point[] ScreenGetVertices()
+        {
+            Point[] vertices = GetVertices();
+
+            Matrix matrix = new Matrix();
+            matrix.Scale(AnimationConstants._ScaleFactor, AnimationConstants._ScaleFactor);
+            matrix.TransformPoints(vertices);
+            matrix.Reset();
+            matrix.Translate(ScreenCenX, ScreenCenY);
+            matrix.TransformPoints(vertices);
+
+            return vertices;
+        }
+
+        public bool IsPointNearCenter(Point point, Double margin)
+        {
+            return Utility.ArePointsWithinMargin(point, ScreenCen, AnimationConstants._ScaleFactor * margin);
+        }
+
+        public bool IsPointOnRadius(Point point, int margin)
+        {
+            return Utility.IsPointOnRadius(ScreenCen, point, ScreenHalfDiagonal, margin);
+        }
+
+        public int IsPointNearVertex(Point point, Double margin)
+        {
+            Point[] vertices = ScreenGetVertices();
+            int selectedVertex = -1;
+            for (int index = 0; index < vertices.Length; index++)
+            {
+                if (Utility.ArePointsWithinMargin(point, vertices[index], AnimationConstants._ScaleFactor * margin))
+                {
+                    selectedVertex = index;
+                }
+
+            }
+            return selectedVertex;
+        }
+
+        public Int16 GetAngle(Point point)
+        {
+            return Utility.GetAngleFromReferencePoint(ScreenCen, point);
+        }
+
+        #endregion
 
     }
 }

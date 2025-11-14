@@ -74,12 +74,6 @@ namespace VectorCubeAnimationEditor
             return new RoundRect(this);
         }
 
-        public override void Move(Point offset)
-        {
-            x0 += (Int16)offset.X;
-            y0 += (Int16)offset.Y;
-        }
-
         public override void Draw(Graphics e, bool isHighlighted)
         {
             GraphicsPath path = GetRectanglePath();
@@ -91,87 +85,10 @@ namespace VectorCubeAnimationEditor
             if (isHighlighted) e.DrawPath(pen, path);
         }
 
-        public Point ScreenCen
+        public override void Move(Point offset)
         {
-            get { return new Point(ScreenX, ScreenY); }
-        }
-
-        public Int16 ScreenX
-        {
-            get { return (Int16)(x0 * AnimationConstants._ScaleFactor); }
-        }
-
-        public Int16 ScreenY
-        {
-            get { return (Int16)(y0 * AnimationConstants._ScaleFactor); }
-        }
-
-        public Int16 ScreenW
-        {
-            get { return (Int16)(w * AnimationConstants._ScaleFactor); }
-        }
-
-        public Int16 ScreenH
-        {
-            get { return (Int16)(h * AnimationConstants._ScaleFactor); }
-        }
-
-        public GraphicsPath GetRectanglePath()
-        {
-            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX, ScreenY, ScreenW, ScreenH);
-            int _radius = radius * AnimationConstants._ScaleFactor;
-            int diameter = 2 * _radius;
-            Size size = new Size(diameter, diameter);
-            System.Drawing.Rectangle arc = new System.Drawing.Rectangle(bounds.Location, size);
-            GraphicsPath path = new GraphicsPath();
-
-            if (radius == 0)
-            {
-                path.AddRectangle(bounds);
-            }
-            else
-            {
-                path.AddArc(arc, 180, 90);
-                arc.X = bounds.Right - diameter;
-                path.AddArc(arc, 270, 90);
-                arc.Y = bounds.Bottom - diameter;
-                path.AddArc(arc, 0, 90);
-                arc.X = bounds.Left;
-                path.AddArc(arc, 90, 90);
-                path.CloseFigure();
-            }
-            return path;
-        }
-
-        public bool IsPointNearPerimeter(Point point, Double margin)
-        {
-            UInt16 halfWidth = (UInt16)(w / 2);
-            UInt16 halfHeight = (UInt16)(h / 2);
-            UInt16 screenHalfWidth = (UInt16)(halfWidth * AnimationConstants._ScaleFactor);
-            UInt16 screenHalfHeight = (UInt16)(halfHeight * AnimationConstants._ScaleFactor);
-            UInt16 screenMidX =  (UInt16)(x0 * AnimationConstants._ScaleFactor + screenHalfWidth);
-            UInt16 screenMidY = (UInt16)(y0 * AnimationConstants._ScaleFactor + screenHalfHeight);
-            int xInRange = Math.Abs(point.X - screenMidX);
-            int yInRange = Math.Abs(point.Y - screenMidY);
-            if ((Math.Abs(point.Y - (y0 * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.Y - ((y0 + h) * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
-            if ((Math.Abs(point.X - ((x0 + w) * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
-            return false;
-        }
-
-        public bool IsPointNearBottomRight(Point point, Double margin)
-        {
-            Point bottomRight = new Point(x0 + w, y0 + h);
-
-            return Math.Abs(point.X - (bottomRight.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
-                    && Math.Abs(point.Y - (bottomRight.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin;
-        }
-
-        public bool IsPointInside(Point point)
-        {
-            GraphicsPath path = GetRectanglePath();
-            return path.IsVisible(point);
+            x0 += (Int16)offset.X;
+            y0 += (Int16)offset.Y;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -207,6 +124,93 @@ namespace VectorCubeAnimationEditor
             color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 4;
         }
+
+        #region Screen mapped methods
+
+        public Point ScreenCen
+        {
+            get { return new Point(ScreenX, ScreenY); }
+        }
+
+        public Int16 ScreenX
+        {
+            get { return (Int16)(x0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenY
+        {
+            get { return (Int16)(y0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenW
+        {
+            get { return (Int16)(w * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenH
+        {
+            get { return (Int16)(h * AnimationConstants._ScaleFactor); }
+        }
+
+        public bool IsPointNearPerimeter(Point point, Double margin)
+        {
+            UInt16 halfWidth = (UInt16)(w / 2);
+            UInt16 halfHeight = (UInt16)(h / 2);
+            UInt16 screenHalfWidth = (UInt16)(halfWidth * AnimationConstants._ScaleFactor);
+            UInt16 screenHalfHeight = (UInt16)(halfHeight * AnimationConstants._ScaleFactor);
+            UInt16 screenMidX = (UInt16)(x0 * AnimationConstants._ScaleFactor + screenHalfWidth);
+            UInt16 screenMidY = (UInt16)(y0 * AnimationConstants._ScaleFactor + screenHalfHeight);
+            int xInRange = Math.Abs(point.X - screenMidX);
+            int yInRange = Math.Abs(point.Y - screenMidY);
+            if ((Math.Abs(point.Y - (y0 * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
+            if ((Math.Abs(point.Y - ((y0 + h) * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
+            if ((Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
+            if ((Math.Abs(point.X - ((x0 + w) * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
+            return false;
+        }
+
+        public bool IsPointNearBottomRight(Point point, Double margin)
+        {
+            Point bottomRight = new Point(x0 + w, y0 + h);
+
+            return Math.Abs(point.X - (bottomRight.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
+                    && Math.Abs(point.Y - (bottomRight.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin;
+        }
+
+        public bool IsPointInside(Point point)
+        {
+            GraphicsPath path = GetRectanglePath();
+            return path.IsVisible(point);
+        }
+
+        public GraphicsPath GetRectanglePath()
+        {
+            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX, ScreenY, ScreenW, ScreenH);
+            int _radius = radius * AnimationConstants._ScaleFactor;
+            int diameter = 2 * _radius;
+            Size size = new Size(diameter, diameter);
+            System.Drawing.Rectangle arc = new System.Drawing.Rectangle(bounds.Location, size);
+            GraphicsPath path = new GraphicsPath();
+
+            if (radius == 0)
+            {
+                path.AddRectangle(bounds);
+            }
+            else
+            {
+                path.AddArc(arc, 180, 90);
+                arc.X = bounds.Right - diameter;
+                path.AddArc(arc, 270, 90);
+                arc.Y = bounds.Bottom - diameter;
+                path.AddArc(arc, 0, 90);
+                arc.X = bounds.Left;
+                path.AddArc(arc, 90, 90);
+                path.CloseFigure();
+            }
+            return path;
+        }
+
+        #endregion
 
     }
 }

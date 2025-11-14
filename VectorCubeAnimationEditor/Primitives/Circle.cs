@@ -79,12 +79,6 @@ namespace VectorCubeAnimationEditor
             return new Circle(this);
         }
 
-        public override void Move(Point offset)
-        {
-            x0 += (Int16)offset.X;
-            y0 += (Int16)offset.Y;
-        }
-
         public override void Draw(Graphics e, bool isHighlighted)
         {
             Color drawColor = Utility.GetColorFromUIint16(color);
@@ -104,22 +98,10 @@ namespace VectorCubeAnimationEditor
 
         }
 
-        public bool IsPointNearCenter(Point point, Double margin)
+        public override void Move(Point offset)
         {
-            return Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2
-                    && Math.Abs(point.Y - (y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2;
-        }
-
-        public bool IsPointOnRadius(Point point, Double margin)
-        {
-            int c = r * AnimationConstants._ScaleFactor;
-            int a = ((x0 * AnimationConstants._ScaleFactor) - point.X);
-            int b = ((y0 * AnimationConstants._ScaleFactor) - point.Y);
-            int cSquare = c * c;
-            int aSquare = a * a;
-            int bSquare = b * b;
-            if ((aSquare + bSquare > cSquare * (1 - margin)) && (aSquare + bSquare < cSquare * (1 + margin))) return true;
-            return false;
+            x0 += (Int16)offset.X;
+            y0 += (Int16)offset.Y;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -155,6 +137,28 @@ namespace VectorCubeAnimationEditor
             color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 5;
         }
+
+        #region Screen mapped methods
+
+        public bool IsPointNearCenter(Point point, Double margin)
+        {
+            return Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2
+                    && Math.Abs(point.Y - (y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2;
+        }
+
+        public bool IsPointOnRadius(Point point, Double margin)
+        {
+            int c = r * AnimationConstants._ScaleFactor;
+            int a = ((x0 * AnimationConstants._ScaleFactor) - point.X);
+            int b = ((y0 * AnimationConstants._ScaleFactor) - point.Y);
+            int cSquare = c * c;
+            int aSquare = a * a;
+            int bSquare = b * b;
+            if ((aSquare + bSquare > cSquare * (1 - margin)) && (aSquare + bSquare < cSquare * (1 + margin))) return true;
+            return false;
+        }
+
+        #endregion
 
     }
 }

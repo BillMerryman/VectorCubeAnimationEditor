@@ -43,33 +43,25 @@ namespace VectorCubeAnimationEditor
 
         public Line()
         {
-            x0 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
-            y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
-            x1 = AnimationConstants.DEFAULT_PRIMITIVE_RIGHT;
-            y1 = AnimationConstants.DEFAULT_PRIMITIVE_BOTTOM;
-            color = 0;
+            X0 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
+            Y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
+            X1 = AnimationConstants.DEFAULT_PRIMITIVE_RIGHT;
+            Y1 = AnimationConstants.DEFAULT_PRIMITIVE_BOTTOM;
+            Color = 0;
         }
 
         public Line(Line line)
         {
-            x0 = line.X0;
-            y0 = line.Y0;
-            x1 = line.X1;
-            y1 = line.Y1;
-            color = line.Color;
+            X0 = line.X0;
+            Y0 = line.Y0;
+            X1 = line.X1;
+            Y1 = line.Y1;
+            Color = line.Color;
         }
 
         public override Primitive Clone()
         {
             return new Line(this);
-        }
-
-        public override void Move(Point offset)
-        {
-            x0 += (Int16)offset.X;
-            y0 += (Int16)offset.Y;
-            x1 += (Int16)offset.X;
-            y1 += (Int16)offset.Y;
         }
 
         public override void Draw(Graphics e, bool isHighlighted)
@@ -81,59 +73,76 @@ namespace VectorCubeAnimationEditor
             pen.Dispose();
         }
 
+        public override void Move(Point offset)
+        {
+            X0 += (Int16)offset.X;
+            Y0 += (Int16)offset.Y;
+            X1 += (Int16)offset.X;
+            Y1 += (Int16)offset.Y;
+        }
+
         public void MoveVertex(int vertexNum, Point offset)
         {
             if (vertexNum < 0 || vertexNum > 1) return;
             if (vertexNum == 0)
             {
-                x0 += (Int16)offset.X;
-                y0 += (Int16)offset.Y;
+                X0 += (Int16)offset.X;
+                Y0 += (Int16)offset.Y;
             }
             if (vertexNum == 1)
             {
-                x1 += (Int16)offset.X;
-                y1 += (Int16)offset.Y;
+                X1 += (Int16)offset.X;
+                Y1 += (Int16)offset.Y;
             }
-        }
-
-        public int IsPointNearVertex(Point point, Double margin)
-        {
-            if (Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
-                && Math.Abs(point.Y - (y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 0;
-            if (Math.Abs(point.X - (x1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
-                && Math.Abs(point.Y - (y1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 1;
-            return -1;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._Line);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), y0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x1);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X1);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), y1);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y1);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), color);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
             bytePosition += 6;
         }
 
         public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            x1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            X1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            y1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Y1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition)); ;
+            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition)); ;
             bytePosition += 6;
         }
+
+        #region Screen mapped methods
+
+        public int IsPointNearVertex(Point point, Double margin)
+        {
+            if (Math.Abs(point.X - (X0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
+                && Math.Abs(point.Y - (Y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 0;
+            if (Math.Abs(point.X - (X1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
+                && Math.Abs(point.Y - (Y1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 1;
+            return -1;
+        }
+
+        public bool IsPointNearLine(Point point)
+        {
+            return Utility.IsPointNearLine(new Point(X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor), new Point(X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor), point, AnimationConstants._ScaleFactor * 2);
+        }
+
+        #endregion
 
     }
 }

@@ -83,16 +83,6 @@ namespace VectorCubeAnimationEditor
             return new Triangle(this);
         }
 
-        public override void Move(Point offset)
-        {
-            x0 += (Int16)offset.X;
-            y0 += (Int16)offset.Y;
-            x1 += (Int16)offset.X;
-            y1 += (Int16)offset.Y;
-            x2 += (Int16)offset.X;
-            y2 += (Int16)offset.Y;
-        }
-
         public override void Draw(Graphics e, bool isHighlighted)
         {
 
@@ -108,6 +98,16 @@ namespace VectorCubeAnimationEditor
             pen.DashStyle = DashStyle.Dash;
             e.FillPolygon(brush, trianglePoints);
             if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
+        }
+
+        public override void Move(Point offset)
+        {
+            x0 += (Int16)offset.X;
+            y0 += (Int16)offset.Y;
+            x1 += (Int16)offset.X;
+            y1 += (Int16)offset.Y;
+            x2 += (Int16)offset.X;
+            y2 += (Int16)offset.Y;
         }
 
         public void MoveVertex(int vertexNum, Point offset)
@@ -128,39 +128,6 @@ namespace VectorCubeAnimationEditor
                 x2 += (Int16)offset.X;
                 y2 += (Int16)offset.Y;
             }
-        }
-
-        public Point[] GetVerticesScreen()
-        {
-            Point vertex0 = new Point(x0 * AnimationConstants._ScaleFactor, y0 * AnimationConstants._ScaleFactor);
-            Point vertex1 = new Point(x1 * AnimationConstants._ScaleFactor, y1 * AnimationConstants._ScaleFactor);
-            Point vertex2 = new Point(x2 * AnimationConstants._ScaleFactor, y2 * AnimationConstants._ScaleFactor);
-
-            Point[] vertices = new Point[] { vertex0, vertex1, vertex2 };
-
-            return vertices;
-        }
-
-        public int IsPointNearVertex(Point point, Double margin)
-        {
-            Point[] vertices = GetVerticesScreen();
-            int selectedVertex = -1;
-            for (int index = 0; index < vertices.Length; index++)
-            {
-                if (Utility.ArePointsWithinMargin(point, vertices[index], margin))
-                {
-                    selectedVertex = index;
-                }
-
-            }
-            return selectedVertex;
-        }
-
-        public bool IsPointNearCentroid(Point point, Double margin)
-        {
-            Point centroid = GetCentroid();
-            return (Math.Abs(point.X - (centroid.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
-                && Math.Abs(point.Y - (centroid.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin);
         }
 
         public Point GetCentroid()
@@ -207,6 +174,43 @@ namespace VectorCubeAnimationEditor
             color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
         }
+
+        #region Screen mapped methods
+
+        public Point[] GetVerticesScreen()
+        {
+            Point vertex0 = new Point(x0 * AnimationConstants._ScaleFactor, y0 * AnimationConstants._ScaleFactor);
+            Point vertex1 = new Point(x1 * AnimationConstants._ScaleFactor, y1 * AnimationConstants._ScaleFactor);
+            Point vertex2 = new Point(x2 * AnimationConstants._ScaleFactor, y2 * AnimationConstants._ScaleFactor);
+
+            Point[] vertices = new Point[] { vertex0, vertex1, vertex2 };
+
+            return vertices;
+        }
+
+        public int IsPointNearVertex(Point point, Double margin)
+        {
+            Point[] vertices = GetVerticesScreen();
+            int selectedVertex = -1;
+            for (int index = 0; index < vertices.Length; index++)
+            {
+                if (Utility.ArePointsWithinMargin(point, vertices[index], AnimationConstants._ScaleFactor * margin))
+                {
+                    selectedVertex = index;
+                }
+
+            }
+            return selectedVertex;
+        }
+
+        public bool IsPointNearCentroid(Point point, Double margin)
+        {
+            Point centroid = GetCentroid();
+            return (Math.Abs(point.X - (centroid.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
+                && Math.Abs(point.Y - (centroid.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin);
+        }
+
+        #endregion
 
     }
 }

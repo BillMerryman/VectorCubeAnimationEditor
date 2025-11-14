@@ -14,9 +14,9 @@ namespace VectorCubeAnimationEditor
 
         public abstract Primitive Clone();
 
-        public abstract void Move(Point offset);
-
         public abstract void Draw(Graphics e, bool isHighlighted);
+
+        public abstract void Move(Point offset);
 
         public abstract void Serialize(ref int bytePosition, byte[] animationBytes);
 

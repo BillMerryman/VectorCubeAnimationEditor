@@ -174,7 +174,7 @@ namespace VectorCubeAnimationEditor
 
         #endregion
 
-        #region IP_Validation
+        #region IP validation
 
         private void txtIPFirstOctet_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -627,8 +627,8 @@ namespace VectorCubeAnimationEditor
             if (currentPrimitive == null) return;
 
             Point mouseDelta = new Point(e.Location.X - MouseLocation.X, e.Location.Y - MouseLocation.Y);
-            Point primitiveDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
-                                            (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
             pctbxCanvas.Cursor = Cursors.Arrow;
             switch (currentPrimitive)
@@ -656,8 +656,8 @@ namespace VectorCubeAnimationEditor
                         RoundRect roundRect = (RoundRect)currentPrimitive;
                         int roundRectWidth = roundRect.W;
                         int roundRectHeight = roundRect.H;
-                        if (roundRectWidth + primitiveDelta.X > 0) roundRect.W += (Int16)primitiveDelta.X;
-                        if (roundRectHeight + primitiveDelta.Y > 0) roundRect.H += (Int16)primitiveDelta.Y;
+                        if (roundRectWidth + unscaledMouseDelta.X > 0) roundRect.W += (Int16)unscaledMouseDelta.X;
+                        if (roundRectHeight + unscaledMouseDelta.Y > 0) roundRect.H += (Int16)unscaledMouseDelta.Y;
                         SetDisplayFieldsFromRoundRect(roundRect);
                         break;
                     case RotatedRect:
@@ -684,7 +684,7 @@ namespace VectorCubeAnimationEditor
             }
             if (isMoving)
             {
-                currentPrimitive.Move(primitiveDelta);
+                currentPrimitive.Move(unscaledMouseDelta);
                 SetDisplayFields(currentPrimitive);
                 pctbxCanvas.Refresh();
             }
@@ -706,19 +706,19 @@ namespace VectorCubeAnimationEditor
                 {
                     case Triangle:
                         Triangle triangle = (Triangle)currentPrimitive;
-                        triangle.MoveVertex(isVertexMoving, primitiveDelta);
+                        triangle.MoveVertex(isVertexMoving, unscaledMouseDelta);
                         SetDisplayFieldsFromTriangle(triangle);
                         break;
                     case Line:
                         Line line = (Line)currentPrimitive;
-                        line.MoveVertex(isVertexMoving, primitiveDelta);
+                        line.MoveVertex(isVertexMoving, unscaledMouseDelta);
                         SetDisplayFieldsFromLine(line);
                         break;
                 }
                 pctbxCanvas.Refresh();
             }
-            MouseLocation.X += primitiveDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += primitiveDelta.Y * AnimationConstants._ScaleFactor;
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
         }
 
         private void pctbxCanvas_MouseUp(object sender, MouseEventArgs e)
@@ -785,7 +785,7 @@ namespace VectorCubeAnimationEditor
 
         #endregion
 
-        #region Object Management Functions
+        #region Object management methods
 
         private void AddFrame()
         {
@@ -1081,9 +1081,9 @@ namespace VectorCubeAnimationEditor
         {
             switch (primitive)
             {
-                case Circle:
-                    Circle circle = (Circle)primitive;
-                    SetDisplayFieldsFromCircle(circle);
+                case Line:
+                    Line line = (Line)primitive;
+                    SetDisplayFieldsFromLine(line);
                     break;
                 case Triangle:
                     Triangle triangle = (Triangle)primitive;
@@ -1097,36 +1097,36 @@ namespace VectorCubeAnimationEditor
                     RotatedRect rotatedRect = (RotatedRect)primitive;
                     SetDisplayFieldsFromRotatedRect(rotatedRect);
                     break;
+                case Circle:
+                    Circle circle = (Circle)primitive;
+                    SetDisplayFieldsFromCircle(circle);
+                    break;
             }
         }
 
-        private void SetDisplayFieldsFromCircle(Circle circle)
+        private void SetDisplayFieldsFromLine(Line line)
         {
-            txtCircleX0.Text = circle.X0.ToString();
-            txtCircleY0.Text = circle.Y0.ToString();
-            txtCircleR.Text = circle.R.ToString();
-            txtCircleDelta.Text = circle.Delta.ToString();
-            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(circle.Color);
-            chkCircleTopLeft.Checked = ((circle.Quadrants & Circle.TopLeft) == Circle.TopLeft);
-            chkCircleTopRight.Checked = ((circle.Quadrants & Circle.TopRight) == Circle.TopRight);
-            chkCircleBottomLeft.Checked = ((circle.Quadrants & Circle.BottomLeft) == Circle.BottomLeft);
-            chkCircleBottomRight.Checked = ((circle.Quadrants & Circle.BottomRight) == Circle.BottomRight);
+            txtLineX0.Text = line.X0.ToString();
+            txtLineY0.Text = line.Y0.ToString();
+            txtLineX1.Text = line.X1.ToString();
+            txtLineY1.Text = line.Y1.ToString();
+            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(line.Color);
         }
 
-        private void SetCircleFromDisplayFields(Circle circle)
+        private void SetLineFromDisplayFields(Line line)
         {
-            if (circle == null) return;
-            if (!Utility.GetInt16FromString(txtCircleX0.Text, out Int16 X0)) return;
-            if (!Utility.GetInt16FromString(txtCircleY0.Text, out Int16 Y0)) return;
-            if (!Utility.GetInt16FromString(txtCircleR.Text, out Int16 R)) return;
-            if (!Utility.GetInt16FromString(txtCircleDelta.Text, out Int16 Delta)) return;
+            if (line == null) return;
+            if (!Utility.GetInt16FromString(txtLineX0.Text, out Int16 X0)) return;
+            if (!Utility.GetInt16FromString(txtLineY0.Text, out Int16 Y0)) return;
+            if (!Utility.GetInt16FromString(txtLineX1.Text, out Int16 X1)) return;
+            if (!Utility.GetInt16FromString(txtLineY1.Text, out Int16 Y1)) return;
             if (!Utility.GetUInt16FromRGBString(txtCurrentPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
-            circle.X0 = X0;
-            circle.Y0 = Y0;
-            circle.R = R;
-            circle.Delta = Delta;
-            circle.Color = Color;
+            line.X0 = X0;
+            line.Y0 = Y0;
+            line.X1 = X1;
+            line.Y1 = Y1;
+            line.Color = Color;
         }
 
         private void SetDisplayFieldsFromTriangle(Triangle triangle)
@@ -1216,29 +1216,33 @@ namespace VectorCubeAnimationEditor
             rotatedRect.Color = Color;
         }
 
-        private void SetDisplayFieldsFromLine(Line line)
+        private void SetDisplayFieldsFromCircle(Circle circle)
         {
-            txtLineX0.Text = line.X0.ToString();
-            txtLineY0.Text = line.Y0.ToString();
-            txtLineX1.Text = line.X1.ToString();
-            txtLineY1.Text = line.Y1.ToString();
-            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(line.Color);
+            txtCircleX0.Text = circle.X0.ToString();
+            txtCircleY0.Text = circle.Y0.ToString();
+            txtCircleR.Text = circle.R.ToString();
+            txtCircleDelta.Text = circle.Delta.ToString();
+            txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(circle.Color);
+            chkCircleTopLeft.Checked = ((circle.Quadrants & Circle.TopLeft) == Circle.TopLeft);
+            chkCircleTopRight.Checked = ((circle.Quadrants & Circle.TopRight) == Circle.TopRight);
+            chkCircleBottomLeft.Checked = ((circle.Quadrants & Circle.BottomLeft) == Circle.BottomLeft);
+            chkCircleBottomRight.Checked = ((circle.Quadrants & Circle.BottomRight) == Circle.BottomRight);
         }
 
-        private void SetLineFromDisplayFields(Line line)
+        private void SetCircleFromDisplayFields(Circle circle)
         {
-            if (line == null) return;
-            if (!Utility.GetInt16FromString(txtLineX0.Text, out Int16 X0)) return;
-            if (!Utility.GetInt16FromString(txtLineY0.Text, out Int16 Y0)) return;
-            if (!Utility.GetInt16FromString(txtLineX1.Text, out Int16 X1)) return;
-            if (!Utility.GetInt16FromString(txtLineY1.Text, out Int16 Y1)) return;
+            if (circle == null) return;
+            if (!Utility.GetInt16FromString(txtCircleX0.Text, out Int16 X0)) return;
+            if (!Utility.GetInt16FromString(txtCircleY0.Text, out Int16 Y0)) return;
+            if (!Utility.GetInt16FromString(txtCircleR.Text, out Int16 R)) return;
+            if (!Utility.GetInt16FromString(txtCircleDelta.Text, out Int16 Delta)) return;
             if (!Utility.GetUInt16FromRGBString(txtCurrentPrimitiveDrawColor.Text, out UInt16 Color)) return;
 
-            line.X0 = X0;
-            line.Y0 = Y0;
-            line.X1 = X1;
-            line.Y1 = Y1;
-            line.Color = Color;
+            circle.X0 = X0;
+            circle.Y0 = Y0;
+            circle.R = R;
+            circle.Delta = Delta;
+            circle.Color = Color;
         }
 
         //Set tool tips

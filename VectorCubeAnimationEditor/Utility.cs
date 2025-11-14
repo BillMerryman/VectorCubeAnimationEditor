@@ -129,6 +129,11 @@ namespace VectorCubeAnimationEditor
             return Color.FromArgb(color.A, invertedR, invertedG, invertedB);
         }
 
+        public static bool IsPointNearLine(Point endpoint1, Point endpoint2, Point point, double threshold)
+        {
+            return DistanceFromLine(endpoint1, endpoint2, point) <= threshold;
+        }
+
         public static bool IsPointOnRadius(Point point1, Point point2, Int16 radius, int margin)
         {
             int a = (point2.X - point1.X);
@@ -142,8 +147,33 @@ namespace VectorCubeAnimationEditor
 
         public static bool ArePointsWithinMargin(Point point1, Point point2, Double margin)
         {
-            return Math.Abs(point1.X - point2.X) < AnimationConstants._ScaleFactor * margin
-                && Math.Abs(point1.Y - point2.Y) < AnimationConstants._ScaleFactor * margin;
+            return Math.Abs(point1.X - point2.X) < margin
+                && Math.Abs(point1.Y - point2.Y) < margin;
+        }
+
+        public static double DistanceFromLine(Point endpoint1, Point endpoint2, Point point)
+        {
+            double dx = endpoint2.X - endpoint1.X;
+            double dy = endpoint2.Y - endpoint1.Y;
+
+            if (dx == 0 && dy == 0)
+            {
+                double pdx = point.X - endpoint1.X;
+                double pdy = point.Y - endpoint1.Y;
+                return Math.Sqrt(pdx * pdx + pdy * pdy);
+            }
+
+            double t = ((point.X - endpoint1.X) * dx + (point.Y - endpoint1.Y) * dy) / (dx * dx + dy * dy);
+
+            t = Math.Max(0, Math.Min(1, t));
+
+            double closestX = endpoint1.X + t * dx;
+            double closestY = endpoint1.Y + t * dy;
+
+            double distX = point.X - closestX;
+            double distY = point.Y - closestY;
+
+            return Math.Sqrt(distX * distX + distY * distY);
         }
 
         public static Int16 GetAngleFromReferencePoint(Point referencePoint, Point point)
