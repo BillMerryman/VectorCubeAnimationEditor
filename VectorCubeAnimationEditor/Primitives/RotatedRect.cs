@@ -1,7 +1,5 @@
-﻿using ST7735Point85;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
-using System.Linq.Expressions;
 
 namespace VectorCubeAnimationEditor
 {
@@ -52,22 +50,22 @@ namespace VectorCubeAnimationEditor
 
         public RotatedRect()
         {
-            cenX = AnimationConstants.SCREEN_CENTER_X;
-            cenY = AnimationConstants.SCREEN_CENTER_Y;
-            w = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
-            h = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
-            angleDeg = 0;
-            color = 0;
+            CenX = AnimationConstants.SCREEN_CENTER_X;
+            CenY = AnimationConstants.SCREEN_CENTER_Y;
+            W = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
+            H = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
+            AngleDeg = 0;
+            Color = 0;
         }
 
         public RotatedRect(RotatedRect rotatingRectangle)
         {
-            cenX = rotatingRectangle.CenX;
-            cenY = rotatingRectangle.CenY;
-            w = rotatingRectangle.W;
-            h = rotatingRectangle.H;
-            angleDeg = rotatingRectangle.AngleDeg;
-            color = rotatingRectangle.Color;
+            CenX = rotatingRectangle.CenX;
+            CenY = rotatingRectangle.CenY;
+            W = rotatingRectangle.W;
+            H = rotatingRectangle.H;
+            AngleDeg = rotatingRectangle.AngleDeg;
+            Color = rotatingRectangle.Color;
         }
 
         public override Primitive Clone()
@@ -77,7 +75,7 @@ namespace VectorCubeAnimationEditor
 
         public override void Draw(Graphics e, bool isHighlighted)
         {
-            Color drawColor = Utility.GetColorFromUIint16(color);
+            Color drawColor = Utility.GetColorFromUIint16(Color);
             Brush brush = new SolidBrush(drawColor);
             Pen pen = new Pen(drawColor.ColorToInverse());
             pen.DashStyle = DashStyle.Dash;
@@ -176,17 +174,17 @@ namespace VectorCubeAnimationEditor
 
         public override void Move(Point offset)
         {
-            cenX += (Int16)offset.X;
-            cenY += (Int16)offset.Y;
+            CenX += (Int16)offset.X;
+            CenY += (Int16)offset.Y;
         }
 
         public Point[] GetVertices()
         {
-            Point center = new Point(w / 2, h / 2);
-            Point topLeft = new Point(center.X - w, center.Y - h);
-            Point topRight = new Point(w - center.X, center.Y - h);
-            Point bottomRight = new Point(w - center.X, h - center.Y);
-            Point bottomLeft = new Point(center.X - w, h - center.Y);
+            Point center = new Point(W / 2, H / 2);
+            Point topLeft = new Point(center.X - W, center.Y - H);
+            Point topRight = new Point(W - center.X, center.Y - H);
+            Point bottomRight = new Point(W - center.X, H - center.Y);
+            Point bottomLeft = new Point(center.X - W, H - center.Y);
 
             Point[] vertices = new Point[] { topRight, topLeft, bottomRight, bottomLeft };
 
@@ -200,33 +198,33 @@ namespace VectorCubeAnimationEditor
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._RotatedRect);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), cenX);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), CenX);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), cenY);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), CenY);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), w);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), W);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), h);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), H);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), angleDeg);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AngleDeg);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), color);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
             bytePosition += 4;
         }
 
         public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            cenX = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            CenX = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            cenY = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            CenY = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            w = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            W = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            h = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            H = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            angleDeg = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            AngleDeg = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 4;
         }
 
@@ -239,27 +237,27 @@ namespace VectorCubeAnimationEditor
 
         public Int16 ScreenCenX
         {
-            get { return (Int16)(cenX * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(CenX * AnimationConstants._ScaleFactor); }
         }
 
         public Int16 ScreenCenY
         {
-            get { return (Int16)(cenY * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(CenY * AnimationConstants._ScaleFactor); }
         }
 
         public Int16 ScreenW
         {
-            get { return (Int16)(w * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(W * AnimationConstants._ScaleFactor); }
         }
 
         public Int16 ScreenH
         {
-            get { return (Int16)(h * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(H * AnimationConstants._ScaleFactor); }
         }
 
         public Point ScreenRectangleCenter
         {
-            get { return new Point((w / 2) * AnimationConstants._ScaleFactor, (h / 2) * AnimationConstants._ScaleFactor); }
+            get { return new Point((W / 2) * AnimationConstants._ScaleFactor, (H / 2) * AnimationConstants._ScaleFactor); }
         }
 
         public Int16 ScreenHalfDiagonal

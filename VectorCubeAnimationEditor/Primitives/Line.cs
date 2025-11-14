@@ -1,5 +1,4 @@
-﻿using ST7735Point85;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
@@ -67,7 +66,7 @@ namespace VectorCubeAnimationEditor
 
         public override void Draw(Graphics e, bool isHighlighted)
         {
-            Color drawColor = Utility.GetColorFromUIint16(color);
+            Color drawColor = Utility.GetColorFromUIint16(Color);
             Pen pen = new Pen(drawColor);
             if (isHighlighted) pen.DashStyle = DashStyle.Dash;
             e.DrawLine(pen, X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor, X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor);

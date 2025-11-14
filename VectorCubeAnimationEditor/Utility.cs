@@ -1,9 +1,6 @@
 ﻿using System.Buffers.Binary;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Printing;
 using System.Globalization;
-using System.Reflection;
 
 namespace VectorCubeAnimationEditor
 {

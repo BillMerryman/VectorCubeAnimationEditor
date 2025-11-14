@@ -1,5 +1,4 @@
-﻿using ST7735Point85;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
@@ -51,22 +50,22 @@ namespace VectorCubeAnimationEditor
 
         public RoundRect()
         {
-            x0 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
-            y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
-            w = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
-            h = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
-            radius = 0;
-            color = 0;
+            X0 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
+            Y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
+            W = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
+            H = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
+            Radius = 0;
+            Color = 0;
         }
 
         public RoundRect(RoundRect rectangle)
         {
-            x0 = rectangle.X0;
-            y0 = rectangle.Y0;
-            w = rectangle.W;
-            h = rectangle.H;
-            radius = rectangle.Radius;
-            color = rectangle.Color;
+            X0 = rectangle.X0;
+            Y0 = rectangle.Y0;
+            W = rectangle.W;
+            H = rectangle.H;
+            Radius = rectangle.Radius;
+            Color = rectangle.Color;
         }
 
         public override Primitive Clone()
@@ -77,7 +76,7 @@ namespace VectorCubeAnimationEditor
         public override void Draw(Graphics e, bool isHighlighted)
         {
             GraphicsPath path = GetRectanglePath();
-            Color drawColor = Utility.GetColorFromUIint16(color);
+            Color drawColor = Utility.GetColorFromUIint16(Color);
             Brush brush = new SolidBrush(drawColor);
             Pen pen = new Pen(drawColor.ColorToInverse());
             pen.DashStyle = DashStyle.Dash;
@@ -137,41 +136,41 @@ namespace VectorCubeAnimationEditor
 
         public override void Move(Point offset)
         {
-            x0 += (Int16)offset.X;
-            y0 += (Int16)offset.Y;
+            X0 += (Int16)offset.X;
+            Y0 += (Int16)offset.Y;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._RoundRect);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), y0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), w);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), W);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), h);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), H);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), radius);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Radius);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), color);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
             bytePosition += 4;
         }
 
         public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            w = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            W = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            h = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            H = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            radius = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Radius = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 2;
-            color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
             bytePosition += 4;
         }
 
@@ -184,44 +183,44 @@ namespace VectorCubeAnimationEditor
 
         public Int16 ScreenX
         {
-            get { return (Int16)(x0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
         }
 
         public Int16 ScreenY
         {
-            get { return (Int16)(y0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
         }
 
         public Int16 ScreenW
         {
-            get { return (Int16)(w * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(W * AnimationConstants._ScaleFactor); }
         }
 
         public Int16 ScreenH
         {
-            get { return (Int16)(h * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(H * AnimationConstants._ScaleFactor); }
         }
 
         public bool IsPointNearPerimeter(Point point, Double margin)
         {
-            UInt16 halfWidth = (UInt16)(w / 2);
-            UInt16 halfHeight = (UInt16)(h / 2);
+            UInt16 halfWidth = (UInt16)(W / 2);
+            UInt16 halfHeight = (UInt16)(H / 2);
             UInt16 screenHalfWidth = (UInt16)(halfWidth * AnimationConstants._ScaleFactor);
             UInt16 screenHalfHeight = (UInt16)(halfHeight * AnimationConstants._ScaleFactor);
-            UInt16 screenMidX = (UInt16)(x0 * AnimationConstants._ScaleFactor + screenHalfWidth);
-            UInt16 screenMidY = (UInt16)(y0 * AnimationConstants._ScaleFactor + screenHalfHeight);
+            UInt16 screenMidX = (UInt16)(X0 * AnimationConstants._ScaleFactor + screenHalfWidth);
+            UInt16 screenMidY = (UInt16)(Y0 * AnimationConstants._ScaleFactor + screenHalfHeight);
             int xInRange = Math.Abs(point.X - screenMidX);
             int yInRange = Math.Abs(point.Y - screenMidY);
-            if ((Math.Abs(point.Y - (y0 * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.Y - ((y0 + h) * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.X - (x0 * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
-            if ((Math.Abs(point.X - ((x0 + w) * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
+            if ((Math.Abs(point.Y - (Y0 * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
+            if ((Math.Abs(point.Y - ((Y0 + H) * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
+            if ((Math.Abs(point.X - (X0 * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
+            if ((Math.Abs(point.X - ((X0 + W) * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
             return false;
         }
 
         public bool IsPointNearBottomRight(Point point, Double margin)
         {
-            Point bottomRight = new Point(x0 + w, y0 + h);
+            Point bottomRight = new Point(X0 + W, Y0 + H);
 
             return Math.Abs(point.X - (bottomRight.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
                     && Math.Abs(point.Y - (bottomRight.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin;
@@ -236,13 +235,13 @@ namespace VectorCubeAnimationEditor
         public GraphicsPath GetRectanglePath()
         {
             System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX, ScreenY, ScreenW, ScreenH);
-            int _radius = radius * AnimationConstants._ScaleFactor;
+            int _radius = Radius * AnimationConstants._ScaleFactor;
             int diameter = 2 * _radius;
             Size size = new Size(diameter, diameter);
             System.Drawing.Rectangle arc = new System.Drawing.Rectangle(bounds.Location, size);
             GraphicsPath path = new GraphicsPath();
 
-            if (radius == 0)
+            if (Radius == 0)
             {
                 path.AddRectangle(bounds);
             }

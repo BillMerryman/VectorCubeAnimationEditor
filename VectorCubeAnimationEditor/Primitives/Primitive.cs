@@ -1,5 +1,4 @@
-﻿using System.Buffers.Binary;
-
+﻿
 namespace VectorCubeAnimationEditor
 {
     using PrimitiveType = UInt16;
