@@ -98,6 +98,54 @@ namespace VectorCubeAnimationEditor
 
         }
 
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMoving = false;
+        private bool isResizing = false;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            isResizing = IsPointOnRadius(MouseLocation, .1);
+            isMoving = IsPointNearCenter(MouseLocation, 2);
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+
+            bool result = false;
+            if (isResizing)
+            {
+                //Old way of resizing...
+                //int cRadius = circle.R;
+                //if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
+                int circleXOffset = ((X0 * AnimationConstants._ScaleFactor) - point.X) / AnimationConstants._ScaleFactor;
+                int circleYOffset = ((Y0 * AnimationConstants._ScaleFactor) - point.Y) / AnimationConstants._ScaleFactor;
+                R = (short)Math.Sqrt((circleXOffset * circleXOffset) + (circleYOffset * circleYOffset));
+                result = true;
+            }
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMoving = false;
+            isResizing = false;
+        }
+
+        #endregion
+
         public override void Move(Point offset)
         {
             x0 += (Int16)offset.X;

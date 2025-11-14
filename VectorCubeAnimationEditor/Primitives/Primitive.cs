@@ -16,6 +16,12 @@ namespace VectorCubeAnimationEditor
 
         public abstract void Draw(Graphics e, bool isHighlighted);
 
+        public abstract void MouseDown(Point point);
+
+        public abstract bool MouseMove(Point point, PictureBox pctbxCanvas);
+
+        public abstract void MouseUp();
+
         public abstract void Move(Point offset);
 
         public abstract void Serialize(ref int bytePosition, byte[] animationBytes);

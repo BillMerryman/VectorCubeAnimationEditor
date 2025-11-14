@@ -9,11 +9,6 @@ namespace VectorCubeAnimationEditor
         AnimationFrame? currentFrame;
         Primitive? currentPrimitive;
         bool highlightCurrent = false;
-        bool isMoving = false;
-        bool isResizing = false;
-        bool isRotating = false;
-        Int16 offsetAngle = 0;
-        int isVertexMoving = -1;
         Point MouseLocation = new Point(0, 0);
 
         public Editor()
@@ -571,162 +566,23 @@ namespace VectorCubeAnimationEditor
         {
             if (currentPrimitive == null) return;
             MouseLocation = e.Location;
-            switch (currentPrimitive)
-            {
-                case Line:
-                    Line line = (Line)currentPrimitive;
-                    isVertexMoving = line.IsPointNearVertex(MouseLocation, 2);
-                    break;
-                case Triangle:
-                    Triangle triangle = (Triangle)currentPrimitive;
-                    isVertexMoving = triangle.IsPointNearVertex(MouseLocation, 2);
-                    isMoving = triangle.IsPointNearCentroid(MouseLocation, 2);
-                    break;
-                case RoundRect:
-                    RoundRect roundRect = (RoundRect)currentPrimitive;
-                    if (roundRect.IsPointNearBottomRight(MouseLocation, 2))
-                    {
-                        isResizing = true;
-                    }
-                    else if (roundRect.IsPointInside(MouseLocation))
-                    {
-                        isMoving = true;
-                    }
-                    break;
-                case RotatedRect:
-                    RotatedRect rotatedRect = (RotatedRect)currentPrimitive;
-                    //check if it is near center and we are moving
-                    if (rotatedRect.IsPointNearCenter(MouseLocation, 2))
-                    {
-                        isMoving = true;
-                    }
-                    isVertexMoving = rotatedRect.IsPointNearVertex(MouseLocation, 2);
-                    if(isVertexMoving < 0)
-                    {
-                        isRotating = rotatedRect.IsPointOnRadius(MouseLocation, 2);
-                        if (isRotating)
-                        {
-                            offsetAngle = (Int16)(rotatedRect.AngleDeg - rotatedRect.GetAngle(MouseLocation));
-                        }
-                    }
-                    else
-                    {
-                        isResizing = true;
-                    }
-                    break;
-                case Circle:
-                    Circle circle = (Circle)currentPrimitive;
-                    isResizing = circle.IsPointOnRadius(MouseLocation, .1);
-                    isMoving = circle.IsPointNearCenter(MouseLocation, 2);
-                    break;
-            }
+            currentPrimitive.MouseDown(MouseLocation);
         }
 
         private void pctbxCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (currentPrimitive == null) return;
 
-            Point mouseDelta = new Point(e.Location.X - MouseLocation.X, e.Location.Y - MouseLocation.Y);
-            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
-                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
-
-            pctbxCanvas.Cursor = Cursors.Arrow;
-            switch (currentPrimitive)
-            {
-                case Line:
-                    break;
-                case Triangle:
-                    break;
-                case RoundRect:
-                    break;
-                case RotatedRect:
-                    RotatedRect rotatedRect = (RotatedRect)currentPrimitive;
-                    if (rotatedRect.IsPointOnRadius(e.Location, 2)) pctbxCanvas.Cursor = Cursors.Cross;
-                    if (rotatedRect.IsPointNearVertex(e.Location, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
-                    break;
-                case Circle:
-                    break;
-            }
-         
-            if (isResizing)
-            {
-                switch (currentPrimitive)
-                {
-                    case RoundRect:
-                        RoundRect roundRect = (RoundRect)currentPrimitive;
-                        int roundRectWidth = roundRect.W;
-                        int roundRectHeight = roundRect.H;
-                        if (roundRectWidth + unscaledMouseDelta.X > 0) roundRect.W += (Int16)unscaledMouseDelta.X;
-                        if (roundRectHeight + unscaledMouseDelta.Y > 0) roundRect.H += (Int16)unscaledMouseDelta.Y;
-                        SetDisplayFieldsFromRoundRect(roundRect);
-                        break;
-                    case RotatedRect:
-                        RotatedRect rotatedRect = (RotatedRect)currentPrimitive;
-                        Point rotatedMouseLocation = Utility.RotateFromReferencePoint(rotatedRect.ScreenCen, e.Location, (Int16)(-rotatedRect.AngleDeg));
-                        rotatedMouseLocation.X = (Math.Abs(rotatedMouseLocation.X) / AnimationConstants._ScaleFactor) * 2;
-                        rotatedMouseLocation.Y = (Math.Abs(rotatedMouseLocation.Y) / AnimationConstants._ScaleFactor) * 2;
-                        if (rotatedMouseLocation.X > 0) rotatedRect.W = (Int16)rotatedMouseLocation.X;
-                        if (rotatedMouseLocation.Y > 0) rotatedRect.H = (Int16)rotatedMouseLocation.Y;
-                        SetDisplayFieldsFromRotatedRect(rotatedRect);
-                        break;
-                    case Circle:
-                        Circle circle = (Circle)currentPrimitive;
-                        //Old way of resizing...
-                        //int cRadius = circle.R;
-                        //if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
-                        int circleXOffset = ((circle.X0 * AnimationConstants._ScaleFactor) - e.Location.X) / AnimationConstants._ScaleFactor;
-                        int circleYOffset = ((circle.Y0 * AnimationConstants._ScaleFactor) - e.Location.Y) / AnimationConstants._ScaleFactor;
-                        circle.R = (short)Math.Sqrt((circleXOffset * circleXOffset) + (circleYOffset * circleYOffset));
-                        SetDisplayFieldsFromCircle(circle);
-                        break;
-                }
-                pctbxCanvas.Refresh();
-            }
-            if (isMoving)
-            {
-                currentPrimitive.Move(unscaledMouseDelta);
+            if (currentPrimitive.MouseMove(e.Location, pctbxCanvas)) {
                 SetDisplayFields(currentPrimitive);
                 pctbxCanvas.Refresh();
             }
-            if (isRotating)
-            {
-                switch(currentPrimitive)
-                {
-                    case RotatedRect:
-                        RotatedRect rotatedRect = (RotatedRect)currentPrimitive;
-                        rotatedRect.AngleDeg = (Int16)(rotatedRect.GetAngle(e.Location) + offsetAngle);
-                        SetDisplayFieldsFromRotatedRect(rotatedRect);
-                        break;
-                }
-                pctbxCanvas.Refresh();
-            }
-            if (isVertexMoving > -1)
-            {
-                switch (currentPrimitive)
-                {
-                    case Triangle:
-                        Triangle triangle = (Triangle)currentPrimitive;
-                        triangle.MoveVertex(isVertexMoving, unscaledMouseDelta);
-                        SetDisplayFieldsFromTriangle(triangle);
-                        break;
-                    case Line:
-                        Line line = (Line)currentPrimitive;
-                        line.MoveVertex(isVertexMoving, unscaledMouseDelta);
-                        SetDisplayFieldsFromLine(line);
-                        break;
-                }
-                pctbxCanvas.Refresh();
-            }
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
         }
 
         private void pctbxCanvas_MouseUp(object sender, MouseEventArgs e)
         {
-            isMoving = false;
-            isResizing = false;
-            isVertexMoving = -1;
-            isRotating = false;
+            if (currentPrimitive == null) return;
+            currentPrimitive.MouseUp();
         }
 
         private void pctbxCanvas_Paint(object sender, PaintEventArgs e)

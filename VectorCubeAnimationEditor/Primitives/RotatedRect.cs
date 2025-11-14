@@ -1,7 +1,7 @@
 ﻿using ST7735Point85;
 using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
-using System.IO;
+using System.Linq.Expressions;
 
 namespace VectorCubeAnimationEditor
 {
@@ -97,6 +97,82 @@ namespace VectorCubeAnimationEditor
                                 (float)ScreenHalfDiagonal * 2);
             }
         }
+
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMouseUp = true;
+        private bool isMoving = false;
+        private bool isResizing = false;
+        private bool isRotating = false;
+        private Int16 offsetAngle = 0;
+        private int isVertexMoving = -1;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            isMouseUp = false;
+            isMoving = IsPointNearCenter(MouseLocation, 2);
+            isVertexMoving = IsPointNearVertex(MouseLocation, 2);
+            if (isVertexMoving < 0)
+            {
+                isRotating = IsPointOnRadius(MouseLocation, 2);
+                if (isRotating) offsetAngle = (Int16)(AngleDeg - GetAngle(MouseLocation));
+            }
+            else
+            {
+                isResizing = true;
+            }
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+
+            if (isMouseUp)
+            {
+                if (IsPointNearVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (IsPointOnRadius(point, 2)) pctbxCanvas.Cursor = Cursors.Cross;
+                else pctbxCanvas.Cursor = Cursors.Arrow;
+            }
+
+            bool result = false;
+            if (isResizing)
+            {
+                Point rotatedMouseLocation = Utility.RotateFromReferencePoint(ScreenCen, point, (Int16)(-AngleDeg));
+                rotatedMouseLocation.X = (Math.Abs(rotatedMouseLocation.X) / AnimationConstants._ScaleFactor) * 2;
+                rotatedMouseLocation.Y = (Math.Abs(rotatedMouseLocation.Y) / AnimationConstants._ScaleFactor) * 2;
+                if (rotatedMouseLocation.X > 0) W = (Int16)rotatedMouseLocation.X;
+                if (rotatedMouseLocation.Y > 0) H = (Int16)rotatedMouseLocation.Y;
+                result = true;
+            }
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            if (isRotating)
+            {
+                AngleDeg = (Int16)(GetAngle(point) + offsetAngle);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMouseUp = true;
+            isMoving = false;
+            isResizing = false;
+            isVertexMoving = -1;
+            isRotating = false;
+        }
+
+        #endregion
 
         public override void Move(Point offset)
         {

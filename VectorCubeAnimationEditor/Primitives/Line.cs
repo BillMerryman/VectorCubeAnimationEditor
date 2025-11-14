@@ -1,4 +1,5 @@
-﻿using System.Buffers.Binary;
+﻿using ST7735Point85;
+using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
@@ -73,6 +74,49 @@ namespace VectorCubeAnimationEditor
             pen.Dispose();
         }
 
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMoving = false;
+        private int isEndPointMoving = -1;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            isEndPointMoving = IsPointNearEndPoint(MouseLocation, 2);
+            if (isEndPointMoving < 0) isMoving = IsPointNearLine(point);
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+            
+            bool result = false;
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            if (isEndPointMoving > -1)
+            {
+                MoveEndPoint(isEndPointMoving, unscaledMouseDelta);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMoving = false;
+            isEndPointMoving = -1;
+        }
+
+        #endregion
+
         public override void Move(Point offset)
         {
             X0 += (Int16)offset.X;
@@ -81,15 +125,15 @@ namespace VectorCubeAnimationEditor
             Y1 += (Int16)offset.Y;
         }
 
-        public void MoveVertex(int vertexNum, Point offset)
+        public void MoveEndPoint(int endPointNum, Point offset)
         {
-            if (vertexNum < 0 || vertexNum > 1) return;
-            if (vertexNum == 0)
+            if (endPointNum < 0 || endPointNum > 1) return;
+            if (endPointNum == 0)
             {
                 X0 += (Int16)offset.X;
                 Y0 += (Int16)offset.Y;
             }
-            if (vertexNum == 1)
+            if (endPointNum == 1)
             {
                 X1 += (Int16)offset.X;
                 Y1 += (Int16)offset.Y;
@@ -128,7 +172,7 @@ namespace VectorCubeAnimationEditor
 
         #region Screen mapped methods
 
-        public int IsPointNearVertex(Point point, Double margin)
+        public int IsPointNearEndPoint(Point point, Double margin)
         {
             if (Math.Abs(point.X - (X0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
                 && Math.Abs(point.Y - (Y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 0;

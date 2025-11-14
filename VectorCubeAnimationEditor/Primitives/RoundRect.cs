@@ -1,6 +1,6 @@
-﻿using System.Buffers.Binary;
+﻿using ST7735Point85;
+using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
-using System.IO;
 
 namespace VectorCubeAnimationEditor
 {
@@ -84,6 +84,56 @@ namespace VectorCubeAnimationEditor
             e.FillPath(brush, path);
             if (isHighlighted) e.DrawPath(pen, path);
         }
+
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMoving = false;
+        private bool isResizing = false;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            if (IsPointNearBottomRight(MouseLocation, 2))
+            {
+                isResizing = true;
+            }
+            else if (IsPointInside(MouseLocation))
+            {
+                isMoving = true;
+            }
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+            
+            bool result = false;
+            if (isResizing)
+            {
+                if (W + unscaledMouseDelta.X > 0) W += (Int16)unscaledMouseDelta.X;
+                if (H + unscaledMouseDelta.Y > 0) H += (Int16)unscaledMouseDelta.Y;
+                result = true;
+            }
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMoving = false;
+            isResizing = false;
+        }
+
+        #endregion
 
         public override void Move(Point offset)
         {

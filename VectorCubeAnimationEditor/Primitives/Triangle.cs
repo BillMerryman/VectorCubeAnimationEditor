@@ -100,6 +100,49 @@ namespace VectorCubeAnimationEditor
             if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
         }
 
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMoving = false;
+        private int isVertexMoving = -1;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            isVertexMoving = IsPointNearVertex(MouseLocation, 2);
+            isMoving = IsPointNearCentroid(MouseLocation, 2);
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+
+            bool result = false;
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            if (isVertexMoving > -1)
+            {
+                MoveVertex(isVertexMoving, unscaledMouseDelta);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMoving = false;
+            isVertexMoving = -1;
+        }
+
+        #endregion
+
         public override void Move(Point offset)
         {
             x0 += (Int16)offset.X;
