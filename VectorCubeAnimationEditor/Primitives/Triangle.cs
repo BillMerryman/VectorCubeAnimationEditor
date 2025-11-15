@@ -99,49 +99,6 @@ namespace VectorCubeAnimationEditor
             if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
         }
 
-        #region Mouse handling
-
-        private Point MouseLocation = new Point(0, 0);
-        private bool isMoving = false;
-        private int isVertexMoving = -1;
-
-        public override void MouseDown(Point point)
-        {
-            MouseLocation = point;
-            isVertexMoving = IsPointNearVertex(MouseLocation, 2);
-            isMoving = IsPointNearCentroid(MouseLocation, 2);
-        }
-
-        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
-        {
-            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
-            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
-                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
-
-            bool result = false;
-            if (isMoving)
-            {
-                Move(unscaledMouseDelta);
-                result = true;
-            }
-            if (isVertexMoving > -1)
-            {
-                MoveVertex(isVertexMoving, unscaledMouseDelta);
-                result = true;
-            }
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
-            return result;
-        }
-
-        public override void MouseUp()
-        {
-            isMoving = false;
-            isVertexMoving = -1;
-        }
-
-        #endregion
-
         public override void Move(Point offset)
         {
             X0 += (Int16)offset.X;
@@ -170,6 +127,16 @@ namespace VectorCubeAnimationEditor
                 X2 += (Int16)offset.X;
                 Y2 += (Int16)offset.Y;
             }
+        }
+        public Point[] GetVertices()
+        {
+            Point vertex1 = new Point(X0, Y0);
+            Point vertex2 = new Point(X1, Y1);
+            Point vertex3 = new Point(X2, Y2);
+
+            Point[] vertices = new Point[] { vertex1, vertex2, vertex3 };
+
+            return vertices;
         }
 
         public Point GetCentroid()
@@ -218,6 +185,49 @@ namespace VectorCubeAnimationEditor
         }
 
         #region Screen mapped methods
+
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMoving = false;
+        private int isVertexMoving = -1;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            isVertexMoving = IsPointNearVertex(MouseLocation, 2);
+            isMoving = IsPointNearCentroid(MouseLocation, 2);
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+
+            bool result = false;
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            if (isVertexMoving > -1)
+            {
+                MoveVertex(isVertexMoving, unscaledMouseDelta);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMoving = false;
+            isVertexMoving = -1;
+        }
+
+        #endregion
 
         public Point[] GetVerticesScreen()
         {

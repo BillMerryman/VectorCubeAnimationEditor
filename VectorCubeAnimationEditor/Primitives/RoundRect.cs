@@ -39,7 +39,7 @@ namespace VectorCubeAnimationEditor
         public Int16 Radius
         {
             get { return radius; }
-            set { radius = value; }
+            set { radius = (value < 0) ? (Int16)0 : (value > Math.Min(W / 2, H / 2)) ? (Int16)Math.Min(W / 2, H / 2) : value; }
         }
 
         public override UInt16 Color
@@ -84,60 +84,37 @@ namespace VectorCubeAnimationEditor
             if (isHighlighted) e.DrawPath(pen, path);
         }
 
-        #region Mouse handling
-
-        private Point MouseLocation = new Point(0, 0);
-        private bool isMoving = false;
-        private bool isResizing = false;
-
-        public override void MouseDown(Point point)
-        {
-            MouseLocation = point;
-            if (IsPointNearBottomRight(MouseLocation, 2))
-            {
-                isResizing = true;
-            }
-            else if (IsPointInside(MouseLocation))
-            {
-                isMoving = true;
-            }
-        }
-
-        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
-        {
-            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
-            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
-                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
-            
-            bool result = false;
-            if (isResizing)
-            {
-                if (W + unscaledMouseDelta.X > 0) W += (Int16)unscaledMouseDelta.X;
-                if (H + unscaledMouseDelta.Y > 0) H += (Int16)unscaledMouseDelta.Y;
-                result = true;
-            }
-            if (isMoving)
-            {
-                Move(unscaledMouseDelta);
-                result = true;
-            }
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
-            return result;
-        }
-
-        public override void MouseUp()
-        {
-            isMoving = false;
-            isResizing = false;
-        }
-
-        #endregion
-
         public override void Move(Point offset)
         {
             X0 += (Int16)offset.X;
             Y0 += (Int16)offset.Y;
+        }
+
+        public Point[] GetVertices()
+        {
+            Point topLeft = new Point(X0, Y0);
+            Point topRight = new Point(X0 + W, Y0);
+            Point bottomRight = new Point(X0 + W, Y0 + H);
+            Point bottomLeft = new Point(X0, Y0 + H);
+
+            Point[] vertices = new Point[] { bottomRight, bottomLeft, topLeft, topRight };
+
+            return vertices;
+        }
+
+        public Point[] GetVerticesMinusRadius()
+        {
+            Point[] vertices = GetVertices();
+            vertices[0].X -= Radius;
+            vertices[0].Y -= Radius;
+            vertices[1].X += Radius;
+            vertices[1].Y -= Radius;
+            vertices[2].X += Radius;
+            vertices[2].Y += Radius;
+            vertices[3].X -= Radius;
+            vertices[3].Y += Radius;
+
+            return vertices;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -178,15 +155,15 @@ namespace VectorCubeAnimationEditor
 
         public Point ScreenCen
         {
-            get { return new Point(ScreenX, ScreenY); }
+            get { return new Point(ScreenX0 + (ScreenW / 2), ScreenY0 + (ScreenH / 2)); }
         }
 
-        public Int16 ScreenX
+        public Int16 ScreenX0
         {
             get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
         }
 
-        public Int16 ScreenY
+        public Int16 ScreenY0
         {
             get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
         }
@@ -201,7 +178,123 @@ namespace VectorCubeAnimationEditor
             get { return (Int16)(H * AnimationConstants._ScaleFactor); }
         }
 
-        public bool IsPointNearPerimeter(Point point, Double margin)
+        public Int16 ScreenRadius
+        {
+            get { return (Int16)(Radius * AnimationConstants._ScaleFactor); }
+        }
+
+        public Point ScreenRectangleCenter
+        {
+            get { return new Point((W / 2) * AnimationConstants._ScaleFactor, (H / 2) * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenHalfDiagonal
+        {
+            get { return (Int16)(Math.Sqrt(Math.Pow(ScreenRectangleCenter.X + 1, 2) + Math.Pow(ScreenRectangleCenter.Y + 1, 2))); }
+        }
+
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMouseUp = true;
+        private bool isMoving = false;
+        private bool isResizing = false;
+        private int isVertexMoving = -1;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            isMouseUp = false;
+            isVertexMoving = SelectedVertex(point, 2);
+
+            if (isVertexMoving < 0)
+            {
+                if (IsPointNearBottomRight(MouseLocation, 2))
+                {
+                    isResizing = true;
+                }
+                else if (IsPointInside(MouseLocation))
+                {
+                    isMoving = true;
+                }
+            }
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+
+            if (isMouseUp)
+            {
+                if (SelectedVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                else pctbxCanvas.Cursor = Cursors.Arrow;
+            }
+
+            bool result = false;
+            if (isVertexMoving > -1)
+            {
+                Point screenCenter = ScreenCen;
+                int offsetX = point.X - screenCenter.X;
+                int offsetY = point.Y - screenCenter.Y;
+                int offsetR = (Int16)Math.Sqrt(Math.Pow(offsetX, 2) + Math.Pow(offsetY, 2));
+                Radius = (Int16)(ScreenHalfDiagonal - offsetR);
+                result = true;
+            }
+            if (isResizing)
+            {
+                if (W + unscaledMouseDelta.X > 0) W += (Int16)unscaledMouseDelta.X;
+                if (H + unscaledMouseDelta.Y > 0) H += (Int16)unscaledMouseDelta.Y;
+                result = true;
+            }
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMouseUp = true;
+            isMoving = false;
+            isResizing = false;
+            isVertexMoving = -1;
+        }
+
+        #endregion
+
+        public Point[] ScreenGetVertices()
+        {
+            Point[] vertices = GetVertices();
+
+            for(int index = 0; index < vertices.Length; index++)
+            {
+                vertices[index].X *= AnimationConstants._ScaleFactor;
+                vertices[index].Y *= AnimationConstants._ScaleFactor;
+            }
+
+            return vertices;
+        }
+
+        public Point[] ScreenGetVerticesMinusRadius()
+        {
+            Point[] vertices = GetVerticesMinusRadius();
+
+            for (int index = 0; index < vertices.Length; index++)
+            {
+                vertices[index].X *= AnimationConstants._ScaleFactor;
+                vertices[index].Y *= AnimationConstants._ScaleFactor;
+            }
+
+            return vertices;
+        }
+
+        public bool IsPointNearPerimeterLine(Point point, Double margin)
         {
             UInt16 halfWidth = (UInt16)(W / 2);
             UInt16 halfHeight = (UInt16)(H / 2);
@@ -211,19 +304,34 @@ namespace VectorCubeAnimationEditor
             UInt16 screenMidY = (UInt16)(Y0 * AnimationConstants._ScaleFactor + screenHalfHeight);
             int xInRange = Math.Abs(point.X - screenMidX);
             int yInRange = Math.Abs(point.Y - screenMidY);
-            if ((Math.Abs(point.Y - (Y0 * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.Y - ((Y0 + H) * AnimationConstants._ScaleFactor))) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.X - (X0 * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
-            if ((Math.Abs(point.X - ((X0 + W) * AnimationConstants._ScaleFactor))) < margin && yInRange < halfHeight) return true;
+            if ((Math.Abs(point.Y - ScreenY0)) < margin && xInRange < halfWidth) return true;
+            if ((Math.Abs(point.Y - (ScreenY0 + ScreenH))) < margin && xInRange < halfWidth) return true;
+            if ((Math.Abs(point.X - ScreenX0)) < margin && yInRange < halfHeight) return true;
+            if ((Math.Abs(point.X - (ScreenX0 + ScreenW))) < margin && yInRange < halfHeight) return true;
             return false;
+        }
+
+        public int SelectedVertex(Point point, int margin)
+        {
+            Point[] vertices = ScreenGetVerticesMinusRadius();
+            int selectedVertex = -1;
+            for (int index = 0; index < vertices.Length; index++)
+            {
+                if (Utility.IsPointOnRadiusClamped(point, vertices[index], ScreenRadius, margin * AnimationConstants._ScaleFactor, index * 90, index * 90 + 90))
+                {
+                    selectedVertex = index;
+                }
+
+            }
+            return selectedVertex;
         }
 
         public bool IsPointNearBottomRight(Point point, Double margin)
         {
             Point bottomRight = new Point(X0 + W, Y0 + H);
 
-            return Math.Abs(point.X - (bottomRight.X * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
-                    && Math.Abs(point.Y - (bottomRight.Y * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin;
+            return Math.Abs(point.X - (bottomRight.X * AnimationConstants._ScaleFactor)) < margin * AnimationConstants._ScaleFactor
+                    && Math.Abs(point.Y - (bottomRight.Y * AnimationConstants._ScaleFactor)) < margin * AnimationConstants._ScaleFactor;
         }
 
         public bool IsPointInside(Point point)
@@ -234,9 +342,8 @@ namespace VectorCubeAnimationEditor
 
         public GraphicsPath GetRectanglePath()
         {
-            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX, ScreenY, ScreenW, ScreenH);
-            int _radius = Radius * AnimationConstants._ScaleFactor;
-            int diameter = 2 * _radius;
+            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX0, ScreenY0, ScreenW, ScreenH);
+            int diameter = 2 * ScreenRadius;
             Size size = new Size(diameter, diameter);
             System.Drawing.Rectangle arc = new System.Drawing.Rectangle(bounds.Location, size);
             GraphicsPath path = new GraphicsPath();
@@ -247,13 +354,10 @@ namespace VectorCubeAnimationEditor
             }
             else
             {
-                path.AddArc(arc, 180, 90);
-                arc.X = bounds.Right - diameter;
-                path.AddArc(arc, 270, 90);
-                arc.Y = bounds.Bottom - diameter;
-                path.AddArc(arc, 0, 90);
-                arc.X = bounds.Left;
-                path.AddArc(arc, 90, 90);
+                path.AddArc(bounds.X, bounds.Y, diameter, diameter, 180, 90);
+                path.AddArc(bounds.X + (bounds.Width - diameter) - 1, bounds.Y, diameter + 1, diameter + 8, 270, 90);
+                path.AddArc(bounds.X + (bounds.Width - diameter) - 7, bounds.Y + (bounds.Height - diameter) - 7, diameter + 7, diameter + 7, 0, 90);
+                path.AddArc(bounds.X, bounds.Y + (bounds.Height - diameter) - 1, diameter + 8, diameter + 1, 90, 90);
                 path.CloseFigure();
             }
             return path;

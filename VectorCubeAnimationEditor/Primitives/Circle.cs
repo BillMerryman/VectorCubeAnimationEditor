@@ -97,6 +97,49 @@ namespace VectorCubeAnimationEditor
 
         }
 
+        public override void Move(Point offset)
+        {
+            X0 += (Int16)offset.X;
+            Y0 += (Int16)offset.Y;
+        }
+
+        public override void Serialize(ref int bytePosition, byte[] animationBytes)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._QuarterCircle);
+            bytePosition += 2;
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X0);
+            bytePosition += 2;
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y0);
+            bytePosition += 2;
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), R);
+            bytePosition += 2;
+            animationBytes[bytePosition] = Quadrants;
+            bytePosition += 1;
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Delta);
+            bytePosition += 2;
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
+            bytePosition += 5;
+        }
+
+        public override void Deserialize(ref int bytePosition, byte[] animationBytes)
+        {
+            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            R = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            Quadrants = animationBytes[bytePosition];
+            bytePosition += 1;
+            Delta = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 2;
+            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            bytePosition += 5;
+        }
+
+        #region Screen mapped methods
+
+
         #region Mouse handling
 
         private Point MouseLocation = new Point(0, 0);
@@ -144,48 +187,6 @@ namespace VectorCubeAnimationEditor
         }
 
         #endregion
-
-        public override void Move(Point offset)
-        {
-            X0 += (Int16)offset.X;
-            Y0 += (Int16)offset.Y;
-        }
-
-        public override void Serialize(ref int bytePosition, byte[] animationBytes)
-        {
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._QuarterCircle);
-            bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X0);
-            bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y0);
-            bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), R);
-            bytePosition += 2;
-            animationBytes[bytePosition] = Quadrants;
-            bytePosition += 1;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Delta);
-            bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
-            bytePosition += 5;
-        }
-
-        public override void Deserialize(ref int bytePosition, byte[] animationBytes)
-        {
-            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-            bytePosition += 2;
-            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-            bytePosition += 2;
-            R = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-            bytePosition += 2;
-            Quadrants = animationBytes[bytePosition];
-            bytePosition += 1;
-            Delta = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-            bytePosition += 2;
-            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
-            bytePosition += 5;
-        }
-
-        #region Screen mapped methods
 
         public bool IsPointNearCenter(Point point, Double margin)
         {

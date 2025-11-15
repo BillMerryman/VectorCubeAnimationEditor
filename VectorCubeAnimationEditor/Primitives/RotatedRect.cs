@@ -81,9 +81,9 @@ namespace VectorCubeAnimationEditor
             pen.DashStyle = DashStyle.Dash;
 
             // Split rectangle into two triangles (diagonal from top-left to bottom-right)
-            Point[] corners = ScreenGetVertices();
-            Point[] triangle1 = new Point[] { corners[0], corners[1], corners[2] };
-            Point[] triangle2 = new Point[] { corners[1], corners[2], corners[3] };
+            Point[] vertices = ScreenGetVertices();
+            Point[] triangle1 = new Point[] { vertices[0], vertices[1], vertices[2] };
+            Point[] triangle2 = new Point[] { vertices[2], vertices[3], vertices[0] };
             e.FillPolygon(brush, triangle1);
             e.FillPolygon(brush, triangle2);
             if (isHighlighted)
@@ -95,82 +95,6 @@ namespace VectorCubeAnimationEditor
                                 (float)ScreenHalfDiagonal * 2);
             }
         }
-
-        #region Mouse handling
-
-        private Point MouseLocation = new Point(0, 0);
-        private bool isMouseUp = true;
-        private bool isMoving = false;
-        private bool isResizing = false;
-        private bool isRotating = false;
-        private Int16 offsetAngle = 0;
-        private int isVertexMoving = -1;
-
-        public override void MouseDown(Point point)
-        {
-            MouseLocation = point;
-            isMouseUp = false;
-            isMoving = IsPointNearCenter(MouseLocation, 2);
-            isVertexMoving = IsPointNearVertex(MouseLocation, 2);
-            if (isVertexMoving < 0)
-            {
-                isRotating = IsPointOnRadius(MouseLocation, 2);
-                if (isRotating) offsetAngle = (Int16)(AngleDeg - GetAngle(MouseLocation));
-            }
-            else
-            {
-                isResizing = true;
-            }
-        }
-
-        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
-        {
-            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
-            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
-                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
-
-            if (isMouseUp)
-            {
-                if (IsPointNearVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
-                else if (IsPointOnRadius(point, 2)) pctbxCanvas.Cursor = Cursors.Cross;
-                else pctbxCanvas.Cursor = Cursors.Arrow;
-            }
-
-            bool result = false;
-            if (isResizing)
-            {
-                Point rotatedMouseLocation = Utility.RotateFromReferencePoint(ScreenCen, point, (Int16)(-AngleDeg));
-                rotatedMouseLocation.X = (Math.Abs(rotatedMouseLocation.X) / AnimationConstants._ScaleFactor) * 2;
-                rotatedMouseLocation.Y = (Math.Abs(rotatedMouseLocation.Y) / AnimationConstants._ScaleFactor) * 2;
-                if (rotatedMouseLocation.X > 0) W = (Int16)rotatedMouseLocation.X;
-                if (rotatedMouseLocation.Y > 0) H = (Int16)rotatedMouseLocation.Y;
-                result = true;
-            }
-            if (isMoving)
-            {
-                Move(unscaledMouseDelta);
-                result = true;
-            }
-            if (isRotating)
-            {
-                AngleDeg = (Int16)(GetAngle(point) + offsetAngle);
-                result = true;
-            }
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
-            return result;
-        }
-
-        public override void MouseUp()
-        {
-            isMouseUp = true;
-            isMoving = false;
-            isResizing = false;
-            isVertexMoving = -1;
-            isRotating = false;
-        }
-
-        #endregion
 
         public override void Move(Point offset)
         {
@@ -186,7 +110,7 @@ namespace VectorCubeAnimationEditor
             Point bottomRight = new Point(W - center.X, H - center.Y);
             Point bottomLeft = new Point(center.X - W, H - center.Y);
 
-            Point[] vertices = new Point[] { topRight, topLeft, bottomRight, bottomLeft };
+            Point[] vertices = new Point[] { bottomRight, bottomLeft, topLeft, topRight };
 
             Matrix matrix = new Matrix();
             matrix.Rotate(angleDeg);
@@ -265,6 +189,83 @@ namespace VectorCubeAnimationEditor
             get { return (Int16)(Math.Sqrt(Math.Pow(ScreenRectangleCenter.X + 1, 2) + Math.Pow(ScreenRectangleCenter.Y + 1, 2))); }
         }
 
+
+        #region Mouse handling
+
+        private Point MouseLocation = new Point(0, 0);
+        private bool isMouseUp = true;
+        private bool isMoving = false;
+        private bool isResizing = false;
+        private bool isRotating = false;
+        private Int16 offsetAngle = 0;
+        private int isVertexMoving = -1;
+
+        public override void MouseDown(Point point)
+        {
+            MouseLocation = point;
+            isMouseUp = false;
+            isMoving = IsPointNearCenter(MouseLocation, 2);
+            isVertexMoving = SelectedVertex(MouseLocation, 2);
+            if (isVertexMoving < 0)
+            {
+                isRotating = IsPointOnRadius(MouseLocation, 2);
+                if (isRotating) offsetAngle = (Int16)(AngleDeg - GetAngle(MouseLocation));
+            }
+            else
+            {
+                isResizing = true;
+            }
+        }
+
+        public override bool MouseMove(Point point, PictureBox pctbxCanvas)
+        {
+            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+                                                (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
+
+            if (isMouseUp)
+            {
+                if (SelectedVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (IsPointOnRadius(point, 2)) pctbxCanvas.Cursor = Cursors.Cross;
+                else pctbxCanvas.Cursor = Cursors.Arrow;
+            }
+
+            bool result = false;
+            if (isResizing)
+            {
+                Point rotatedMouseLocation = Utility.RotateFromReferencePoint(ScreenCen, point, (Int16)(-AngleDeg));
+                rotatedMouseLocation.X = (Math.Abs(rotatedMouseLocation.X) / AnimationConstants._ScaleFactor) * 2;
+                rotatedMouseLocation.Y = (Math.Abs(rotatedMouseLocation.Y) / AnimationConstants._ScaleFactor) * 2;
+                if (rotatedMouseLocation.X > 0) W = (Int16)rotatedMouseLocation.X;
+                if (rotatedMouseLocation.Y > 0) H = (Int16)rotatedMouseLocation.Y;
+                result = true;
+            }
+            if (isMoving)
+            {
+                Move(unscaledMouseDelta);
+                result = true;
+            }
+            if (isRotating)
+            {
+                AngleDeg = (Int16)(GetAngle(point) + offsetAngle);
+                result = true;
+            }
+            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            return result;
+        }
+
+        public override void MouseUp()
+        {
+            isMouseUp = true;
+            isMoving = false;
+            isResizing = false;
+            isVertexMoving = -1;
+            isRotating = false;
+        }
+
+        #endregion
+
         public Point[] ScreenGetVertices()
         {
             Point[] vertices = GetVertices();
@@ -281,7 +282,7 @@ namespace VectorCubeAnimationEditor
 
         public bool IsPointNearCenter(Point point, Double margin)
         {
-            return Utility.ArePointsWithinMargin(point, ScreenCen, AnimationConstants._ScaleFactor * margin);
+            return Utility.ArePointsWithinMargin(point, ScreenCen, margin * AnimationConstants._ScaleFactor);
         }
 
         public bool IsPointOnRadius(Point point, int margin)
@@ -289,13 +290,13 @@ namespace VectorCubeAnimationEditor
             return Utility.IsPointOnRadius(ScreenCen, point, ScreenHalfDiagonal, margin);
         }
 
-        public int IsPointNearVertex(Point point, Double margin)
+        public int SelectedVertex(Point point, Double margin)
         {
             Point[] vertices = ScreenGetVertices();
             int selectedVertex = -1;
             for (int index = 0; index < vertices.Length; index++)
             {
-                if (Utility.ArePointsWithinMargin(point, vertices[index], AnimationConstants._ScaleFactor * margin))
+                if (Utility.ArePointsWithinMargin(point, vertices[index], margin * AnimationConstants._ScaleFactor))
                 {
                     selectedVertex = index;
                 }

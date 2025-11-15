@@ -142,6 +142,13 @@ namespace VectorCubeAnimationEditor
             return false;
         }
 
+        public static bool IsPointOnRadiusClamped(Point point1, Point point2, Int16 radius, int margin, int startAngle, int endAngle)
+        {
+            int angle = GetAngleFromReferencePoint(point1, point2);
+            if (angle < startAngle || angle > endAngle) return false;
+            return IsPointOnRadius(point1, point2, radius, margin);
+        }
+
         public static bool ArePointsWithinMargin(Point point1, Point point2, Double margin)
         {
             return Math.Abs(point1.X - point2.X) < margin
