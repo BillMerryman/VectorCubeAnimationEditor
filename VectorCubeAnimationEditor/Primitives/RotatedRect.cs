@@ -1,4 +1,5 @@
-﻿using System.Buffers.Binary;
+﻿using System;
+using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
@@ -81,7 +82,7 @@ namespace VectorCubeAnimationEditor
             pen.DashStyle = DashStyle.Dash;
 
             // Split rectangle into two triangles (diagonal from top-left to bottom-right)
-            Point[] vertices = ScreenGetVertices();
+            Point[] vertices = GetScreenVertices();
             Point[] triangle1 = new Point[] { vertices[0], vertices[1], vertices[2] };
             Point[] triangle2 = new Point[] { vertices[2], vertices[3], vertices[0] };
             e.FillPolygon(brush, triangle1);
@@ -100,22 +101,6 @@ namespace VectorCubeAnimationEditor
         {
             CenX += (Int16)offset.X;
             CenY += (Int16)offset.Y;
-        }
-
-        public Point[] GetVertices()
-        {
-            Point center = new Point(W / 2, H / 2);
-            Point topLeft = new Point(center.X - W, center.Y - H);
-            Point topRight = new Point(W - center.X, center.Y - H);
-            Point bottomRight = new Point(W - center.X, H - center.Y);
-            Point bottomLeft = new Point(center.X - W, H - center.Y);
-
-            Point[] vertices = new Point[] { bottomRight, bottomLeft, topLeft, topRight };
-
-            Matrix matrix = new Matrix();
-            matrix.Rotate(angleDeg);
-            matrix.TransformPoints(vertices);
-            return vertices;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -195,26 +180,42 @@ namespace VectorCubeAnimationEditor
         private Point MouseLocation = new Point(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
-        private bool isResizing = false;
-        private bool isRotating = false;
+        private int SelectedSide = -1;
+        private int SelectedVertex = -1;
         private Int16 offsetAngle = 0;
-        private int isVertexMoving = -1;
+        private Point mousedownScreenCen;
+        private Int16 mousedownW;
+        private Int16 mousedownH;
+
 
         public override void MouseDown(Point point)
         {
             MouseLocation = point;
             isMouseUp = false;
-            isMoving = IsPointNearCenter(MouseLocation, 2);
-            isVertexMoving = SelectedVertex(MouseLocation, 2);
-            if (isVertexMoving < 0)
+            SelectedVertex = GetSelectedVertex(MouseLocation);
+
+            if (SelectedVertex < 0)
             {
-                isRotating = IsPointOnRadius(MouseLocation, 2);
-                if (isRotating) offsetAngle = (Int16)(AngleDeg - GetAngle(MouseLocation));
+                SelectedSide = GetSelectedSide(MouseLocation);
+                if (SelectedSide < 0)
+                {
+                    if (IsPointNearCenter(MouseLocation))
+                    {
+                        isMoving = true;
+                    }
+                }
+                else
+                {
+                    mousedownScreenCen = ScreenCen;
+                    mousedownW = W;
+                    mousedownH = H;
+                }
             }
             else
             {
-                isResizing = true;
+                offsetAngle = (Int16)(AngleDeg - GetAngle(MouseLocation));
             }
+
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
@@ -225,74 +226,145 @@ namespace VectorCubeAnimationEditor
 
             if (isMouseUp)
             {
-                if (SelectedVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
-                else if (IsPointOnRadius(point, 2)) pctbxCanvas.Cursor = Cursors.Cross;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (GetSelectedSide(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (GetSelectedVertex(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
                 else pctbxCanvas.Cursor = Cursors.Arrow;
+                return false;
             }
 
-            bool result = false;
-            if (isResizing)
-            {
-                Point rotatedMouseLocation = Utility.RotateFromReferencePoint(ScreenCen, point, (Int16)(-AngleDeg));
-                rotatedMouseLocation.X = (Math.Abs(rotatedMouseLocation.X) / AnimationConstants._ScaleFactor) * 2;
-                rotatedMouseLocation.Y = (Math.Abs(rotatedMouseLocation.Y) / AnimationConstants._ScaleFactor) * 2;
-                if (rotatedMouseLocation.X > 0) W = (Int16)rotatedMouseLocation.X;
-                if (rotatedMouseLocation.Y > 0) H = (Int16)rotatedMouseLocation.Y;
-                result = true;
-            }
-            if (isMoving)
-            {
-                Move(unscaledMouseDelta);
-                result = true;
-            }
-            if (isRotating)
+            if (SelectedVertex > -1)
             {
                 AngleDeg = (Int16)(GetAngle(point) + offsetAngle);
-                result = true;
             }
+            if (SelectedSide > -1)
+            {
+                Point[] vertices = GetScreenVertices();
+                switch (SelectedSide)
+                {
+                    case 0:
+                        //rotate the mouse to unrotated position and find distance from center, all in screen units
+                        Point unrotatedMousesPosition = Utility.RotateFromReferencePoint(mousedownScreenCen, point, (Int16)(-angleDeg));
+                        Int16 ScreenDistanceFromCenter = (Int16)(unrotatedMousesPosition.Y - mousedownScreenCen.Y);
+
+                        Int16 DistanceFromCenter = (Int16)((ScreenDistanceFromCenter / AnimationConstants._ScaleFactor) + (mousedownH % 2));
+                        Int16 newH = (Int16)(DistanceFromCenter + (mousedownH / 2));
+                        Int16 dH = (Int16)(newH - mousedownH);
+                        Point newCenter = mousedownScreenCen;
+
+                        if ((mousedownH % 2) == 0)
+                        {
+                            if (dH > 0)
+                            {
+                                newCenter.Y += (((dH / 2) + (newH % 2)) * AnimationConstants._ScaleFactor);
+                            }
+                            else
+                            {
+                                newCenter.Y += ((dH / 2) * AnimationConstants._ScaleFactor);
+                            }
+                        }
+                        else
+                        {
+                            if (dH > 0)
+                            {
+                                newCenter.Y += ((dH / 2) * AnimationConstants._ScaleFactor);
+                            }
+                            else
+                            {
+                                newCenter.Y += (((dH / 2) + (newH % 2)) * AnimationConstants._ScaleFactor);
+                            }
+                        }
+
+                        newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
+                        newCenter.X /= AnimationConstants._ScaleFactor;
+                        newCenter.Y /= AnimationConstants._ScaleFactor;
+                        CenX = (Int16)newCenter.X;
+                        CenY = (Int16)newCenter.Y;
+                        H = newH;
+                        break;
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                }
+            }
+            if (isMoving) Move(unscaledMouseDelta);
+  
             MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
             MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
-            return result;
+
+            return true;
         }
 
         public override void MouseUp()
         {
             isMouseUp = true;
             isMoving = false;
-            isResizing = false;
-            isVertexMoving = -1;
-            isRotating = false;
+            SelectedSide = -1;
+            SelectedVertex = -1;
         }
 
         #endregion
 
-        public Point[] ScreenGetVertices()
+        public bool IsPointNearCenter(Point point)
         {
-            Point[] vertices = GetVertices();
+            int margin = 4;
+            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
+        }
+
+        public bool IsPointOnRadius(Point point)
+        {
+            int margin = 4;
+            return Utility.IsPointOnRadius(ScreenCen, point, ScreenHalfDiagonal, margin);
+        }
+
+
+        public PointF[] GetVertices()
+        {
+            float halfWidth = ((float)W / 2) - (((W % 2) == 0) ? (float).5 : 0);
+            float halfHeight = ((float)H / 2) - (((H % 2) == 0) ? (float).5 : 0);
+            PointF bottomRight = new PointF(W - halfWidth, H - halfHeight);
+            PointF bottomLeft = new PointF(-halfWidth, H - halfHeight);
+            PointF topLeft = new PointF(-halfWidth, -halfHeight);
+            PointF topRight = new PointF(W - halfWidth, -halfHeight);
+
+            PointF[] vertices = new PointF[] { bottomRight, bottomLeft, topLeft, topRight };
+
+            Matrix matrix = new Matrix();
+            matrix.Rotate(angleDeg);
+            matrix.TransformPoints(vertices);
+            return vertices;
+        }
+
+        public Point[] GetScreenVertices()
+        {
+            PointF[] fltVertices = GetVertices();
 
             Matrix matrix = new Matrix();
             matrix.Scale(AnimationConstants._ScaleFactor, AnimationConstants._ScaleFactor);
-            matrix.TransformPoints(vertices);
+            matrix.TransformPoints(fltVertices);
             matrix.Reset();
             matrix.Translate(ScreenCenX, ScreenCenY);
-            matrix.TransformPoints(vertices);
+            matrix.TransformPoints(fltVertices);
+
+            Point[] vertices = new Point[fltVertices.Length];
+            for(int index  = 0; index < fltVertices.Length; index++)
+            {
+                vertices[index] = new Point((int)fltVertices[index].X, (int)fltVertices[index].Y);
+            }
 
             return vertices;
         }
 
-        public bool IsPointNearCenter(Point point, Double margin)
+        public int GetSelectedVertex(Point point)
         {
-            return Utility.ArePointsWithinMargin(point, ScreenCen, margin * AnimationConstants._ScaleFactor);
-        }
-
-        public bool IsPointOnRadius(Point point, int margin)
-        {
-            return Utility.IsPointOnRadius(ScreenCen, point, ScreenHalfDiagonal, margin);
-        }
-
-        public int SelectedVertex(Point point, Double margin)
-        {
-            Point[] vertices = ScreenGetVertices();
+            Point[] vertices = GetScreenVertices();
+            int margin = 4;
             int selectedVertex = -1;
             for (int index = 0; index < vertices.Length; index++)
             {
@@ -305,6 +377,22 @@ namespace VectorCubeAnimationEditor
             return selectedVertex;
         }
 
+        public int GetSelectedSide(Point point)
+        {
+            Point[] lines = GetScreenVertices();
+            int margin = 4;
+            int selectedLine = -1;
+            for (int index = 0; index < lines.Length; index++)
+            {
+                if (Utility.DistanceFromLine(lines[index], lines[(index + 1) % 4], point) < margin)
+                {
+                    selectedLine = index;
+                }
+
+            }
+            return selectedLine;
+        }
+
         public Int16 GetAngle(Point point)
         {
             return Utility.GetAngleFromReferencePoint(ScreenCen, point);
@@ -314,3 +402,39 @@ namespace VectorCubeAnimationEditor
 
     }
 }
+
+
+/*
+        Original vertex handling code
+
+        //public Point[] GetVertices()
+        //{
+        //    Point center = new Point(W / 2, H / 2);
+        //    Point topLeft = new Point(-center.X, -center.Y);
+        //    Point topRight = new Point(center.X, -center.Y);
+        //    Point bottomRight = new Point(center.X, center.Y);
+        //    Point bottomLeft = new Point(-center.X, center.Y);
+
+        //    Point[] vertices = new Point[] { bottomRight, bottomLeft, topLeft, topRight };
+
+        //    Matrix matrix = new Matrix();
+        //    matrix.Rotate(angleDeg);
+        //    matrix.TransformPoints(vertices);
+        //    return vertices;
+        //}
+
+        //public Point[] GetScreenVertices()
+        //{
+        //    Point[] vertices = GetVertices();
+
+        //    Matrix matrix = new Matrix();
+        //    matrix.Scale(AnimationConstants._ScaleFactor, AnimationConstants._ScaleFactor);
+        //    matrix.TransformPoints(vertices);
+        //    matrix.Reset();
+        //    matrix.Translate(ScreenCenX, ScreenCenY);
+        //    matrix.TransformPoints(vertices);
+
+        //    return vertices;
+        //}
+
+ */

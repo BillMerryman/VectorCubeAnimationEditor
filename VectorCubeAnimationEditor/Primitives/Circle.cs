@@ -84,11 +84,8 @@ namespace VectorCubeAnimationEditor
             Brush brush = new SolidBrush(drawColor);
             Pen pen = new Pen(drawColor.ColorToInverse());
             pen.DashStyle = DashStyle.Dash;
-            int ScreenX = X0 * AnimationConstants._ScaleFactor;
-            int ScreenY = Y0 * AnimationConstants._ScaleFactor;
-            int ScreenR = R * AnimationConstants._ScaleFactor;
-            int boundingX = ScreenX - ScreenR;
-            int boundingY = ScreenY - ScreenR;
+            int boundingX = ScreenX0 - ScreenR;
+            int boundingY = ScreenY0 - ScreenR;
             if ((Quadrants & TopLeft) == TopLeft) e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 180, 90);
             if ((Quadrants & TopRight) == TopRight) e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 270, 90);
             if ((Quadrants & BottomRight) == BottomRight) e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 0, 90);
@@ -139,18 +136,39 @@ namespace VectorCubeAnimationEditor
 
         #region Screen mapped methods
 
+        public Point ScreenCen
+        {
+            get { return new Point(ScreenX0, ScreenY0); }
+        }
+
+        public Int16 ScreenX0
+        {
+            get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenY0
+        {
+            get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenR
+        {
+            get { return (Int16)(R * AnimationConstants._ScaleFactor); }
+        }
 
         #region Mouse handling
 
         private Point MouseLocation = new Point(0, 0);
+        private bool isMouseUp = true;
         private bool isMoving = false;
         private bool isResizing = false;
 
         public override void MouseDown(Point point)
         {
             MouseLocation = point;
-            isResizing = IsPointOnRadius(MouseLocation, .1);
-            isMoving = IsPointNearCenter(MouseLocation, 2);
+            isMouseUp = false;
+            isResizing = IsPointOnRadius(MouseLocation);
+            isMoving = IsPointNearCenter(MouseLocation);
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
@@ -160,49 +178,66 @@ namespace VectorCubeAnimationEditor
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
             bool result = false;
-            if (isResizing)
+
+            if (isMouseUp)
             {
-                //Old way of resizing...
-                //int cRadius = circle.R;
-                //if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
-                int circleXOffset = ((X0 * AnimationConstants._ScaleFactor) - point.X) / AnimationConstants._ScaleFactor;
-                int circleYOffset = ((Y0 * AnimationConstants._ScaleFactor) - point.Y) / AnimationConstants._ScaleFactor;
-                R = (short)Math.Sqrt((circleXOffset * circleXOffset) + (circleYOffset * circleYOffset));
-                result = true;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (IsPointOnRadius(point)) pctbxCanvas.Cursor = Cursors.Hand;
+                else pctbxCanvas.Cursor = Cursors.Arrow;
             }
-            if (isMoving)
+            else
             {
-                Move(unscaledMouseDelta);
-                result = true;
+                if (isResizing)
+                {
+                    //Old way of resizing...
+                    //int cRadius = circle.R;
+                    //if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
+                    int circleXOffset = ((X0 * AnimationConstants._ScaleFactor) - point.X) / AnimationConstants._ScaleFactor;
+                    int circleYOffset = ((Y0 * AnimationConstants._ScaleFactor) - point.Y) / AnimationConstants._ScaleFactor;
+                    R = (short)Math.Sqrt((circleXOffset * circleXOffset) + (circleYOffset * circleYOffset));
+                    result = true;
+                }
+                if (isMoving)
+                {
+                    Move(unscaledMouseDelta);
+                    result = true;
+                }
             }
+
             MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
             MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+
             return result;
         }
 
         public override void MouseUp()
         {
+            isMouseUp = true;
             isMoving = false;
             isResizing = false;
         }
 
         #endregion
 
-        public bool IsPointNearCenter(Point point, Double margin)
+        public bool IsPointNearCenter(Point point)
         {
-            return Math.Abs(point.X - (X0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2
-                    && Math.Abs(point.Y - (Y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * 2;
+            int margin = 4;
+            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
         }
 
-        public bool IsPointOnRadius(Point point, Double margin)
+        public bool IsPointOnRadius(Point point)
         {
-            int c = R * AnimationConstants._ScaleFactor;
+            int margin = 4;
+            int cLower = ScreenR - margin;
+            int cUpper = ScreenR + margin;
             int a = ((X0 * AnimationConstants._ScaleFactor) - point.X);
             int b = ((Y0 * AnimationConstants._ScaleFactor) - point.Y);
-            int cSquare = c * c;
+            int cSquare = ScreenR * ScreenR;
+            int cLowerSquare = cLower * cLower;
+            int cUpperSquare = cUpper * cUpper;
             int aSquare = a * a;
             int bSquare = b * b;
-            if ((aSquare + bSquare > cSquare * (1 - margin)) && (aSquare + bSquare < cSquare * (1 + margin))) return true;
+            if ((aSquare + bSquare > cLowerSquare) && (aSquare + bSquare < cUpperSquare)) return true;
             return false;
         }
 

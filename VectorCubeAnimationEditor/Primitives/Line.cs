@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
 using System.Net;
+using System.Windows.Forms;
 
 namespace VectorCubeAnimationEditor
 {
@@ -69,6 +70,7 @@ namespace VectorCubeAnimationEditor
         {
             Color drawColor = Utility.GetColorFromUIint16(Color);
             Pen pen = new Pen(drawColor);
+            pen.Width = AnimationConstants._ScaleFactor;
             if (isHighlighted) pen.DashStyle = DashStyle.Dash;
             e.DrawLine(pen, X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor, X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor);
             pen.Dispose();
@@ -95,16 +97,6 @@ namespace VectorCubeAnimationEditor
                 X1 += (Int16)offset.X;
                 Y1 += (Int16)offset.Y;
             }
-        }
-
-        public Point[] GetEndPoints()
-        {
-            Point endPoint1 = new Point(X0, Y0);
-            Point endPoint2 = new Point(X1, Y1);
-
-            Point[] endPoints = new Point[] { endPoint1, endPoint2 };
-
-            return endPoints;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -139,17 +131,44 @@ namespace VectorCubeAnimationEditor
 
         #region Screen mapped methods
 
+        public Point ScreenCen
+        {
+            get { return new Point((ScreenX1 + ScreenX0) / 2, (ScreenY1 + ScreenY0) / 2); }
+        }
+
+        public Int16 ScreenX0
+        {
+            get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenY0
+        {
+            get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenX1
+        {
+            get { return (Int16)(X1 * AnimationConstants._ScaleFactor); }
+        }
+
+        public Int16 ScreenY1
+        {
+            get { return (Int16)(Y1 * AnimationConstants._ScaleFactor); }
+        }
+
         #region Mouse handling
 
         private Point MouseLocation = new Point(0, 0);
+        private bool isMouseUp = true;
         private bool isMoving = false;
         private int isEndPointMoving = -1;
 
         public override void MouseDown(Point point)
         {
             MouseLocation = point;
-            isEndPointMoving = IsPointNearEndPoint(MouseLocation, 2);
-            if (isEndPointMoving < 0) isMoving = IsPointNearLine(point);
+            isMouseUp = false;
+            isEndPointMoving = SelectedEndpoint(MouseLocation);
+            if (isEndPointMoving < 0) isMoving = IsPointNearCenter(point);
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
@@ -159,30 +178,53 @@ namespace VectorCubeAnimationEditor
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
             bool result = false;
-            if (isMoving)
+
+            if (isMouseUp)
             {
-                Move(unscaledMouseDelta);
-                result = true;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (SelectedEndpoint(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                else pctbxCanvas.Cursor = Cursors.Arrow;
             }
-            if (isEndPointMoving > -1)
+            else
             {
-                MoveEndPoint(isEndPointMoving, unscaledMouseDelta);
-                result = true;
+                if (isMoving)
+                {
+                    Move(unscaledMouseDelta);
+                    result = true;
+                }
+                if (isEndPointMoving > -1)
+                {
+                    MoveEndPoint(isEndPointMoving, unscaledMouseDelta);
+                    result = true;
+                }
             }
+
             MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
             MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+
             return result;
         }
 
         public override void MouseUp()
         {
+            isMouseUp = true;
             isMoving = false;
             isEndPointMoving = -1;
         }
 
         #endregion
 
-        public Point[] ScreenGetEndPoints()
+        public Point[] GetEndPoints()
+        {
+            Point endPoint1 = new Point(X0, Y0);
+            Point endPoint2 = new Point(X1, Y1);
+
+            Point[] endPoints = new Point[] { endPoint1, endPoint2 };
+
+            return endPoints;
+        }
+
+        public Point[] GetScreenEndPoints()
         {
             Point[] endPoints = GetEndPoints();
 
@@ -195,18 +237,31 @@ namespace VectorCubeAnimationEditor
             return endPoints;
         }
 
-        public int IsPointNearEndPoint(Point point, Double margin)
+        public int SelectedEndpoint(Point point)
         {
-            if (Math.Abs(point.X - (X0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
-                && Math.Abs(point.Y - (Y0 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 0;
-            if (Math.Abs(point.X - (X1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin
-                && Math.Abs(point.Y - (Y1 * AnimationConstants._ScaleFactor)) < AnimationConstants._ScaleFactor * margin) return 1;
-            return -1;
+            Point[] endpoints = GetScreenEndPoints();
+            int margin = 4;
+            int selectedEndpoint = -1;
+            for (int index = 0; index < endpoints.Length; index++)
+            {
+                if (Utility.ArePointsWithinMargin(point, endpoints[index], margin))
+                {
+                    selectedEndpoint = index;
+                }
+
+            }
+            return selectedEndpoint;
+        }
+
+        public bool IsPointNearCenter(Point point)
+        {
+            int margin = 4;
+            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
         }
 
         public bool IsPointNearLine(Point point)
         {
-            return Utility.IsPointNearLine(new Point(X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor), new Point(X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor), point, AnimationConstants._ScaleFactor * 2);
+            return Utility.IsPointNearLine(new Point(ScreenX0, ScreenY0), new Point(ScreenX1, ScreenY1), point, AnimationConstants._ScaleFactor * 2);
         }
 
         #endregion

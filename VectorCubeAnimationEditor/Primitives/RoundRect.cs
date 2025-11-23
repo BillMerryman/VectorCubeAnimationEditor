@@ -75,7 +75,7 @@ namespace VectorCubeAnimationEditor
 
         public override void Draw(Graphics e, bool isHighlighted)
         {
-            GraphicsPath path = GetRectanglePath();
+            GraphicsPath path = GetScreenRectanglePath();
             Color drawColor = Utility.GetColorFromUIint16(Color);
             Brush brush = new SolidBrush(drawColor);
             Pen pen = new Pen(drawColor.ColorToInverse());
@@ -88,33 +88,6 @@ namespace VectorCubeAnimationEditor
         {
             X0 += (Int16)offset.X;
             Y0 += (Int16)offset.Y;
-        }
-
-        public Point[] GetVertices()
-        {
-            Point topLeft = new Point(X0, Y0);
-            Point topRight = new Point(X0 + W, Y0);
-            Point bottomRight = new Point(X0 + W, Y0 + H);
-            Point bottomLeft = new Point(X0, Y0 + H);
-
-            Point[] vertices = new Point[] { bottomRight, bottomLeft, topLeft, topRight };
-
-            return vertices;
-        }
-
-        public Point[] GetVerticesMinusRadius()
-        {
-            Point[] vertices = GetVertices();
-            vertices[0].X -= Radius;
-            vertices[0].Y -= Radius;
-            vertices[1].X += Radius;
-            vertices[1].Y -= Radius;
-            vertices[2].X += Radius;
-            vertices[2].Y += Radius;
-            vertices[3].X -= Radius;
-            vertices[3].Y += Radius;
-
-            return vertices;
         }
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
@@ -198,26 +171,27 @@ namespace VectorCubeAnimationEditor
         private Point MouseLocation = new Point(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
-        private bool isResizing = false;
-        private int isVertexMoving = -1;
+        private int SelectedSide = -1;
+        private int SelectedVertex = -1;
 
         public override void MouseDown(Point point)
         {
             MouseLocation = point;
             isMouseUp = false;
-            isVertexMoving = SelectedVertex(point, 2);
+            SelectedVertex = GetSelectedVertex(point, 2);
 
-            if (isVertexMoving < 0)
+            if (SelectedVertex < 0)
             {
-                if (IsPointNearBottomRight(MouseLocation, 2))
+                SelectedSide = GetSelectedSide(MouseLocation);
+                if (GetSelectedSide(MouseLocation) < 0)
                 {
-                    isResizing = true;
-                }
-                else if (IsPointInside(MouseLocation))
-                {
-                    isMoving = true;
+                    if (IsPointNearCenter(MouseLocation))
+                    {
+                        isMoving = true;
+                    }
                 }
             }
+
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
@@ -228,51 +202,82 @@ namespace VectorCubeAnimationEditor
 
             if (isMouseUp)
             {
-                if (SelectedVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (GetSelectedSide(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                else if (GetSelectedVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
                 else pctbxCanvas.Cursor = Cursors.Arrow;
+                return false;
             }
 
-            bool result = false;
-            if (isVertexMoving > -1)
+            if (SelectedVertex > -1)
             {
                 Point screenCenter = ScreenCen;
                 int offsetX = point.X - screenCenter.X;
                 int offsetY = point.Y - screenCenter.Y;
                 int offsetR = (Int16)Math.Sqrt(Math.Pow(offsetX, 2) + Math.Pow(offsetY, 2));
                 Radius = (Int16)(ScreenHalfDiagonal - offsetR);
-                result = true;
             }
-            if (isResizing)
+            if (SelectedSide > -1)
             {
-                if (W + unscaledMouseDelta.X > 0) W += (Int16)unscaledMouseDelta.X;
-                if (H + unscaledMouseDelta.Y > 0) H += (Int16)unscaledMouseDelta.Y;
-                result = true;
+                switch (SelectedSide)
+                {
+                    case 0:
+                        Y0 += (Int16)unscaledMouseDelta.Y;
+                        H -= (Int16)unscaledMouseDelta.Y;
+                        break;
+                    case 1:
+                        W += (Int16)unscaledMouseDelta.X;
+                        break;
+                    case 2:
+                        H += (Int16)unscaledMouseDelta.Y;
+                        break;
+                    case 3:
+                        X0 += (Int16)unscaledMouseDelta.X;
+                        W -= (Int16)unscaledMouseDelta.X;
+                        break;
+                }
             }
-            if (isMoving)
-            {
-                Move(unscaledMouseDelta);
-                result = true;
-            }
+            if (isMoving) Move(unscaledMouseDelta);
+
             MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
             MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
-            return result;
+
+            return true;
         }
 
         public override void MouseUp()
         {
             isMouseUp = true;
             isMoving = false;
-            isResizing = false;
-            isVertexMoving = -1;
+            SelectedSide = -1;
+            SelectedVertex = -1;
         }
 
         #endregion
 
-        public Point[] ScreenGetVertices()
+        public bool IsPointNearCenter(Point point)
+        {
+            int margin = 4;
+            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
+        }
+
+        public Point[] GetVertices()
+        {
+            Point bottomRight = new Point(X0 + W, Y0 + H);
+            Point bottomLeft = new Point(X0, Y0 + H);
+            Point topLeft = new Point(X0, Y0);
+            Point topRight = new Point(X0 + W, Y0);
+
+            Point[] vertices = new Point[] { bottomRight, bottomLeft, topLeft, topRight };
+
+            return vertices;
+        }
+
+        public Point[] GetScreenVertices()
         {
             Point[] vertices = GetVertices();
 
-            for(int index = 0; index < vertices.Length; index++)
+            for (int index = 0; index < vertices.Length; index++)
             {
                 vertices[index].X *= AnimationConstants._ScaleFactor;
                 vertices[index].Y *= AnimationConstants._ScaleFactor;
@@ -281,7 +286,22 @@ namespace VectorCubeAnimationEditor
             return vertices;
         }
 
-        public Point[] ScreenGetVerticesMinusRadius()
+        public Point[] GetVerticesMinusRadius()
+        {
+            Point[] vertices = GetVertices();
+            vertices[0].X -= Radius;
+            vertices[0].Y -= Radius;
+            vertices[1].X += Radius;
+            vertices[1].Y -= Radius;
+            vertices[2].X += Radius;
+            vertices[2].Y += Radius;
+            vertices[3].X -= Radius;
+            vertices[3].Y += Radius;
+
+            return vertices;
+        }
+
+        public Point[] GetScreenVerticesMinusRadius()
         {
             Point[] vertices = GetVerticesMinusRadius();
 
@@ -294,26 +314,38 @@ namespace VectorCubeAnimationEditor
             return vertices;
         }
 
-        public bool IsPointNearPerimeterLine(Point point, Double margin)
+        public Point[] GetSides()
         {
-            UInt16 halfWidth = (UInt16)(W / 2);
-            UInt16 halfHeight = (UInt16)(H / 2);
-            UInt16 screenHalfWidth = (UInt16)(halfWidth * AnimationConstants._ScaleFactor);
-            UInt16 screenHalfHeight = (UInt16)(halfHeight * AnimationConstants._ScaleFactor);
-            UInt16 screenMidX = (UInt16)(X0 * AnimationConstants._ScaleFactor + screenHalfWidth);
-            UInt16 screenMidY = (UInt16)(Y0 * AnimationConstants._ScaleFactor + screenHalfHeight);
-            int xInRange = Math.Abs(point.X - screenMidX);
-            int yInRange = Math.Abs(point.Y - screenMidY);
-            if ((Math.Abs(point.Y - ScreenY0)) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.Y - (ScreenY0 + ScreenH))) < margin && xInRange < halfWidth) return true;
-            if ((Math.Abs(point.X - ScreenX0)) < margin && yInRange < halfHeight) return true;
-            if ((Math.Abs(point.X - (ScreenX0 + ScreenW))) < margin && yInRange < halfHeight) return true;
-            return false;
+            Point[] vertices = GetVertices();
+            Point l00 = new Point(X0 + Radius, Y0);
+            Point l01 = new Point(X0 + W - Radius, Y0);
+            Point l10 = new Point(X0 + W, Y0 + Radius);
+            Point l11 = new Point(X0 + W, Y0 + H - Radius);
+            Point l20 = new Point(X0 + W - Radius, Y0 + H);
+            Point l21 = new Point(X0 + Radius, Y0 + H);
+            Point l30 = new Point(X0, Y0 + H - Radius);
+            Point l31 = new Point(X0, Y0 + Radius);
+
+            Point[] lines = { l00, l01, l10, l11, l20, l21, l30, l31 };
+            return lines;
         }
 
-        public int SelectedVertex(Point point, int margin)
+        public Point[] GetScreenSides()
         {
-            Point[] vertices = ScreenGetVerticesMinusRadius();
+            Point[] lines = GetSides();
+
+            for (int index = 0; index < lines.Length; index++)
+            {
+                lines[index].X *= AnimationConstants._ScaleFactor;
+                lines[index].Y *= AnimationConstants._ScaleFactor;
+            }
+
+            return lines;
+        }
+
+        public int GetSelectedVertex(Point point, int margin)
+        {
+            Point[] vertices = GetScreenVerticesMinusRadius();
             int selectedVertex = -1;
             for (int index = 0; index < vertices.Length; index++)
             {
@@ -326,21 +358,23 @@ namespace VectorCubeAnimationEditor
             return selectedVertex;
         }
 
-        public bool IsPointNearBottomRight(Point point, Double margin)
+        public int GetSelectedSide(Point point)
         {
-            Point bottomRight = new Point(X0 + W, Y0 + H);
+            Point[] lines = GetScreenSides();
+            int margin = 4;
+            int selectedLine = -1;
+            for (int index = 0; index < lines.Length; index += 2)
+            {
+                if (Utility.DistanceFromLine(lines[index], lines[index + 1], point) < margin)
+                {
+                    selectedLine = index / 2;
+                }
 
-            return Math.Abs(point.X - (bottomRight.X * AnimationConstants._ScaleFactor)) < margin * AnimationConstants._ScaleFactor
-                    && Math.Abs(point.Y - (bottomRight.Y * AnimationConstants._ScaleFactor)) < margin * AnimationConstants._ScaleFactor;
+            }
+            return selectedLine;
         }
 
-        public bool IsPointInside(Point point)
-        {
-            GraphicsPath path = GetRectanglePath();
-            return path.IsVisible(point);
-        }
-
-        public GraphicsPath GetRectanglePath()
+        public GraphicsPath GetScreenRectanglePath()
         {
             System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX0, ScreenY0, ScreenW, ScreenH);
             int diameter = 2 * ScreenRadius;

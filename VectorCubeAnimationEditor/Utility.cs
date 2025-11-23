@@ -1,4 +1,5 @@
 ﻿using System.Buffers.Binary;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 
@@ -149,54 +150,69 @@ namespace VectorCubeAnimationEditor
             return IsPointOnRadius(point1, point2, radius, margin);
         }
 
-        public static bool ArePointsWithinMargin(Point point1, Point point2, Double margin)
+        public static bool ArePointsWithinMargin(Point point1, Point point2, int margin)
         {
             return Math.Abs(point1.X - point2.X) < margin
                 && Math.Abs(point1.Y - point2.Y) < margin;
         }
 
+        public static Int16 Distance(Point point1, Point point2)
+        {
+            Int16 distX = (Int16)(point1.X - point2.X);
+            Int16 distY = (Int16)(point1.Y - point2.Y);
+
+            return (Int16)Math.Sqrt(distX * distX + distY * distY);
+        }
+
         public static double DistanceFromLine(Point endpoint1, Point endpoint2, Point point)
         {
-            double dx = endpoint2.X - endpoint1.X;
-            double dy = endpoint2.Y - endpoint1.Y;
+            Point closestPoint = ClosestPointOnLine(endpoint1, endpoint2, point);
+            return Distance(closestPoint, point);
+        }
 
-            if (dx == 0 && dy == 0)
-            {
-                double pdx = point.X - endpoint1.X;
-                double pdy = point.Y - endpoint1.Y;
-                return Math.Sqrt(pdx * pdx + pdy * pdy);
-            }
+        public static Point ClosestPointOnLine(Point endpoint1, Point endpoint2, Point point)
+        {
+            float dx = endpoint2.X - endpoint1.X;
+            float dy = endpoint2.Y - endpoint1.Y;
 
-            double t = ((point.X - endpoint1.X) * dx + (point.Y - endpoint1.Y) * dy) / (dx * dx + dy * dy);
+            if (dx == 0 && dy == 0) return endpoint1;
+
+            float t = ((point.X - endpoint1.X) * dx + (point.Y - endpoint1.Y) * dy) / (dx * dx + dy * dy);
 
             t = Math.Max(0, Math.Min(1, t));
 
-            double closestX = endpoint1.X + t * dx;
-            double closestY = endpoint1.Y + t * dy;
+            float closestX = endpoint1.X + t * dx;
+            float closestY = endpoint1.Y + t * dy;
 
-            double distX = point.X - closestX;
-            double distY = point.Y - closestY;
-
-            return Math.Sqrt(distX * distX + distY * distY);
+            return new Point((int)closestX, (int)closestY);
         }
 
         public static Int16 GetAngleFromReferencePoint(Point referencePoint, Point point)
         {
-            double pointDeltaX = point.X - referencePoint.X;
-            double pointDeltaY = point.Y - referencePoint.Y;
+            Int16 pointDeltaX = (Int16)(point.X - referencePoint.X);
+            Int16 pointDeltaY = (Int16)(point.Y - referencePoint.Y);
 
-            double angle = 360 - (Math.Atan2(-pointDeltaY, pointDeltaX) + Math.PI) * (180 / Math.PI);
+            return GetAngle(new Point(pointDeltaX, pointDeltaY));
+        }
 
-            return (Int16)angle;
+        public static Int16 GetAngle(Point point)
+        {
+            return (Int16)(360 - (Math.Atan2(-point.Y, point.X) + Math.PI) * (180 / Math.PI));
         }
 
         public static Point RotateFromReferencePoint(Point referencePoint, Point point, Int16 angleDeg)
         {
             point.X -= referencePoint.X;
             point.Y -= referencePoint.Y;
+            Point rotated = Rotate(point, angleDeg);
+            rotated.X += referencePoint.X;
+            rotated.Y += referencePoint.Y;
+            return rotated;
+        }
 
+        public static Point Rotate(Point point, Int16 angleDeg)
+        {
             Point[] points = [point];
-
             Matrix matrix = new Matrix();
             matrix.Rotate(angleDeg);
             matrix.TransformPoints(points);
