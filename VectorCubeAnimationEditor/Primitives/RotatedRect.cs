@@ -243,39 +243,18 @@ namespace VectorCubeAnimationEditor
                 switch (SelectedSide)
                 {
                     case 0:
-                        //rotate the mouse to unrotated position and find distance from center, all in screen units
                         Point unrotatedMousesPosition = Utility.RotateFromReferencePoint(mousedownScreenCen, point, (Int16)(-angleDeg));
-                        Int16 ScreenDistanceFromCenter = (Int16)(unrotatedMousesPosition.Y - mousedownScreenCen.Y);
-
-                        Int16 DistanceFromCenter = (Int16)(ScreenDistanceFromCenter / AnimationConstants._ScaleFactor);
-                        if (DistanceFromCenter > (mousedownH / 2)) DistanceFromCenter += (Int16)(mousedownH % 2);
-                        Int16 newH = (Int16)(DistanceFromCenter + (mousedownH / 2));
-                        Int16 dH = (Int16)(newH - mousedownH);
-                        int offsetY = 0;
-
-                        if ((mousedownH % 2) == 0)
+                        int ScreenDistanceFromCenter = unrotatedMousesPosition.Y - mousedownScreenCen.Y;
+                        int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
+                        H = (Int16)(DistanceFromCenter + (mousedownH / 2));
+                        if (H == mousedownH)
                         {
-                            if (dH > 0)
-                            {
-                                offsetY = (dH / 2) + (newH % 2);
-                            }
-                            else
-                            {
-                                offsetY = (dH / 2);
-                            }
+                            CenX = (Int16)(mousedownScreenCen.X / AnimationConstants._ScaleFactor);
+                            CenY = (Int16)(mousedownScreenCen.Y / AnimationConstants._ScaleFactor);
+                            break;
                         }
-                        else
-                        {
-                            if (dH > 0)
-                            {
-                                offsetY = (dH / 2);
-                            }
-                            else
-                            {
-                                offsetY = (dH / 2) - ((newH + 1) % 2);
-                            }
-                        }
-
+                        int dH = H - mousedownH;
+                        int offsetY = ((dH + (((mousedownH % 2) == 0) ? ((dH < 0) ?  0 : 1 ) : ((dH < 0) ? -1 : 0))) / 2);
                         offsetY *= AnimationConstants._ScaleFactor;
                         Point newCenter = mousedownScreenCen;
                         newCenter.Y += offsetY;
@@ -284,7 +263,6 @@ namespace VectorCubeAnimationEditor
                         newCenter.Y /= AnimationConstants._ScaleFactor;
                         CenX = (Int16)newCenter.X;
                         CenY = (Int16)newCenter.Y;
-                        H = newH;
                         break;
                     case 1:
 
