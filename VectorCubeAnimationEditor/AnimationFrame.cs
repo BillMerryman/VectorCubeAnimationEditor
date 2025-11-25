@@ -126,6 +126,9 @@ namespace VectorCubeAnimationEditor
                     case AnimationConstants._RoundRect:
                         newPrimitive = new RoundRect();
                         break;
+                    case AnimationConstants._RotatedRect:
+                        newPrimitive = new RotatedRect();
+                        break;
                     case AnimationConstants._Circle:
                         newPrimitive = new Circle();
                         break;

@@ -158,56 +158,59 @@ namespace VectorCubeAnimationEditor
 
         #region Mouse handling
 
-        private Point MouseLocation = new Point(0, 0);
+        private Point mouseLocation = new Point(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
         private bool isResizing = false;
 
         public override void MouseDown(Point point)
         {
-            MouseLocation = point;
+            mouseLocation = point;
             isMouseUp = false;
-            isResizing = IsPointOnRadius(MouseLocation);
-            isMoving = IsPointNearCenter(MouseLocation);
+
+            if (IsPointNearCenter(mouseLocation)) isMoving = true;
+            else isResizing = IsPointOnRadius(mouseLocation);
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
         {
-            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point mouseDelta = new Point(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
             Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
-            bool result = false;
-
             if (isMouseUp)
             {
-                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
-                else if (IsPointOnRadius(point)) pctbxCanvas.Cursor = Cursors.Hand;
-                else pctbxCanvas.Cursor = Cursors.Arrow;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.SizeAll;
+                else
+                {
+                    if (IsPointOnRadius(point))
+                    {
+                        int angle = GetAngle(point);
+                        angle %= 180;
+                        pctbxCanvas.Cursor = (angle < 90) ? Cursors.SizeNWSE : Cursors.SizeNESW;
+                    }
+                    else pctbxCanvas.Cursor = Cursors.Arrow;
+                }
+                return false;
             }
             else
             {
-                if (isResizing)
+                if (isMoving) Move(unscaledMouseDelta);
+                else
                 {
-                    //Old way of resizing...
-                    //int cRadius = circle.R;
-                    //if (cRadius + primitiveDeltaY > 0) circle.R += (Int16)primitiveDeltaY;
-                    int circleXOffset = ((X0 * AnimationConstants._ScaleFactor) - point.X) / AnimationConstants._ScaleFactor;
-                    int circleYOffset = ((Y0 * AnimationConstants._ScaleFactor) - point.Y) / AnimationConstants._ScaleFactor;
-                    R = (short)Math.Sqrt((circleXOffset * circleXOffset) + (circleYOffset * circleYOffset));
-                    result = true;
-                }
-                if (isMoving)
-                {
-                    Move(unscaledMouseDelta);
-                    result = true;
+                    if (isResizing)
+                    {
+                        int circleXOffset = ((X0 * AnimationConstants._ScaleFactor) - point.X) / AnimationConstants._ScaleFactor;
+                        int circleYOffset = ((Y0 * AnimationConstants._ScaleFactor) - point.Y) / AnimationConstants._ScaleFactor;
+                        R = (short)Math.Sqrt((circleXOffset * circleXOffset) + (circleYOffset * circleYOffset));
+                    }
                 }
             }
 
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            mouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            mouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
 
-            return result;
+            return true;
         }
 
         public override void MouseUp()
@@ -218,11 +221,9 @@ namespace VectorCubeAnimationEditor
         }
 
         #endregion
-
-        public bool IsPointNearCenter(Point point)
+        public Int16 GetAngle(Point point)
         {
-            int margin = 4;
-            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
+            return Utility.GetAngleFromReferencePoint(ScreenCen, point);
         }
 
         public bool IsPointOnRadius(Point point)
@@ -239,6 +240,12 @@ namespace VectorCubeAnimationEditor
             int bSquare = b * b;
             if ((aSquare + bSquare > cLowerSquare) && (aSquare + bSquare < cUpperSquare)) return true;
             return false;
+        }
+
+        public bool IsPointNearCenter(Point point)
+        {
+            int margin = 4;
+            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
         }
 
         #endregion

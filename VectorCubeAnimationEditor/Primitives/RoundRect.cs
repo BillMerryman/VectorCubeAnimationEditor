@@ -27,13 +27,13 @@ namespace VectorCubeAnimationEditor
         public Int16 W
         {
             get { return w; }
-            set { w = value; }
+            set { w = (value < 1) ? (Int16)1 : value; }
         }
 
         public Int16 H
         {
             get { return h; }
-            set { h = value; }
+            set { h = (value < 1) ? (Int16)1 : value; }
         }
 
         public Int16 Radius
@@ -168,79 +168,89 @@ namespace VectorCubeAnimationEditor
 
         #region Mouse handling
 
-        private Point MouseLocation = new Point(0, 0);
+        private Point mouseLocation = new Point(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
-        private int SelectedSide = -1;
-        private int SelectedVertex = -1;
+        private int selectedSide = -1;
+        private int selectedVertex = -1;
 
         public override void MouseDown(Point point)
         {
-            MouseLocation = point;
+            mouseLocation = point;
             isMouseUp = false;
-            SelectedVertex = GetSelectedVertex(point, 2);
 
-            if (SelectedVertex < 0)
+            if (IsPointNearCenter(point)) isMoving = true;
+            else
             {
-                SelectedSide = GetSelectedSide(MouseLocation);
-                if (GetSelectedSide(MouseLocation) < 0)
-                {
-                    if (IsPointNearCenter(MouseLocation))
-                    {
-                        isMoving = true;
-                    }
-                }
+                selectedVertex = GetSelectedVertex(mouseLocation);
+                if (selectedVertex < 0) selectedSide = GetSelectedSide(mouseLocation);
             }
-
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
         {
-            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point mouseDelta = new Point(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
             Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
             if (isMouseUp)
             {
-                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
-                else if (GetSelectedSide(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
-                else if (GetSelectedVertex(point, 2) > -1) pctbxCanvas.Cursor = Cursors.Hand;
-                else pctbxCanvas.Cursor = Cursors.Arrow;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.SizeAll;
+                else
+                {
+                    int selectedSide = GetSelectedSide(point);
+                    if (selectedSide > -1) pctbxCanvas.Cursor = ((selectedSide % 2) == 0) ? Cursors.SizeNS : Cursors.SizeWE;
+                    else
+                    {
+                        //update this to not have a second argument...
+                        int selectedVertex = GetSelectedVertex(point);
+                        if (selectedVertex > -1) pctbxCanvas.Cursor = ((selectedVertex % 2) == 0) ? Cursors.SizeNWSE : Cursors.SizeNESW;
+                        else pctbxCanvas.Cursor = Cursors.Arrow;
+                    }
+                }
                 return false;
             }
-
-            if (SelectedVertex > -1)
+            else
             {
-                Point screenCenter = ScreenCen;
-                int offsetX = point.X - screenCenter.X;
-                int offsetY = point.Y - screenCenter.Y;
-                int offsetR = (Int16)Math.Sqrt(Math.Pow(offsetX, 2) + Math.Pow(offsetY, 2));
-                Radius = (Int16)(ScreenHalfDiagonal - offsetR);
-            }
-            if (SelectedSide > -1)
-            {
-                switch (SelectedSide)
+                if (isMoving) Move(unscaledMouseDelta);
+                else
                 {
-                    case 0:
-                        Y0 += (Int16)unscaledMouseDelta.Y;
-                        H -= (Int16)unscaledMouseDelta.Y;
-                        break;
-                    case 1:
-                        W += (Int16)unscaledMouseDelta.X;
-                        break;
-                    case 2:
-                        H += (Int16)unscaledMouseDelta.Y;
-                        break;
-                    case 3:
-                        X0 += (Int16)unscaledMouseDelta.X;
-                        W -= (Int16)unscaledMouseDelta.X;
-                        break;
+                    if (selectedVertex > -1)
+                    {
+                        Point screenCenter = ScreenCen;
+                        int offsetX = point.X - screenCenter.X;
+                        int offsetY = point.Y - screenCenter.Y;
+                        int offsetR = (Int16)Math.Sqrt(Math.Pow(offsetX, 2) + Math.Pow(offsetY, 2));
+                        Radius = (Int16)(ScreenHalfDiagonal - offsetR);
+                    }
+                    else
+                    {
+                        if (selectedSide > -1)
+                        {
+                            switch (selectedSide)
+                            {
+                                case 0:
+                                    Y0 += (Int16)unscaledMouseDelta.Y;
+                                    H -= (Int16)unscaledMouseDelta.Y;
+                                    break;
+                                case 1:
+                                    W += (Int16)unscaledMouseDelta.X;
+                                    break;
+                                case 2:
+                                    H += (Int16)unscaledMouseDelta.Y;
+                                    break;
+                                case 3:
+                                    X0 += (Int16)unscaledMouseDelta.X;
+                                    W -= (Int16)unscaledMouseDelta.X;
+                                    break;
+                            }
+                        }
+                    }
                 }
             }
-            if (isMoving) Move(unscaledMouseDelta);
 
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            mouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            mouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
 
             return true;
         }
@@ -249,16 +259,33 @@ namespace VectorCubeAnimationEditor
         {
             isMouseUp = true;
             isMoving = false;
-            SelectedSide = -1;
-            SelectedVertex = -1;
+            selectedSide = -1;
+            selectedVertex = -1;
         }
 
         #endregion
 
-        public bool IsPointNearCenter(Point point)
+        public GraphicsPath GetScreenRectanglePath()
         {
-            int margin = 4;
-            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
+            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX0, ScreenY0, ScreenW, ScreenH);
+            int diameter = 2 * ScreenRadius;
+            Size size = new Size(diameter, diameter);
+            System.Drawing.Rectangle arc = new System.Drawing.Rectangle(bounds.Location, size);
+            GraphicsPath path = new GraphicsPath();
+
+            if (Radius == 0)
+            {
+                path.AddRectangle(bounds);
+            }
+            else
+            {
+                path.AddArc(bounds.X, bounds.Y, diameter, diameter, 180, 90);
+                path.AddArc(bounds.X + (bounds.Width - diameter) - 1, bounds.Y, diameter + 1, diameter + 8, 270, 90);
+                path.AddArc(bounds.X + (bounds.Width - diameter) - 7, bounds.Y + (bounds.Height - diameter) - 7, diameter + 7, diameter + 7, 0, 90);
+                path.AddArc(bounds.X, bounds.Y + (bounds.Height - diameter) - 1, diameter + 8, diameter + 1, 90, 90);
+                path.CloseFigure();
+            }
+            return path;
         }
 
         public Point[] GetVertices()
@@ -269,19 +296,6 @@ namespace VectorCubeAnimationEditor
             Point topRight = new Point(X0 + W, Y0);
 
             Point[] vertices = new Point[] { bottomRight, bottomLeft, topLeft, topRight };
-
-            return vertices;
-        }
-
-        public Point[] GetScreenVertices()
-        {
-            Point[] vertices = GetVertices();
-
-            for (int index = 0; index < vertices.Length; index++)
-            {
-                vertices[index].X *= AnimationConstants._ScaleFactor;
-                vertices[index].Y *= AnimationConstants._ScaleFactor;
-            }
 
             return vertices;
         }
@@ -343,9 +357,10 @@ namespace VectorCubeAnimationEditor
             return lines;
         }
 
-        public int GetSelectedVertex(Point point, int margin)
+        public int GetSelectedVertex(Point point)
         {
             Point[] vertices = GetScreenVerticesMinusRadius();
+            int margin = 4;
             int selectedVertex = -1;
             for (int index = 0; index < vertices.Length; index++)
             {
@@ -374,27 +389,10 @@ namespace VectorCubeAnimationEditor
             return selectedLine;
         }
 
-        public GraphicsPath GetScreenRectanglePath()
+        public bool IsPointNearCenter(Point point)
         {
-            System.Drawing.Rectangle bounds = new System.Drawing.Rectangle(ScreenX0, ScreenY0, ScreenW, ScreenH);
-            int diameter = 2 * ScreenRadius;
-            Size size = new Size(diameter, diameter);
-            System.Drawing.Rectangle arc = new System.Drawing.Rectangle(bounds.Location, size);
-            GraphicsPath path = new GraphicsPath();
-
-            if (Radius == 0)
-            {
-                path.AddRectangle(bounds);
-            }
-            else
-            {
-                path.AddArc(bounds.X, bounds.Y, diameter, diameter, 180, 90);
-                path.AddArc(bounds.X + (bounds.Width - diameter) - 1, bounds.Y, diameter + 1, diameter + 8, 270, 90);
-                path.AddArc(bounds.X + (bounds.Width - diameter) - 7, bounds.Y + (bounds.Height - diameter) - 7, diameter + 7, diameter + 7, 0, 90);
-                path.AddArc(bounds.X, bounds.Y + (bounds.Height - diameter) - 1, diameter + 8, diameter + 1, 90, 90);
-                path.CloseFigure();
-            }
-            return path;
+            int margin = 4;
+            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
         }
 
         #endregion

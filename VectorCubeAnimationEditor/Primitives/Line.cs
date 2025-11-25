@@ -158,58 +158,56 @@ namespace VectorCubeAnimationEditor
 
         #region Mouse handling
 
-        private Point MouseLocation = new Point(0, 0);
+        private Point mouseLocation = new Point(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
-        private int isEndPointMoving = -1;
+        private int selectedEndpoint = -1;
 
         public override void MouseDown(Point point)
         {
-            MouseLocation = point;
+            mouseLocation = point;
             isMouseUp = false;
-            isEndPointMoving = SelectedEndpoint(MouseLocation);
-            if (isEndPointMoving < 0) isMoving = IsPointNearCenter(point);
+            
+            if (IsPointNearCenter(point)) isMoving = true;
+            else selectedEndpoint = GetSelectedEndpoint(mouseLocation);
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
         {
-            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point mouseDelta = new Point(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
             Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
-            bool result = false;
-
             if (isMouseUp)
             {
-                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
-                else if (SelectedEndpoint(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
-                else pctbxCanvas.Cursor = Cursors.Arrow;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.SizeAll;
+                else
+                {
+                    if (GetSelectedEndpoint(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                    else pctbxCanvas.Cursor = Cursors.Arrow;
+                }
+                return false;
             }
             else
             {
-                if (isMoving)
+                if (isMoving) Move(unscaledMouseDelta);
+                else
                 {
-                    Move(unscaledMouseDelta);
-                    result = true;
-                }
-                if (isEndPointMoving > -1)
-                {
-                    MoveEndPoint(isEndPointMoving, unscaledMouseDelta);
-                    result = true;
+                    if (selectedEndpoint > -1) MoveEndPoint(selectedEndpoint, unscaledMouseDelta);
                 }
             }
 
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            mouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            mouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
 
-            return result;
+            return true;
         }
 
         public override void MouseUp()
         {
             isMouseUp = true;
             isMoving = false;
-            isEndPointMoving = -1;
+            selectedEndpoint = -1;
         }
 
         #endregion
@@ -237,7 +235,7 @@ namespace VectorCubeAnimationEditor
             return endPoints;
         }
 
-        public int SelectedEndpoint(Point point)
+        public int GetSelectedEndpoint(Point point)
         {
             Point[] endpoints = GetScreenEndPoints();
             int margin = 4;
@@ -257,11 +255,6 @@ namespace VectorCubeAnimationEditor
         {
             int margin = 4;
             return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
-        }
-
-        public bool IsPointNearLine(Point point)
-        {
-            return Utility.IsPointNearLine(new Point(ScreenX0, ScreenY0), new Point(ScreenX1, ScreenY1), point, AnimationConstants._ScaleFactor * 2);
         }
 
         #endregion

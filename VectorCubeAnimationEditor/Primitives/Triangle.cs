@@ -165,24 +165,6 @@ namespace VectorCubeAnimationEditor
 
         #region Screen mapped methods
 
-        public Point[] GetVertices()
-        {
-            Point vertex1 = new Point(X0, Y0);
-            Point vertex2 = new Point(X1, Y1);
-            Point vertex3 = new Point(X2, Y2);
-
-            Point[] vertices = new Point[] { vertex1, vertex2, vertex3 };
-
-            return vertices;
-        }
-
-        public Point GetCentroid()
-        {
-            int centerX = (X0 + X1 + X2) / 3;
-            int centerY = (Y0 + Y1 + Y2) / 3;
-            return new Point(centerX, centerY);
-        }
-
         public Point ScreenCen
         {
             get 
@@ -225,66 +207,69 @@ namespace VectorCubeAnimationEditor
 
         #region Mouse handling
 
-        private Point MouseLocation = new Point(0, 0);
+        private Point mouseLocation = new Point(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
-        private int isVertexMoving = -1;
+        private int selectedVertex = -1;
 
         public override void MouseDown(Point point)
         {
-            MouseLocation = point;
+            mouseLocation = point;
             isMouseUp = false;
-            isVertexMoving = SelectedVertex(MouseLocation);
-            isMoving = IsPointNearCenter(MouseLocation);
+
+            if (IsPointNearCenter(point)) isMoving = true;
+            else selectedVertex = GetSelectedVertex(mouseLocation);
         }
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
         {
-            Point mouseDelta = new Point(point.X - MouseLocation.X, point.Y - MouseLocation.Y);
+            Point mouseDelta = new Point(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
             Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
-            bool result = false;
-
             if (isMouseUp)
             {
-                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.Hand;
-                else if (SelectedVertex(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
-                else pctbxCanvas.Cursor = Cursors.Arrow;
+                if (IsPointNearCenter(point)) pctbxCanvas.Cursor = Cursors.SizeAll;
+                else
+                {
+                    if (GetSelectedVertex(point) > -1) pctbxCanvas.Cursor = Cursors.Hand;
+                    else pctbxCanvas.Cursor = Cursors.Arrow;
+                }
+                return false;
             }
             else
             {
-                if (isMoving)
+                if (isMoving) Move(unscaledMouseDelta);
+                else
                 {
-                    Move(unscaledMouseDelta);
-                    result = true;
-                }
-                if (isVertexMoving > -1)
-                {
-                    MoveVertex(isVertexMoving, unscaledMouseDelta);
-                    result = true;
+                    if (selectedVertex > -1) MoveVertex(selectedVertex, unscaledMouseDelta);
                 }
             }
 
-            MouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
-            MouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
+            mouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
+            mouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
 
-            return result;
+            return true;
         }
 
         public override void MouseUp()
         {
             isMouseUp = true;
             isMoving = false;
-            isVertexMoving = -1;
+            selectedVertex = -1;
         }
 
         #endregion
 
-        public bool IsPointNearCenter(Point point)
+        public Point[] GetVertices()
         {
-            int margin = 4;
-            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
+            Point vertex1 = new Point(X0, Y0);
+            Point vertex2 = new Point(X1, Y1);
+            Point vertex3 = new Point(X2, Y2);
+
+            Point[] vertices = new Point[] { vertex1, vertex2, vertex3 };
+
+            return vertices;
         }
 
         public Point[] GetScreenVertices()
@@ -298,7 +283,14 @@ namespace VectorCubeAnimationEditor
             return vertices;
         }
 
-        public int SelectedVertex(Point point)
+        public Point GetCentroid()
+        {
+            int centerX = (X0 + X1 + X2) / 3;
+            int centerY = (Y0 + Y1 + Y2) / 3;
+            return new Point(centerX, centerY);
+        }
+
+        public int GetSelectedVertex(Point point)
         {
             Point[] vertices = GetScreenVertices();
             int margin = 4;
@@ -312,6 +304,12 @@ namespace VectorCubeAnimationEditor
 
             }
             return selectedVertex;
+        }
+
+        public bool IsPointNearCenter(Point point)
+        {
+            int margin = 4;
+            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
         }
 
         #endregion
