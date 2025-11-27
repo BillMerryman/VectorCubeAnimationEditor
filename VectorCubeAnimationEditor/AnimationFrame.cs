@@ -129,8 +129,11 @@ namespace VectorCubeAnimationEditor
                     case AnimationConstants._RotatedRect:
                         newPrimitive = new RotatedRect();
                         break;
-                    case AnimationConstants._Circle:
+                    case AnimationConstants._QuarterCircle:
                         newPrimitive = new Circle();
+                        break;
+                    default:
+                        bytePosition += AnimationConstants._LargestPrimitiveByteCount;
                         break;
                 }
                 if (newPrimitive != null)
