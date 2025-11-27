@@ -264,7 +264,7 @@ namespace VectorCubeAnimationEditor
                                             break;
                                         }
                                         int dW = W - mousedownW;
-                                        int offsetX = ((dW + (((mousedownH % 2) != 0) ? ((dW < 0) ? 0 : -1) : ((dW < 0) ? -1 : 0))) / 2);
+                                        int offsetX = ((dW + (((mousedownW % 2) != 0) ? ((dW < 0) ? 0 : 1) : ((dW < 0) ? -1 : 0))) / 2);
                                         offsetX *= AnimationConstants._ScaleFactor;
                                         newCenter.X -= offsetX;
                                         newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
@@ -286,7 +286,7 @@ namespace VectorCubeAnimationEditor
                                             break;
                                         }
                                         int dH = H - mousedownH;
-                                        int offsetY = ((dH + (((mousedownH % 2) != 0) ? ((dH < 0) ? 0 : -1) : ((dH < 0) ? -1 : 0))) / 2);
+                                        int offsetY = ((dH - (((mousedownH % 2) != 0) ? ((dH < 0) ? 0 : -1) : ((dH < 0) ? 1 : 0))) / 2);
                                         offsetY *= AnimationConstants._ScaleFactor;
                                         newCenter.Y -= offsetY;
                                         newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
@@ -308,7 +308,7 @@ namespace VectorCubeAnimationEditor
                                             break;
                                         }
                                         int dW = W - mousedownW;
-                                        int offsetX = ((dW + (((mousedownH % 2) == 0) ? ((dW < 0) ? 0 : 1) : ((dW < 0) ? -1 : 0))) / 2);
+                                        int offsetX = ((dW + (((mousedownW % 2) == 0) ? ((dW < 0) ? 0 : 1) : ((dW < 0) ? -1 : 0))) / 2);
                                         offsetX *= AnimationConstants._ScaleFactor;
                                         newCenter.X += offsetX;
                                         newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
