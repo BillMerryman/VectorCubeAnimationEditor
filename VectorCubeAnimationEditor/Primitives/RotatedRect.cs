@@ -227,12 +227,12 @@ namespace VectorCubeAnimationEditor
                         if (selectedSide > -1)
                         {
                             Point newCenter = mousedownScreenCen;
-                            Point unrotatedMousesPosition = Utility.RotateFromReferencePoint(mousedownScreenCen, point, (Int16)(-angleDeg));
+                            Point unrotatedMousePosition = Utility.RotateFromReferencePoint(mousedownScreenCen, point, (Int16)(-angleDeg));
                             switch (selectedSide)
                             {
                                 case 0:
                                     {
-                                        int ScreenDistanceFromCenter = unrotatedMousesPosition.Y - mousedownScreenCen.Y;
+                                        int ScreenDistanceFromCenter = unrotatedMousePosition.Y - mousedownScreenCen.Y;
                                         int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
                                         H = (Int16)(DistanceFromCenter + (mousedownH / 2));
                                         if (H == mousedownH)
@@ -254,7 +254,7 @@ namespace VectorCubeAnimationEditor
                                     break;
                                 case 1:
                                     {
-                                        int ScreenDistanceFromCenter = mousedownScreenCen.X - unrotatedMousesPosition.X;
+                                        int ScreenDistanceFromCenter = mousedownScreenCen.X - unrotatedMousePosition.X;
                                         int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
                                         W = (Int16)(DistanceFromCenter + (mousedownW / 2));
                                         if (W == mousedownW)
@@ -276,7 +276,7 @@ namespace VectorCubeAnimationEditor
                                     break;
                                 case 2:
                                     {
-                                        int ScreenDistanceFromCenter = mousedownScreenCen.Y - unrotatedMousesPosition.Y;
+                                        int ScreenDistanceFromCenter = mousedownScreenCen.Y - unrotatedMousePosition.Y;
                                         int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
                                         H = (Int16)(DistanceFromCenter + (mousedownH / 2));
                                         if (H == mousedownH)
@@ -286,7 +286,7 @@ namespace VectorCubeAnimationEditor
                                             break;
                                         }
                                         int dH = H - mousedownH;
-                                        int offsetY = ((dH - (((mousedownH % 2) != 0) ? ((dH < 0) ? 0 : -1) : ((dH < 0) ? 1 : 0))) / 2);
+                                        int offsetY = ((dH + (((mousedownH % 2) != 0) ? ((dH < 0) ? 0 : 1) : ((dH < 0) ? -1 : 0))) / 2);
                                         offsetY *= AnimationConstants._ScaleFactor;
                                         newCenter.Y -= offsetY;
                                         newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
@@ -298,7 +298,7 @@ namespace VectorCubeAnimationEditor
                                     break;
                                 case 3:
                                     {
-                                        int ScreenDistanceFromCenter = unrotatedMousesPosition.X - mousedownScreenCen.X;
+                                        int ScreenDistanceFromCenter = unrotatedMousePosition.X - mousedownScreenCen.X;
                                         int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
                                         W = (Int16)(DistanceFromCenter + (mousedownW / 2));
                                         if (W == mousedownW)
