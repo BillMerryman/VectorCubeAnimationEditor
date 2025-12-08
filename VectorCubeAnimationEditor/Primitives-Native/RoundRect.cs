@@ -70,33 +70,33 @@ namespace ST7735Point85
 
         public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), x0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], x0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), y0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], y0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), w);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], w);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), h);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], h);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), radius);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], radius);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), color);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], color);
             bytePosition += 4;
         }
 
         public void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            x0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            w = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            w = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            h = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            h = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            radius = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            radius = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 4;
         }
 

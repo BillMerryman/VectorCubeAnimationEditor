@@ -89,8 +89,10 @@ namespace VectorCubeAnimationEditor
 
             Color drawColor = Utility.GetColorFromUIint16(Color);
             Brush brush = new SolidBrush(drawColor);
-            Pen pen = new Pen(drawColor.ColorToInverse());
-            pen.DashStyle = DashStyle.Dash;
+            Pen pen = new(drawColor.ColorToInverse())
+            {
+                DashStyle = DashStyle.Dash
+            };
             e.FillPolygon(brush, trianglePoints);
             if (isHighlighted) e.DrawPolygon(pen, trianglePoints);
         }
@@ -127,39 +129,39 @@ namespace VectorCubeAnimationEditor
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
         {
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._Triangle);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._Triangle);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X1);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X1);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y1);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y1);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X2);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X2);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y2);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y2);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Color);
             bytePosition += 2;
         }
 
         public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            X1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            X1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            Y1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Y1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            X2 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            X2 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            Y2 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Y2 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
         }
 
@@ -207,7 +209,7 @@ namespace VectorCubeAnimationEditor
 
         #region Mouse handling
 
-        private Point mouseLocation = new Point(0, 0);
+        private Point mouseLocation = new(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
         private int selectedVertex = -1;
@@ -223,8 +225,8 @@ namespace VectorCubeAnimationEditor
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
         {
-            Point mouseDelta = new Point(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
-            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+            Point mouseDelta = new(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
+            Point unscaledMouseDelta = new((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
             if (isMouseUp)
@@ -263,22 +265,22 @@ namespace VectorCubeAnimationEditor
 
         public Point[] GetVertices()
         {
-            Point vertex1 = new Point(X0, Y0);
-            Point vertex2 = new Point(X1, Y1);
-            Point vertex3 = new Point(X2, Y2);
+            Point vertex1 = new(X0, Y0);
+            Point vertex2 = new(X1, Y1);
+            Point vertex3 = new(X2, Y2);
 
-            Point[] vertices = new Point[] { vertex1, vertex2, vertex3 };
+            Point[] vertices = [vertex1, vertex2, vertex3];
 
             return vertices;
         }
 
         public Point[] GetScreenVertices()
         {
-            Point vertex0 = new Point(ScreenX0, ScreenY0);
-            Point vertex1 = new Point(ScreenX1, ScreenY1);
-            Point vertex2 = new Point(ScreenX2, ScreenY2);
+            Point vertex0 = new(ScreenX0, ScreenY0);
+            Point vertex1 = new(ScreenX1, ScreenY1);
+            Point vertex2 = new(ScreenX2, ScreenY2);
 
-            Point[] vertices = new Point[] { vertex0, vertex1, vertex2 };
+            Point[] vertices = [vertex0, vertex1, vertex2];
 
             return vertices;
         }

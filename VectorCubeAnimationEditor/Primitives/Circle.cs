@@ -82,8 +82,10 @@ namespace VectorCubeAnimationEditor
         {
             Color drawColor = Utility.GetColorFromUIint16(Color);
             Brush brush = new SolidBrush(drawColor);
-            Pen pen = new Pen(drawColor.ColorToInverse());
-            pen.DashStyle = DashStyle.Dash;
+            Pen pen = new(drawColor.ColorToInverse())
+            {
+                DashStyle = DashStyle.Dash
+            };
             int boundingX = ScreenX0 - ScreenR;
             int boundingY = ScreenY0 - ScreenR;
             if ((Quadrants & TopLeft) == TopLeft) e.FillPie(brush, boundingX, boundingY, 2 * ScreenR, 2 * ScreenR, 180, 90);
@@ -102,35 +104,35 @@ namespace VectorCubeAnimationEditor
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
         {
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._QuarterCircle);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._QuarterCircle);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), X0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Y0);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), R);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], R);
             bytePosition += 2;
             animationBytes[bytePosition] = Quadrants;
             bytePosition += 1;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Delta);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Delta);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Color);
             bytePosition += 5;
         }
 
         public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            R = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            R = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
             Quadrants = animationBytes[bytePosition];
             bytePosition += 1;
-            Delta = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Delta = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 5;
         }
 
@@ -158,7 +160,7 @@ namespace VectorCubeAnimationEditor
 
         #region Mouse handling
 
-        private Point mouseLocation = new Point(0, 0);
+        private Point mouseLocation = new(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
         private bool isResizing = false;
@@ -174,8 +176,8 @@ namespace VectorCubeAnimationEditor
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
         {
-            Point mouseDelta = new Point(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
-            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+            Point mouseDelta = new(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
+            Point unscaledMouseDelta = new((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
             if (isMouseUp)
@@ -233,7 +235,6 @@ namespace VectorCubeAnimationEditor
             int cUpper = ScreenR + margin;
             int a = ((X0 * AnimationConstants._ScaleFactor) - point.X);
             int b = ((Y0 * AnimationConstants._ScaleFactor) - point.Y);
-            int cSquare = ScreenR * ScreenR;
             int cLowerSquare = cLower * cLower;
             int cUpperSquare = cUpper * cUpper;
             int aSquare = a * a;

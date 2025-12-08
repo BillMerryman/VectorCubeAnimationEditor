@@ -74,7 +74,7 @@ namespace ST7735Point85
         public Primitive? AddPrimitive(PrimitiveType primitiveType, UInt16 color)
         {
             if (primitiveCount > AnimationConstants._MaxPrimitiveCount) return null;
-            Primitive primitive = new Primitive();
+            Primitive primitive = new();
             primitives[primitiveCount] = primitive;
             primitive.Type = primitiveType;
             switch (primitiveType)
@@ -130,11 +130,11 @@ namespace ST7735Point85
 
         public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
-            BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan().Slice(bytePosition), duration);
+            BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..], duration);
             bytePosition += 4;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), fillColor);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], fillColor);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), primitiveCount);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], primitiveCount);
             bytePosition += 2;
             for (int index = 0; index < primitives.Length; index++)
             {
@@ -144,11 +144,11 @@ namespace ST7735Point85
 
         public void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 4;
-            fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
             for (int index = 0; index < primitives.Length; index++)
             {

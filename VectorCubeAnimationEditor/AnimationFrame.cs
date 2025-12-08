@@ -31,14 +31,14 @@ namespace VectorCubeAnimationEditor
         {
             duration = 0;
             fillColor = 0x0000;
-            primitives = new List<Primitive>();
+            primitives = [];
         }
 
         public AnimationFrame(AnimationFrame frame)
         {
             this.duration = frame.duration;
             this.fillColor = frame.fillColor;
-            primitives = frame.primitives.Select(item => item.Clone()).ToList();
+            primitives = [.. frame.primitives.Select(item => item.Clone())];
         }
 
         public Primitive? GetPrimitive(int primitiveIndex)
@@ -85,11 +85,11 @@ namespace VectorCubeAnimationEditor
 
         public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
-            BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan().Slice(bytePosition), duration);
+            BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..], duration);
             bytePosition += 4;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), fillColor);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], fillColor);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), (ushort)primitives.Count);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], (ushort)primitives.Count);
             bytePosition += 2;
             for (int index = 0; index < primitives.Count; index++)
             {
@@ -104,15 +104,15 @@ namespace VectorCubeAnimationEditor
 
         public void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 4;
-            fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            UInt16 primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            UInt16 primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
             for (int index = 0; index < primitiveCount; index++)
             {
-                PrimitiveType type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+                PrimitiveType type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
                 bytePosition += AnimationConstants._PrimitiveTypeWidth;
                 Primitive newPrimitive = null;
                 switch (type)

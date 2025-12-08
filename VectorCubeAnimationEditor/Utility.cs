@@ -13,7 +13,7 @@ namespace VectorCubeAnimationEditor
         public static byte[] getCommandBytes(UInt16 command)
         {
             byte[] commandBytes = new byte[2];
-            BinaryPrimitives.WriteUInt16LittleEndian(commandBytes.AsSpan().Slice(0), command);
+            BinaryPrimitives.WriteUInt16LittleEndian(commandBytes.AsSpan()[..], command);
             return commandBytes;
         }
 
@@ -43,7 +43,7 @@ namespace VectorCubeAnimationEditor
         {
             try
             {
-                int red = int.Parse(strRGB.Substring(0, 2), NumberStyles.HexNumber);
+                int red = int.Parse(strRGB[..2], NumberStyles.HexNumber);
                 int green = int.Parse(strRGB.Substring(2, 2), NumberStyles.HexNumber);
                 int blue = int.Parse(strRGB.Substring(4, 2), NumberStyles.HexNumber);
 
@@ -213,7 +213,7 @@ namespace VectorCubeAnimationEditor
         public static Point Rotate(Point point, Int16 angleDeg)
         {
             Point[] points = [point];
-            Matrix matrix = new Matrix();
+            Matrix matrix = new();
             matrix.Rotate(angleDeg);
             matrix.TransformPoints(points);
             return points[0];

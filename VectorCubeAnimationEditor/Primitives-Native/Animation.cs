@@ -46,7 +46,7 @@ namespace ST7735Point85
         public AnimationFrame? AddFrame(UInt16 fillColor, UInt32 duration)
         {
             if(frameCount >= AnimationConstants._MaxFrameCount) return null;
-            AnimationFrame frame = new AnimationFrame();
+            AnimationFrame frame = new();
             frames[frameCount] = frame;
             frame.FillColor = fillColor;
             frame.Duration = duration;
@@ -65,7 +65,7 @@ namespace ST7735Point85
             {
                 frames[index] = frames[index - 1];
             }
-            AnimationFrame newFrame = new AnimationFrame(frame);
+            AnimationFrame newFrame = new(frame);
             frames[newFrameIndex] = newFrame;
             frameCount++;
             return newFrame;
@@ -96,9 +96,7 @@ namespace ST7735Point85
             if (frameNumber < 1) return false;
             if (frameNumber == FrameCount) return false;
             int frameIndex = frameNumber - 1;
-            AnimationFrame animationFrame = frames[frameIndex];
-            frames[frameIndex] = frames[frameIndex + 1];
-            frames[frameIndex + 1] = animationFrame;
+            (frames[frameIndex + 1], frames[frameIndex]) = (frames[frameIndex], frames[frameIndex + 1]);
             return true;
         }
 
@@ -108,9 +106,7 @@ namespace ST7735Point85
             if (frameNumber < 1) return false;
             if (frameNumber == 1) return false;
             int frameIndex = frameNumber - 1;
-            AnimationFrame animationFrame = frames[frameIndex];
-            frames[frameIndex] = frames[frameIndex - 1];
-            frames[frameIndex - 1] = animationFrame;
+            (frames[frameIndex - 1], frames[frameIndex]) = (frames[frameIndex], frames[frameIndex - 1]);
             return true;
         }
 
@@ -118,7 +114,7 @@ namespace ST7735Point85
         {
             byte[] animationBytes = new byte[2402];
             int bytePosition = 0;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), frameCount);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], frameCount);
             bytePosition += 2;
             for (int index = 0; index < frames.Length; index++)
             {
@@ -131,7 +127,7 @@ namespace ST7735Point85
         {
             if (animationBytes.Length != 2402) return;
             int bytePosition = 0;
-            frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
             for (int index = 0; index < frames.Length; index++)
             {

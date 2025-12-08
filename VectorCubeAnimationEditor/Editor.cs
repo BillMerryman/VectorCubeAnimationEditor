@@ -9,7 +9,7 @@ namespace VectorCubeAnimationEditor
         AnimationFrame? currentFrame;
         Primitive? currentPrimitive;
         bool highlightCurrent = false;
-        Point MouseLocation = new Point(0, 0);
+        Point MouseLocation = new(0, 0);
 
         public Editor()
         {
@@ -82,15 +82,11 @@ namespace VectorCubeAnimationEditor
             IPAddress += txtIPFourthOctet.Text;
             try
             {
-                using (TcpClient client = new TcpClient(IPAddress, 80))
-                {
-                    using (NetworkStream stream = client.GetStream())
-                    {
-                        stream.Write(commandBytes, 0, commandBytes.Length);
-                        stream.Write(animationBytes, 0, animationBytes.Length);
-                        Console.WriteLine("Data transmitted successfully.");
-                    }
-                }
+                using TcpClient client = new(IPAddress, 80);
+                using NetworkStream stream = client.GetStream();
+                stream.Write(commandBytes, 0, commandBytes.Length);
+                stream.Write(animationBytes, 0, animationBytes.Length);
+                Console.WriteLine("Data transmitted successfully.");
             }
             catch (Exception ex)
             {
@@ -107,7 +103,7 @@ namespace VectorCubeAnimationEditor
                 byte[] animationBytes = animation.Serialize();
                 try
                 {
-                    using (StreamWriter writer = new StreamWriter(saveFile.FileName))
+                    using (StreamWriter writer = new(saveFile.FileName))
                     {
                         writer.WriteLine("static const uint8_t animation_" + Path.GetFileNameWithoutExtension(saveFile.FileName) + "[] PROGMEM = {");
                         int index = 0;
@@ -135,9 +131,9 @@ namespace VectorCubeAnimationEditor
         {
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                Image image = new Image();
-                Bitmap originalImage = new Bitmap(openFile.FileName);
-                Bitmap resizedImage = new Bitmap(originalImage, new Size(AnimationConstants.SCREEN_WIDTH, AnimationConstants.SCREEN_HEIGHT));
+                Image image = new();
+                Bitmap originalImage = new(openFile.FileName);
+                Bitmap resizedImage = new(originalImage, new Size(AnimationConstants.SCREEN_WIDTH, AnimationConstants.SCREEN_HEIGHT));
                 Utility.ConvertToRGB565(resizedImage, image.DisplayBuffer);
                 byte[] commandBytes = Utility.getCommandBytes(AnimationConstants._Image);
                 byte[] imageBytes = image.serialize();
@@ -150,15 +146,11 @@ namespace VectorCubeAnimationEditor
                 IPAddress += txtIPFourthOctet.Text;
                 try
                 {
-                    using (TcpClient client = new TcpClient(IPAddress, 80))
-                    {
-                        using (NetworkStream stream = client.GetStream())
-                        {
-                            stream.Write(commandBytes, 0, commandBytes.Length);
-                            stream.Write(imageBytes, 0, imageBytes.Length);
-                            Console.WriteLine("Data transmitted successfully.");
-                        }
-                    }
+                    using TcpClient client = new(IPAddress, 80);
+                    using NetworkStream stream = client.GetStream();
+                    stream.Write(commandBytes, 0, commandBytes.Length);
+                    stream.Write(imageBytes, 0, imageBytes.Length);
+                    Console.WriteLine("Data transmitted successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -321,14 +313,12 @@ namespace VectorCubeAnimationEditor
         private void btnUpdateCurrentFrame_Click(object sender, EventArgs e)
         {
             if (currentFrame == null) return;
-            UInt16 fillColor;
-            UInt32 duration;
-            if (!Utility.GetUInt16FromRGBString(txtCurrentFrameFillColor.Text, out fillColor))
+            if (!Utility.GetUInt16FromRGBString(txtCurrentFrameFillColor.Text, out ushort fillColor))
             {
                 MessageBox.Show("Enter or select a valid fill color for the current frame", "Alert!");
                 return;
             }
-            if (!Utility.GetUInt32FromString(txtCurrentFrameDuration.Text, out duration))
+            if (!Utility.GetUInt32FromString(txtCurrentFrameDuration.Text, out uint duration))
             {
                 MessageBox.Show("Enter a valid duration for the current frame", "Alert!");
                 return;
@@ -590,7 +580,7 @@ namespace VectorCubeAnimationEditor
             if (currentFrame != null)
             {
                 string strRGB = Utility.GetRGBStringFromUIint16(currentFrame.FillColor);
-                int red = int.Parse(strRGB.Substring(0, 2), NumberStyles.HexNumber);
+                int red = int.Parse(strRGB[..2], NumberStyles.HexNumber);
                 int green = int.Parse(strRGB.Substring(2, 2), NumberStyles.HexNumber);
                 int blue = int.Parse(strRGB.Substring(4, 2), NumberStyles.HexNumber);
                 Color color = Color.FromArgb(red, green, blue);
@@ -599,11 +589,8 @@ namespace VectorCubeAnimationEditor
                 {
                     for (int index = 0; index < currentFrame.PrimitiveCount; index++)
                     {
-                        Primitive? Primitive = currentFrame.GetPrimitive(index);
-                        if (Primitive != null)
-                        {
-                            Primitive.Draw(e.Graphics, object.ReferenceEquals(Primitive, currentPrimitive) && highlightCurrent);
-                        }
+                        Primitive? primitive = currentFrame.GetPrimitive(index);
+                        primitive?.Draw(e.Graphics, object.ReferenceEquals(primitive, currentPrimitive) && highlightCurrent);
                     }
                 }
             }
@@ -646,15 +633,13 @@ namespace VectorCubeAnimationEditor
         private void AddFrame()
         {
             //Validate fields to make frame
-            UInt16 fillColor;
-            UInt32 duration;
 
-            if (!Utility.GetUInt16FromRGBString(txtFrameFillColor.Text, out fillColor))
+            if (!Utility.GetUInt16FromRGBString(txtFrameFillColor.Text, out ushort fillColor))
             {
                 MessageBox.Show("Select or enter a valid frame fill color", "Alert!");
                 return;
             }
-            if (!Utility.GetUInt32FromString(txtFrameDuration.Text, out duration))
+            if (!Utility.GetUInt32FromString(txtFrameDuration.Text, out uint duration))
             {
                 MessageBox.Show("Enter a valid frame duration", "Alert!");
                 return;
@@ -788,9 +773,8 @@ namespace VectorCubeAnimationEditor
         private void AddPrimitive(Type primitiveType)
         {
             //Validate fields to make primitive
-            UInt16 color;
 
-            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out color))
+            if (!Utility.GetUInt16FromRGBString(txtPrimitiveDrawColor.Text, out ushort color))
             {
                 MessageBox.Show("Enter or select a valid primitive draw color", "Alert!");
                 return;
@@ -1105,33 +1089,33 @@ namespace VectorCubeAnimationEditor
 
         private void SetToolTips()
         {
-            ToolTip ttLoadFile = new System.Windows.Forms.ToolTip();
+            ToolTip ttLoadFile = new();
             ttLoadFile.SetToolTip(btnLoadFile, "Load animation from file");
-            ToolTip ttSaveFile = new System.Windows.Forms.ToolTip();
+            ToolTip ttSaveFile = new();
             ttSaveFile.SetToolTip(btnSaveFile, "Save animation as file");
-            ToolTip ttTransmitFile = new System.Windows.Forms.ToolTip();
+            ToolTip ttTransmitFile = new();
             ttTransmitFile.SetToolTip(btnTransmitFile, "Transmit animation to cube at IP Address below");
-            ToolTip ttSaveToHeaderFile = new System.Windows.Forms.ToolTip();
+            ToolTip ttSaveToHeaderFile = new();
             ttSaveToHeaderFile.SetToolTip(btnSaveToHeaderFile, "Save animation as C header file");
-            ToolTip ttSendImage = new System.Windows.Forms.ToolTip();
+            ToolTip ttSendImage = new();
             ttSendImage.SetToolTip(btnSendImage, "Transmit an image file (jpeg, bitmap) to cube at IP Address below");
-            ToolTip ttAddFrame = new System.Windows.Forms.ToolTip();
+            ToolTip ttAddFrame = new();
             ttAddFrame.SetToolTip(btnAddFrame, "Add a frame to the animation");
-            ToolTip ttRemoveCurrentFrame = new System.Windows.Forms.ToolTip();
+            ToolTip ttRemoveCurrentFrame = new();
             ttRemoveCurrentFrame.SetToolTip(btnRemoveCurrentFrame, "Remove the current frame from the animation");
-            ToolTip ttDuplicateCurrentFrame = new System.Windows.Forms.ToolTip();
+            ToolTip ttDuplicateCurrentFrame = new();
             ttDuplicateCurrentFrame.SetToolTip(btnDuplicateCurrentFrame, "Duplicate the current frame");
-            ToolTip ttAddCircle = new System.Windows.Forms.ToolTip();
+            ToolTip ttAddCircle = new();
             ttAddCircle.SetToolTip(btnAddCircle, "Add a circle");
-            ToolTip ttAddTriangle = new System.Windows.Forms.ToolTip();
+            ToolTip ttAddTriangle = new();
             ttAddTriangle.SetToolTip(btnAddTriangle, "Add a triangle");
-            ToolTip ttAddRoundRect = new System.Windows.Forms.ToolTip();
+            ToolTip ttAddRoundRect = new();
             ttAddRoundRect.SetToolTip(btnAddRoundRect, "Add a rectangle (with optional corner radius)");
-            ToolTip ttAddRotatedRect = new System.Windows.Forms.ToolTip();
+            ToolTip ttAddRotatedRect = new();
             ttAddRotatedRect.SetToolTip(btnAddRotatedRect, "Add a rotated rectangle");
-            ToolTip ttAddLine = new System.Windows.Forms.ToolTip();
+            ToolTip ttAddLine = new();
             ttAddLine.SetToolTip(btnAddLine, "Add a line");
-            ToolTip ttRemoveCurrentPrimitive = new System.Windows.Forms.ToolTip();
+            ToolTip ttRemoveCurrentPrimitive = new();
             ttRemoveCurrentPrimitive.SetToolTip(btnRemoveCurrentPrimitive, "Remove the current shape");
         }
 

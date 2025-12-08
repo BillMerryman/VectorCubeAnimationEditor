@@ -68,7 +68,7 @@ namespace ST7735Point85
 
         public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), type);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], type);
             bytePosition += 2;
             switch (type)
             {
@@ -95,7 +95,7 @@ namespace ST7735Point85
 
         public void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
             switch (type)
             {

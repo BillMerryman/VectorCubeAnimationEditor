@@ -78,13 +78,15 @@ namespace VectorCubeAnimationEditor
         {
             Color drawColor = Utility.GetColorFromUIint16(Color);
             Brush brush = new SolidBrush(drawColor);
-            Pen pen = new Pen(drawColor.ColorToInverse());
-            pen.DashStyle = DashStyle.Dash;
+            Pen pen = new(drawColor.ColorToInverse())
+            {
+                DashStyle = DashStyle.Dash
+            };
 
             // Split rectangle into two triangles (diagonal from top-left to bottom-right)
             Point[] vertices = GetScreenVertices();
-            Point[] triangle1 = new Point[] { vertices[0], vertices[1], vertices[2] };
-            Point[] triangle2 = new Point[] { vertices[2], vertices[3], vertices[0] };
+            Point[] triangle1 = [vertices[0], vertices[1], vertices[2]];
+            Point[] triangle2 = [vertices[2], vertices[3], vertices[0]];
             e.FillPolygon(brush, triangle1);
             e.FillPolygon(brush, triangle2);
             if (isHighlighted) e.DrawLines(pen, vertices);
@@ -98,35 +100,35 @@ namespace VectorCubeAnimationEditor
 
         public override void Serialize(ref int bytePosition, byte[] animationBytes)
         {
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AnimationConstants._RotatedRect);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._RotatedRect);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), CenX);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], CenX);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), CenY);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], CenY);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), W);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], W);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), H);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], H);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), AngleDeg);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AngleDeg);
             bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition), Color);
+            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Color);
             bytePosition += 4;
         }
 
         public override void Deserialize(ref int bytePosition, byte[] animationBytes)
         {
-            CenX = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            CenX = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            CenY = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            CenY = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            W = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            W = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            H = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            H = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            AngleDeg = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            AngleDeg = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan().Slice(bytePosition));
+            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 4;
         }
 
@@ -149,7 +151,7 @@ namespace VectorCubeAnimationEditor
 
         #region Mouse handling
 
-        private Point mouseLocation = new Point(0, 0);
+        private Point mouseLocation = new(0, 0);
         private bool isMouseUp = true;
         private bool isMoving = false;
         private int selectedSide = -1;
@@ -185,8 +187,8 @@ namespace VectorCubeAnimationEditor
 
         public override bool MouseMove(Point point, PictureBox pctbxCanvas)
         {
-            Point mouseDelta = new Point(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
-            Point unscaledMouseDelta = new Point((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
+            Point mouseDelta = new(point.X - mouseLocation.X, point.Y - mouseLocation.Y);
+            Point unscaledMouseDelta = new((int)Math.Floor((double)mouseDelta.X / AnimationConstants._ScaleFactor),
                                                 (int)Math.Floor((double)mouseDelta.Y / AnimationConstants._ScaleFactor));
 
             if (isMouseUp)
@@ -344,14 +346,14 @@ namespace VectorCubeAnimationEditor
         {
             float halfWidth = ((float)W / 2) - (((W % 2) == 0) ? (float).5 : 0);
             float halfHeight = ((float)H / 2) - (((H % 2) == 0) ? (float).5 : 0);
-            PointF bottomRight = new PointF(W - halfWidth, H - halfHeight);
-            PointF bottomLeft = new PointF(-halfWidth, H - halfHeight);
-            PointF topLeft = new PointF(-halfWidth, -halfHeight);
-            PointF topRight = new PointF(W - halfWidth, -halfHeight);
+            PointF bottomRight = new(W - halfWidth, H - halfHeight);
+            PointF bottomLeft = new(-halfWidth, H - halfHeight);
+            PointF topLeft = new(-halfWidth, -halfHeight);
+            PointF topRight = new(W - halfWidth, -halfHeight);
 
-            PointF[] vertices = new PointF[] { bottomRight, bottomLeft, topLeft, topRight };
+            PointF[] vertices = [bottomRight, bottomLeft, topLeft, topRight];
 
-            Matrix matrix = new Matrix();
+            Matrix matrix = new();
             matrix.Rotate(angleDeg);
             matrix.TransformPoints(vertices);
             return vertices;
@@ -361,7 +363,7 @@ namespace VectorCubeAnimationEditor
         {
             PointF[] fltVertices = GetVertices();
 
-            Matrix matrix = new Matrix();
+            Matrix matrix = new();
             matrix.Scale(AnimationConstants._ScaleFactor, AnimationConstants._ScaleFactor);
             matrix.TransformPoints(fltVertices);
             matrix.Reset();
