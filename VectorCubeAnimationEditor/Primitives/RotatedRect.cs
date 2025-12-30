@@ -212,118 +212,47 @@ namespace VectorCubeAnimationEditor
                 }
                 return false;
             }
+
+            if (isMoving) Move(unscaledMouseDelta);
             else
             {
-                if (isMoving) Move(unscaledMouseDelta);
+                if (selectedVertex > -1)
+                {
+                    int angle = GetAngle(point);
+                    AngleDeg = (Int16)(angle + offsetAngle);
+                    angle %= 180;
+                    pctbxCanvas.Cursor = (angle < 90) ? Cursors.SizeNESW : Cursors.SizeNWSE;
+                }
                 else
                 {
-                    if (selectedVertex > -1)
+                    if (selectedSide > -1)
                     {
-                        int angle = GetAngle(point);
-                        AngleDeg = (Int16)(angle + offsetAngle);
-                        angle %= 180;
-                        pctbxCanvas.Cursor = (angle < 90) ? Cursors.SizeNESW : Cursors.SizeNWSE;
-                    }
-                    else
-                    {
-                        if (selectedSide > -1)
-                        {
-                            Point newCenter = mousedownScreenCen;
-                            Point unrotatedMousePosition = Utility.RotateFromReferencePoint(mousedownScreenCen, point, (Int16)(-angleDeg));
-                            switch (selectedSide)
-                            {
-                                case 0:
-                                    {
-                                        int ScreenDistanceFromCenter = unrotatedMousePosition.Y - mousedownScreenCen.Y;
-                                        int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
-                                        H = (Int16)(DistanceFromCenter + (mousedownH / 2));
-                                        if (H == mousedownH)
-                                        {
-                                            CenX = (Int16)(mousedownScreenCen.X / AnimationConstants._ScaleFactor);
-                                            CenY = (Int16)(mousedownScreenCen.Y / AnimationConstants._ScaleFactor);
-                                            break;
-                                        }
-                                        int dH = H - mousedownH;
-                                        int offsetY = ((dH + (((mousedownH % 2) == 0) ? ((dH < 0) ? 0 : 1) : ((dH < 0) ? -1 : 0))) / 2);
-                                        offsetY *= AnimationConstants._ScaleFactor;
-                                        newCenter.Y += offsetY;
-                                        newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
-                                        newCenter.X /= AnimationConstants._ScaleFactor;
-                                        newCenter.Y /= AnimationConstants._ScaleFactor;
-                                        CenX = (Int16)newCenter.X;
-                                        CenY = (Int16)newCenter.Y;
-                                    }
-                                    break;
-                                case 1:
-                                    {
-                                        int ScreenDistanceFromCenter = mousedownScreenCen.X - unrotatedMousePosition.X;
-                                        int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
-                                        W = (Int16)(DistanceFromCenter + (mousedownW / 2));
-                                        if (W == mousedownW)
-                                        {
-                                            CenX = (Int16)(mousedownScreenCen.X / AnimationConstants._ScaleFactor);
-                                            CenY = (Int16)(mousedownScreenCen.Y / AnimationConstants._ScaleFactor);
-                                            break;
-                                        }
-                                        int dW = W - mousedownW;
-                                        int offsetX = ((dW + (((mousedownW % 2) != 0) ? ((dW < 0) ? 0 : 1) : ((dW < 0) ? -1 : 0))) / 2);
-                                        offsetX *= AnimationConstants._ScaleFactor;
-                                        newCenter.X -= offsetX;
-                                        newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
-                                        newCenter.X /= AnimationConstants._ScaleFactor;
-                                        newCenter.Y /= AnimationConstants._ScaleFactor;
-                                        CenX = (Int16)newCenter.X;
-                                        CenY = (Int16)newCenter.Y;
-                                    }
-                                    break;
-                                case 2:
-                                    {
-                                        int ScreenDistanceFromCenter = mousedownScreenCen.Y - unrotatedMousePosition.Y;
-                                        int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
-                                        H = (Int16)(DistanceFromCenter + (mousedownH / 2));
-                                        if (H == mousedownH)
-                                        {
-                                            CenX = (Int16)(mousedownScreenCen.X / AnimationConstants._ScaleFactor);
-                                            CenY = (Int16)(mousedownScreenCen.Y / AnimationConstants._ScaleFactor);
-                                            break;
-                                        }
-                                        int dH = H - mousedownH;
-                                        int offsetY = ((dH + (((mousedownH % 2) != 0) ? ((dH < 0) ? 0 : 1) : ((dH < 0) ? -1 : 0))) / 2);
-                                        offsetY *= AnimationConstants._ScaleFactor;
-                                        newCenter.Y -= offsetY;
-                                        newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
-                                        newCenter.X /= AnimationConstants._ScaleFactor;
-                                        newCenter.Y /= AnimationConstants._ScaleFactor;
-                                        CenX = (Int16)newCenter.X;
-                                        CenY = (Int16)newCenter.Y;
-                                    }
-                                    break;
-                                case 3:
-                                    {
-                                        int ScreenDistanceFromCenter = unrotatedMousePosition.X - mousedownScreenCen.X;
-                                        int DistanceFromCenter = ScreenDistanceFromCenter / AnimationConstants._ScaleFactor;
-                                        W = (Int16)(DistanceFromCenter + (mousedownW / 2));
-                                        if (W == mousedownW)
-                                        {
-                                            CenX = (Int16)(mousedownScreenCen.X / AnimationConstants._ScaleFactor);
-                                            CenY = (Int16)(mousedownScreenCen.Y / AnimationConstants._ScaleFactor);
-                                            break;
-                                        }
-                                        int dW = W - mousedownW;
-                                        int offsetX = ((dW + (((mousedownW % 2) == 0) ? ((dW < 0) ? 0 : 1) : ((dW < 0) ? -1 : 0))) / 2);
-                                        offsetX *= AnimationConstants._ScaleFactor;
-                                        newCenter.X += offsetX;
-                                        newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
-                                        newCenter.X /= AnimationConstants._ScaleFactor;
-                                        newCenter.Y /= AnimationConstants._ScaleFactor;
-                                        CenX = (Int16)newCenter.X;
-                                        CenY = (Int16)newCenter.Y;
-                                    }
-                                    break;
-                            }
-                        }
+                        Point newCenter = mousedownScreenCen;
+                        Point unrotatedMousePosition = Utility.RotateFromReferencePoint(mousedownScreenCen, point, (Int16)(-angleDeg));
+                        int polarity = ((selectedSide % 3) == 0) ? 1 : -1;
+                        Point screenDistanceFromCenter = new((unrotatedMousePosition.X - mousedownScreenCen.X) * polarity, (unrotatedMousePosition.Y - mousedownScreenCen.Y) * polarity);
+                        Point distanceFromCenter = new(screenDistanceFromCenter.X / AnimationConstants._ScaleFactor, screenDistanceFromCenter.Y / AnimationConstants._ScaleFactor);
+
+                        if ((selectedSide % 2) == 0) H = (Int16)(distanceFromCenter.Y + (mousedownH / 2));
+                        else W = (Int16)(distanceFromCenter.X + (mousedownW / 2));
+
+                        int dH = H - mousedownH;
+                        int dW = W - mousedownW;
+                        int offsetX = ((dW + ((((mousedownW % 2) == 0) ^ (polarity < 0)) ? ((dW < 0) ? 0 : 1) : ((dW < 0) ? -1 : 0))) / 2);
+                        int offsetY = ((dH + ((((mousedownH % 2) == 0) ^ (polarity < 0)) ? ((dH < 0) ? 0 : 1) : ((dH < 0) ? -1 : 0))) / 2);
+
+                        offsetY *= AnimationConstants._ScaleFactor;
+                        offsetX *= AnimationConstants._ScaleFactor;
+                        newCenter.Y += (offsetY * polarity);
+                        newCenter.X += (offsetX * polarity);
+                        newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
+                        newCenter.X /= AnimationConstants._ScaleFactor;
+                        newCenter.Y /= AnimationConstants._ScaleFactor;
+                        CenX = (Int16)newCenter.X;
+                        CenY = (Int16)newCenter.Y;
                     }
                 }
+
             }
   
             mouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
