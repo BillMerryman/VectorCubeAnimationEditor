@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using VectorCubeAnimationEditor;
 
 namespace ST7735Point85
 {

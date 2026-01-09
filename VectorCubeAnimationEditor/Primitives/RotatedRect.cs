@@ -1,5 +1,4 @@
-﻿using System;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
@@ -254,7 +253,7 @@ namespace VectorCubeAnimationEditor
                 }
 
             }
-  
+
             mouseLocation.X += unscaledMouseDelta.X * AnimationConstants._ScaleFactor;
             mouseLocation.Y += unscaledMouseDelta.Y * AnimationConstants._ScaleFactor;
 
@@ -300,7 +299,7 @@ namespace VectorCubeAnimationEditor
             matrix.TransformPoints(fltVertices);
 
             Point[] vertices = new Point[fltVertices.Length];
-            for(int index  = 0; index < fltVertices.Length; index++)
+            for (int index = 0; index < fltVertices.Length; index++)
             {
                 vertices[index] = new Point((int)fltVertices[index].X, (int)fltVertices[index].Y);
             }

@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using VectorCubeAnimationEditor;
 
 namespace ST7735Point85
 {
@@ -16,8 +15,8 @@ namespace ST7735Point85
 
         const int LARGEST_PRIMITIVE_BYTE_COUNT = 14;
 
-        public PrimitiveType Type 
-        { 
+        public PrimitiveType Type
+        {
             get { return type; }
             set { type = value; }
         }

@@ -34,7 +34,7 @@ namespace ST7735Point85
             fillColor = 0x0000;
             primitiveCount = 0;
             primitives = new Primitive[AnimationConstants._MaxPrimitiveCount];
-            for(int i = 0; i < primitives.Length; i++)
+            for (int i = 0; i < primitives.Length; i++)
             {
                 primitives[i] = new Primitive();
             }

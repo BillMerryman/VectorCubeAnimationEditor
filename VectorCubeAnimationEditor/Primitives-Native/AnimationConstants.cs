@@ -1,8 +1,8 @@
 ﻿
 namespace ST7735Point85
 {
-    using TransmissionType = UInt16;
     using PrimitiveType = UInt16;
+    using TransmissionType = UInt16;
     internal class AnimationConstants
     {
         public const TransmissionType _Animation = 1;

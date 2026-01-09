@@ -6,7 +6,7 @@ namespace ST7735Point85
     {
 
         private UInt16 frameCount;
-        private AnimationFrame []frames;
+        private AnimationFrame[] frames;
 
         public UInt16 FrameCount
         {
@@ -18,7 +18,7 @@ namespace ST7735Point85
         {
             frameCount = 0;
             frames = new AnimationFrame[AnimationConstants._MaxFrameCount];
-            for(int i = 0; i < frames.Length; i++)
+            for (int i = 0; i < frames.Length; i++)
             {
                 frames[i] = new AnimationFrame();
             }
@@ -26,14 +26,14 @@ namespace ST7735Point85
 
         public AnimationFrame? GetFrameNumber(int frameNumber)
         {
-            if(frameNumber < 1 || frameNumber > frameCount) return null;
+            if (frameNumber < 1 || frameNumber > frameCount) return null;
             return frames[frameNumber - 1];
         }
 
         public int GetNumberOfFrame(AnimationFrame? frame)
         {
-            if(frame == null) return -1;
-            for(int index = 0; index < frames.Length; index++)
+            if (frame == null) return -1;
+            for (int index = 0; index < frames.Length; index++)
             {
                 if (object.ReferenceEquals(frame, frames[index]))
                 {
@@ -45,7 +45,7 @@ namespace ST7735Point85
 
         public AnimationFrame? AddFrame(UInt16 fillColor, UInt32 duration)
         {
-            if(frameCount >= AnimationConstants._MaxFrameCount) return null;
+            if (frameCount >= AnimationConstants._MaxFrameCount) return null;
             AnimationFrame frame = new();
             frames[frameCount] = frame;
             frame.FillColor = fillColor;
@@ -56,7 +56,7 @@ namespace ST7735Point85
 
         public AnimationFrame? DuplicateFrame(AnimationFrame frame)
         {
-            if(frame == null) return null;
+            if (frame == null) return null;
             if (frameCount >= AnimationConstants._MaxFrameCount) return null;
             int frameNumber = GetNumberOfFrame(frame);
             int newFrameNumber = frameNumber + 1;
@@ -78,7 +78,7 @@ namespace ST7735Point85
             {
                 if (object.ReferenceEquals(frame, frames[index]))
                 {
-                    for (int innerIndex = index;  innerIndex < frames.Length - 1; innerIndex++)
+                    for (int innerIndex = index; innerIndex < frames.Length - 1; innerIndex++)
                     {
                         frames[innerIndex] = frames[innerIndex + 1];
                     }

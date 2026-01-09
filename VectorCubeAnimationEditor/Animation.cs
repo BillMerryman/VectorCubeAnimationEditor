@@ -1,5 +1,4 @@
-﻿using ST7735Point85;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 
 namespace VectorCubeAnimationEditor
 {
@@ -20,7 +19,7 @@ namespace VectorCubeAnimationEditor
 
         public AnimationFrame? GetFrame(int frameIndex)
         {
-            if(frameIndex < 0 || frameIndex > frames.Count - 1) return null;
+            if (frameIndex < 0 || frameIndex > frames.Count - 1) return null;
             return frames[frameIndex];
         }
 
@@ -44,7 +43,7 @@ namespace VectorCubeAnimationEditor
 
         public AnimationFrame? DuplicateFrame(AnimationFrame frame)
         {
-            if(frame == null) return null;
+            if (frame == null) return null;
             if (FrameCount >= AnimationConstants._MaxFrameCount) return null;
             int frameIndex = IndexOf(frame);
             if (frameIndex < 0) return null;

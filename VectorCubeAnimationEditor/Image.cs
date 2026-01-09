@@ -28,7 +28,7 @@ namespace VectorCubeAnimationEditor
             {
                 for (int x = 0; x < 128; x++)
                 {
-                    BinaryPrimitives.WriteUInt16LittleEndian(gifBytes.AsSpan()[bytePosition..], displayBuffer[y,x]);
+                    BinaryPrimitives.WriteUInt16LittleEndian(gifBytes.AsSpan()[bytePosition..], displayBuffer[y, x]);
                     bytePosition += 2;
                 }
             }

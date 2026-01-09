@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using VectorCubeAnimationEditor;
 
 namespace ST7735Point85
 {
@@ -13,10 +12,10 @@ namespace ST7735Point85
         private Int16 y2;
         private UInt16 color;
 
-        public Int16 X0 
-        { 
-            get { return x0; } 
-            set {  x0 = value; } 
+        public Int16 X0
+        {
+            get { return x0; }
+            set { x0 = value; }
         }
 
         public Int16 Y0

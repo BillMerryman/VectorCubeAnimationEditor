@@ -1,8 +1,6 @@
 ﻿
 namespace VectorCubeAnimationEditor
 {
-    using PrimitiveType = UInt16;
-
     internal abstract class Primitive
     {
         public abstract UInt16 Color

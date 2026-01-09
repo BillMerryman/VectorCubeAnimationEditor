@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using VectorCubeAnimationEditor;
 
 namespace ST7735Point85
 {
@@ -10,22 +9,22 @@ namespace ST7735Point85
         private Int16 r;
         private UInt16 color;
 
-        public Int16 X0 
-        { 
-            get { return x0; } 
-            set { x0 = value; } 
+        public Int16 X0
+        {
+            get { return x0; }
+            set { x0 = value; }
         }
 
-        public Int16 Y0 
-        { 
-            get { return y0; } 
-            set { y0 = value; } 
+        public Int16 Y0
+        {
+            get { return y0; }
+            set { y0 = value; }
         }
 
-        public Int16 R 
-        { 
-            get { return r; } 
-            set { r = (value < 1) ? (Int16)1 : value; } 
+        public Int16 R
+        {
+            get { return r; }
+            set { r = (value < 1) ? (Int16)1 : value; }
         }
 
         public UInt16 Color
@@ -37,7 +36,7 @@ namespace ST7735Point85
         public Circle()
         {
             r = AnimationConstants.DEFAULT_PRIMITIVE_RADIUS;
-            x0 = AnimationConstants.SCREEN_CENTER_X; 
+            x0 = AnimationConstants.SCREEN_CENTER_X;
             y0 = AnimationConstants.SCREEN_CENTER_Y;
             color = 0;
         }

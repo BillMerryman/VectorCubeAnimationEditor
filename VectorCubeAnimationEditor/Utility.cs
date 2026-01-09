@@ -1,12 +1,9 @@
 ﻿using System.Buffers.Binary;
-using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 
 namespace VectorCubeAnimationEditor
 {
-    using PrimitiveType = UInt16;
-
     internal static class Utility
     {
 
@@ -53,7 +50,7 @@ namespace VectorCubeAnimationEditor
 
                 uint16 = (UInt16)((blue << 11) | (green << 5) | red);
                 return true;
-            } 
+            }
             catch
             {
                 uint16 = 0;

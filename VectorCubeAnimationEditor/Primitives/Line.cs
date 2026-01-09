@@ -1,7 +1,5 @@
 ﻿using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
-using System.Net;
-using System.Windows.Forms;
 
 namespace VectorCubeAnimationEditor
 {
@@ -169,7 +167,7 @@ namespace VectorCubeAnimationEditor
         {
             mouseLocation = point;
             isMouseUp = false;
-            
+
             if (IsPointNearCenter(point)) isMoving = true;
             else selectedEndpoint = GetSelectedEndpoint(mouseLocation);
         }

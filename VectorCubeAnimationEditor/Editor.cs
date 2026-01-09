@@ -563,7 +563,8 @@ namespace VectorCubeAnimationEditor
         {
             if (currentPrimitive == null) return;
 
-            if (currentPrimitive.MouseMove(e.Location, pctbxCanvas)) {
+            if (currentPrimitive.MouseMove(e.Location, pctbxCanvas))
+            {
                 SetDisplayFields(currentPrimitive);
                 pctbxCanvas.Refresh();
             }
