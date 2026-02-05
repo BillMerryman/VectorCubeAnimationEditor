@@ -1,6 +1,18 @@
-﻿
+﻿using AnimationFlatbuffer;
+using Google.FlatBuffers;
+using System.Text.Json.Serialization;
+
 namespace VectorCubeAnimationEditor
 {
+    [JsonPolymorphic(
+    TypeDiscriminatorPropertyName = "$discriminator",
+    UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization
+)]
+    [JsonDerivedType(typeof(Line), "Line")]
+    [JsonDerivedType(typeof(Triangle), "Triangle")]
+    [JsonDerivedType(typeof(RoundRect), "RoundRect")]
+    [JsonDerivedType(typeof(RotatedRect), "RotatedRect")]
+    [JsonDerivedType(typeof(Circle), "Circle")]
     internal abstract class Primitive
     {
         public abstract UInt16 Color
@@ -21,9 +33,13 @@ namespace VectorCubeAnimationEditor
 
         public abstract void Move(Point offset);
 
-        public abstract void Serialize(ref int bytePosition, byte[] animationBytes);
+        public abstract void SerializeBinary(ref int bytePosition, byte[] animationBytes);
 
-        public abstract void Deserialize(ref int bytePosition, byte[] animationBytes);
+        public abstract void DeserializeBinary(ref int bytePosition, byte[] animationBytes);
+
+        public abstract (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder);
+
+        public abstract void DeserializeFB(Object data);
 
     }
 }

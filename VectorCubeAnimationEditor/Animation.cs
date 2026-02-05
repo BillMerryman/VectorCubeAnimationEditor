@@ -1,12 +1,36 @@
-﻿using System.Buffers.Binary;
+﻿using AnimationFlatbuffer;
+using Google.FlatBuffers;
+using System.Buffers.Binary;
+using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
 {
     internal class Animation
     {
+        private bool interruptCurrent = false;
+        private Point animationCenter = new Point(0, 0);
+        public List<AnimationFrame> frames { get; set; }
 
-        private List<AnimationFrame> frames;
+        public bool InterruptCurrent
+        {
+            set
+            {
+                interruptCurrent = value;
+            }
+            get
+            {
+                return interruptCurrent;
+            }
 
+        }
+
+        public Point AnimationCenter
+        {
+            get { return animationCenter; }
+            set { animationCenter = value; }
+        }
+
+        [JsonIgnore]
         public int FrameCount
         {
             get { return frames.Count; }
@@ -78,7 +102,7 @@ namespace VectorCubeAnimationEditor
             return true;
         }
 
-        public byte[] Serialize()
+        public byte[] SerializeBinary()
         {
             byte[] animationBytes = new byte[2402];
             int bytePosition = 0;
@@ -86,7 +110,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 2;
             for (int index = 0; index < frames.Count; index++)
             {
-                frames[index].Serialize(ref bytePosition, animationBytes);
+                frames[index].SerializeBinary(ref bytePosition, animationBytes);
             }
             for (int index = frames.Count; index < AnimationConstants._MaxFrameCount; index++)
             {
@@ -99,7 +123,7 @@ namespace VectorCubeAnimationEditor
             return animationBytes;
         }
 
-        public void Deserialize(byte[] animationBytes)
+        public void DeserializeBinary(byte[] animationBytes)
         {
             if (animationBytes.Length != 2402) return;
             int bytePosition = 0;
@@ -108,8 +132,37 @@ namespace VectorCubeAnimationEditor
             for (int index = 0; index < frameCount; index++)
             {
                 AddFrame(0, 0);
-                frames[index].Deserialize(ref bytePosition, animationBytes);
+                frames[index].DeserializeBinary(ref bytePosition, animationBytes);
             }
+        }
+
+        public byte[] SerializeFB()
+        {
+            FlatBufferBuilder builder = new FlatBufferBuilder(1024);
+            Offset<AnimationFrameFB>[] animationFrameOffsets = new Offset<AnimationFrameFB>[FrameCount];
+            for (int index = 0; index < FrameCount; index++)
+            {
+                animationFrameOffsets[index] = frames[index].SerializeFB(builder);
+            }
+            VectorOffset animationFramesOffset = AnimationFB.CreateAnimationFramesVector(builder, animationFrameOffsets);
+            Offset<AnimationFB> animationFB = AnimationFB.CreateAnimationFB(builder, InterruptCurrent, (Int16)AnimationCenter.X, (Int16)AnimationCenter.Y, animationFramesOffset);
+            AnimationFB.FinishAnimationFBBuffer(builder, animationFB);
+            return builder.DataBuffer.ToSizedArray();
+        }
+
+        public void DeserializeFB(byte[] buffer)
+        {
+            ByteBuffer bb = new ByteBuffer(buffer);
+            AnimationFB animationFB = AnimationFB.GetRootAsAnimationFB(bb);
+            interruptCurrent = animationFB.InterruptCurrent;
+            animationCenter = new Point(animationFB.AnimationCenterX, animationFB.AnimationCenterY);
+            for (int frame = 0; frame < animationFB.AnimationFramesLength; frame++)
+            {
+                AnimationFrameFB animationFrameFB = animationFB.AnimationFrames(frame).Value;
+                AnimationFrame af = AddFrame(animationFrameFB.FillColor, animationFrameFB.Duration);
+                af.DeserializeFB(animationFrameFB);
+            }
+
         }
 
     }

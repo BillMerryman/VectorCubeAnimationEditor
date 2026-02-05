@@ -1,0 +1,63 @@
+namespace AnimationFlatbuffer;
+
+struct LineFB {
+	x0: int16;
+	y0: int16;
+	x1: int16;
+	y1: int16;
+	color: uint16;
+}
+
+struct TriangleFB {
+    x0: int16;
+    y0: int16;
+    x1: int16;
+    y1: int16;
+    x2: int16;
+    y2: int16;
+    color: uint16;
+}
+
+struct RoundRectFB {
+    x0: int16;
+    y0: int16;
+    w: int16;
+    h: int16;
+    radius: int16;
+    color: uint16;
+}
+
+struct RotatedRectFB {
+    cenX: int16;
+    cenY: int16;
+    w: int16;
+    h: int16;
+    angleDeg: int16;
+    color: uint16;
+}
+
+struct CircleFB {
+    x0: int16;
+    y0: int16;
+    r: int16;
+    quadrants: ubyte;
+    delta: int16;
+    color: uint16;
+}
+
+union PrimitiveFB {LineFB, TriangleFB, RoundRectFB, RotatedRectFB, CircleFB}
+
+table AnimationFrameFB {
+	duration: uint32;
+	fillColor: uint16;
+	primitives: [PrimitiveFB];
+}
+
+table AnimationFB {
+	interruptCurrent: bool;
+	animationCenterX: int16;
+	animationCenterY: int16;
+	animationFrames: [AnimationFrameFB];
+}
+
+root_type AnimationFB;

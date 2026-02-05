@@ -1,5 +1,9 @@
-﻿using System.Buffers.Binary;
+﻿using AnimationFlatbuffer;
+using Google.FlatBuffers;
+using ST7735Point85;
+using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
+using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
 {
@@ -92,7 +96,7 @@ namespace VectorCubeAnimationEditor
             Y0 += (Int16)offset.Y;
         }
 
-        public override void Serialize(ref int bytePosition, byte[] animationBytes)
+        public override void SerializeBinary(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._RoundRect);
             bytePosition += 2;
@@ -110,7 +114,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 4;
         }
 
-        public override void Deserialize(ref int bytePosition, byte[] animationBytes)
+        public override void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
         {
             X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
@@ -126,43 +130,65 @@ namespace VectorCubeAnimationEditor
             bytePosition += 4;
         }
 
+        public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
+        {
+            return (PrimitiveFB.RoundRectFB, RoundRectFB.CreateRoundRectFB(builder, X0, Y0, W, H, Radius, Color).Value);
+        }
+
+        public override void DeserializeFB(Object data)
+        {
+            X0 = ((RoundRectFB)data).X0;
+            Y0 = ((RoundRectFB)data).Y0;
+            W = ((RoundRectFB)data).W;
+            H = ((RoundRectFB)data).H;
+            Radius = ((RoundRectFB)data).Radius;
+        }
+
         #region Screen mapped methods
 
+        [JsonIgnore]
         public Point ScreenCen
         {
             get { return new Point(ScreenX0 + (ScreenW / 2), ScreenY0 + (ScreenH / 2)); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenX0
         {
             get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenY0
         {
             get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenW
         {
             get { return (Int16)(W * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenH
         {
             get { return (Int16)(H * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenRadius
         {
             get { return (Int16)(Radius * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Point ScreenRectangleCenter
         {
             get { return new Point((W / 2) * AnimationConstants._ScaleFactor, (H / 2) * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenHalfDiagonal
         {
             get { return (Int16)(Math.Sqrt(Math.Pow(ScreenRectangleCenter.X + 1, 2) + Math.Pow(ScreenRectangleCenter.Y + 1, 2))); }

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net.Sockets;
+using System.Text.Json;
 
 namespace VectorCubeAnimationEditor
 {
@@ -32,7 +33,7 @@ namespace VectorCubeAnimationEditor
             {
                 byte[] animationBytes = File.ReadAllBytes(openFile.FileName);
                 animation = new Animation();
-                animation.Deserialize(animationBytes);
+                animation.DeserializeBinary(animationBytes);
 
                 if (animation.FrameCount == 0)
                 {
@@ -64,7 +65,7 @@ namespace VectorCubeAnimationEditor
             saveFile.Filter = "Animations 4 Vector (*.a4v)|*.a4v";
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] animationBytes = animation.Serialize();
+                byte[] animationBytes = animation.SerializeBinary();
                 File.WriteAllBytes(saveFile.FileName, animationBytes);
             }
         }
@@ -72,7 +73,7 @@ namespace VectorCubeAnimationEditor
         private void btnTransmitFile_Click(object sender, EventArgs e)
         {
             byte[] commandBytes = Utility.getCommandBytes(AnimationConstants._Animation);
-            byte[] animationBytes = animation.Serialize();
+            byte[] animationBytes = animation.SerializeBinary();
             string IPAddress = txtIPFirstOctet.Text;
             IPAddress += ".";
             IPAddress += txtIPSecondOctet.Text;
@@ -100,7 +101,7 @@ namespace VectorCubeAnimationEditor
             saveFile.Filter = "C Header Files (*.h)|*.h";
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] animationBytes = animation.Serialize();
+                byte[] animationBytes = animation.SerializeBinary();
                 try
                 {
                     using (StreamWriter writer = new(saveFile.FileName))
@@ -1091,9 +1092,9 @@ namespace VectorCubeAnimationEditor
         private void SetToolTips()
         {
             ToolTip ttLoadFile = new();
-            ttLoadFile.SetToolTip(btnLoadFile, "Load animation from file");
+            ttLoadFile.SetToolTip(btnLoadFromBinaryFile, "Load animation from file");
             ToolTip ttSaveFile = new();
-            ttSaveFile.SetToolTip(btnSaveFile, "Save animation as file");
+            ttSaveFile.SetToolTip(btnSaveToBinaryFile, "Save animation as file");
             ToolTip ttTransmitFile = new();
             ttTransmitFile.SetToolTip(btnTransmitFile, "Transmit animation to cube at IP Address below");
             ToolTip ttSaveToHeaderFile = new();
@@ -1121,6 +1122,99 @@ namespace VectorCubeAnimationEditor
         }
 
         #endregion
+
+        private void btnSaveToJSONFile_Click(object sender, EventArgs e)
+        {
+            saveFile.DefaultExt = ".json";
+            saveFile.Filter = "JSON (*.json)|*.json";
+            if (saveFile.ShowDialog() == DialogResult.OK)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+                string animationJSON = JsonSerializer.Serialize(animation, options);
+                File.WriteAllText(saveFile.FileName, animationJSON);
+            }
+        }
+
+        private void btnLoadFromJSONFile_Click(object sender, EventArgs e)
+        {
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                string animationJSON = File.ReadAllText(openFile.FileName);
+                animation = JsonSerializer.Deserialize<Animation>(animationJSON);
+
+                if (animation.FrameCount == 0)
+                {
+                    currentFrame = null;
+                    currentPrimitive = null;
+                    DisableCurrentFrameManipulation();
+                    DisableFrameNavigation();
+                    DisablePrimitiveCreation();
+                    DisablePrimitiveNavigation();
+                    HideAllPrimitiveFields();
+                    pctbxCanvas.Refresh();
+                    return;
+                }
+                AnimationFrame? frame = animation.GetFrame(0);
+                if (frame != null)
+                {
+                    SetCurrentFrame(frame);
+                    EnableCurrentFrameManipulation();
+                    SetFrameNavigation();
+                }
+
+                txtFrameCount.Text = animation.FrameCount.ToString();
+            }
+
+        }
+
+        private void btnLoadFromFB_Click(object sender, EventArgs e)
+        {
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                byte[] flatbuffer = File.ReadAllBytes(openFile.FileName);
+                animation = new Animation();
+                animation.DeserializeFB(flatbuffer);
+                if (animation.FrameCount == 0)
+                {
+                    currentFrame = null;
+                    currentPrimitive = null;
+                    DisableCurrentFrameManipulation();
+                    DisableFrameNavigation();
+                    DisablePrimitiveCreation();
+                    DisablePrimitiveNavigation();
+                    HideAllPrimitiveFields();
+                    pctbxCanvas.Refresh();
+                    return;
+                }
+                AnimationFrame? frame = animation.GetFrame(0);
+                if (frame != null)
+                {
+                    SetCurrentFrame(frame);
+                    EnableCurrentFrameManipulation();
+                    SetFrameNavigation();
+                }
+
+                txtFrameCount.Text = animation.FrameCount.ToString();
+            }
+        }
+
+        private void btnSaveToFB_Click(object sender, EventArgs e)
+        {
+            saveFile.DefaultExt = ".fb";
+            saveFile.Filter = "Flatbuffers (*.fb)|*.fb";
+            if (saveFile.ShowDialog() == DialogResult.OK)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+                byte[] flatbuffer = animation.SerializeFB();
+                File.WriteAllBytes(saveFile.FileName, flatbuffer);
+            }
+        }
 
     }
 }

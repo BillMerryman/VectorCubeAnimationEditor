@@ -1,5 +1,9 @@
-﻿using System.Buffers.Binary;
+﻿using AnimationFlatbuffer;
+using Google.FlatBuffers;
+using ST7735Point85;
+using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
+using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
 {
@@ -102,7 +106,7 @@ namespace VectorCubeAnimationEditor
             Y0 += (Int16)offset.Y;
         }
 
-        public override void Serialize(ref int bytePosition, byte[] animationBytes)
+        public override void SerializeBinary(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._QuarterCircle);
             bytePosition += 2;
@@ -120,7 +124,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 5;
         }
 
-        public override void Deserialize(ref int bytePosition, byte[] animationBytes)
+        public override void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
         {
             X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
@@ -136,23 +140,41 @@ namespace VectorCubeAnimationEditor
             bytePosition += 5;
         }
 
+        public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
+        {
+            return (PrimitiveFB.CircleFB, CircleFB.CreateCircleFB(builder, X0, Y0, R, Quadrants, Delta, Color).Value);
+        }
+
+        public override void DeserializeFB(Object data)
+        {
+            X0 = ((CircleFB)data).X0;
+            Y0 = ((CircleFB)data).Y0;
+            R = ((CircleFB)data).R;
+            Quadrants = ((CircleFB)data).Quadrants;
+            Delta = ((CircleFB)data).Delta;
+        }
+
         #region Screen mapped methods
 
+        [JsonIgnore]
         public Point ScreenCen
         {
             get { return new Point(ScreenX0, ScreenY0); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenX0
         {
             get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenY0
         {
             get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenR
         {
             get { return (Int16)(R * AnimationConstants._ScaleFactor); }

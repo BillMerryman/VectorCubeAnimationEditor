@@ -1,5 +1,8 @@
-﻿using System.Buffers.Binary;
+﻿using AnimationFlatbuffer;
+using Google.FlatBuffers;
+using System.Buffers.Binary;
 using System.Drawing.Drawing2D;
+using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
 {
@@ -97,7 +100,7 @@ namespace VectorCubeAnimationEditor
             CenY += (Int16)offset.Y;
         }
 
-        public override void Serialize(ref int bytePosition, byte[] animationBytes)
+        public override void SerializeBinary(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._RotatedRect);
             bytePosition += 2;
@@ -115,7 +118,7 @@ namespace VectorCubeAnimationEditor
             bytePosition += 4;
         }
 
-        public override void Deserialize(ref int bytePosition, byte[] animationBytes)
+        public override void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
         {
             CenX = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
@@ -131,18 +134,35 @@ namespace VectorCubeAnimationEditor
             bytePosition += 4;
         }
 
+        public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
+        {
+            return (PrimitiveFB.RotatedRectFB, RotatedRectFB.CreateRotatedRectFB(builder, CenX, CenY, W, H, AngleDeg, Color).Value);
+        }
+
+        public override void DeserializeFB(Object data)
+        {
+            CenX = ((RotatedRectFB)data).CenX;
+            CenY = ((RotatedRectFB)data).CenY;
+            W = ((RotatedRectFB)data).W;
+            H = ((RotatedRectFB)data).H;
+            AngleDeg = ((RotatedRectFB)data).AngleDeg;
+        }
+
         #region Screen mapped methods
 
+        [JsonIgnore]
         public Point ScreenCen
         {
             get { return new Point(ScreenCenX, ScreenCenY); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenCenX
         {
             get { return (Int16)(CenX * AnimationConstants._ScaleFactor); }
         }
 
+        [JsonIgnore]
         public Int16 ScreenCenY
         {
             get { return (Int16)(CenY * AnimationConstants._ScaleFactor); }
