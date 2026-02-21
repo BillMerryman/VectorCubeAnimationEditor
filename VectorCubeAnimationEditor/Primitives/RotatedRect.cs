@@ -1,19 +1,28 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
 using System.Buffers.Binary;
-using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
+using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
 {
     internal class RotatedRect : Primitive
     {
+        private AnimationFrame? parent;
+
         private Int16 cenX;
         private Int16 cenY;
         private Int16 w;
         private Int16 h;
         private Int16 angleDeg;
         private UInt16 color;
+
+        [JsonIgnore]
+        public override AnimationFrame? Parent
+        {
+            get { return parent; }
+            internal set { parent = value; }
+        }
 
         public Int16 CenX
         {
@@ -61,14 +70,20 @@ namespace VectorCubeAnimationEditor
             Color = 0;
         }
 
-        public RotatedRect(RotatedRect rotatingRectangle)
+        public RotatedRect(AnimationFrame parent) : this()
         {
-            CenX = rotatingRectangle.CenX;
-            CenY = rotatingRectangle.CenY;
-            W = rotatingRectangle.W;
-            H = rotatingRectangle.H;
-            AngleDeg = rotatingRectangle.AngleDeg;
-            Color = rotatingRectangle.Color;
+            this.parent = parent;
+        }
+
+        public RotatedRect(RotatedRect rotatedRect)
+        {
+            CenX = rotatedRect.CenX;
+            CenY = rotatedRect.CenY;
+            W = rotatedRect.W;
+            H = rotatedRect.H;
+            AngleDeg = rotatedRect.AngleDeg;
+            Color = rotatedRect.Color;
+            parent = rotatedRect.Parent;
         }
 
         public override Primitive Clone()

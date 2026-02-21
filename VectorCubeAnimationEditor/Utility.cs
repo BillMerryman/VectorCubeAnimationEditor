@@ -6,7 +6,6 @@ namespace VectorCubeAnimationEditor
 {
     internal static class Utility
     {
-
         public static byte[] getCommandBytes(UInt16 command)
         {
             byte[] commandBytes = new byte[2];
@@ -20,9 +19,9 @@ namespace VectorCubeAnimationEditor
             int green = (_fillColor >> 5) & 0x3F;
             int red = _fillColor & 0x1F;
 
-            red = (red * 255) / 31;
-            green = (green * 255) / 63;
-            blue = (blue * 255) / 31;
+            red = red << 3;
+            green = green << 2;
+            blue = blue << 3;
 
             return Color.FromArgb(255, red, green, blue);
         }
@@ -38,64 +37,27 @@ namespace VectorCubeAnimationEditor
 
         public static bool GetUInt16FromRGBString(String strRGB, out UInt16 uint16)
         {
-            try
-            {
-                int red = int.Parse(strRGB[..2], NumberStyles.HexNumber);
-                int green = int.Parse(strRGB.Substring(2, 2), NumberStyles.HexNumber);
-                int blue = int.Parse(strRGB.Substring(4, 2), NumberStyles.HexNumber);
-
-                red = (red * 31) / 255;
-                green = (green * 63) / 255;
-                blue = (blue * 31) / 255;
-
-                uint16 = (UInt16)((blue << 11) | (green << 5) | red);
-                return true;
-            }
-            catch
+            if (strRGB.Length != 6)
             {
                 uint16 = 0;
                 return false;
             }
-        }
+            bool redResult = int.TryParse(strRGB[..2], NumberStyles.HexNumber, null, out int red);
+            bool greenResult = int.TryParse(strRGB.Substring(2, 2), NumberStyles.HexNumber, null, out int green);
+            bool blueResult = int.TryParse(strRGB.Substring(4, 2), NumberStyles.HexNumber, null, out int blue);
 
-        public static bool GetByteFromString(String str, out Byte _byte)
-        {
-            try
+            if(redResult && greenResult && blueResult)
             {
-                _byte = Byte.Parse(str);
+                red = (red & 0xF8) >> 3;
+                green = (green & 0xFC) >> 2;
+                blue = (blue & 0xF8) >> 3;
+
+                uint16 = (UInt16)((blue << 11) | (green << 5) | red);
                 return true;
             }
-            catch (FormatException)
+            else
             {
-                _byte = 0;
-                return false;
-            }
-        }
-
-        public static bool GetInt16FromString(String str, out Int16 int16)
-        {
-            try
-            {
-                int16 = Int16.Parse(str);
-                return true;
-            }
-            catch (FormatException)
-            {
-                int16 = 0;
-                return false;
-            }
-        }
-
-        public static bool GetUInt32FromString(String str, out UInt32 uint32)
-        {
-            try
-            {
-                uint32 = UInt32.Parse(str);
-                return true;
-            }
-            catch (FormatException)
-            {
-                uint32 = 0;
+                uint16 = 0;
                 return false;
             }
         }

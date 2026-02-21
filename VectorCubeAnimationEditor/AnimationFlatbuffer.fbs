@@ -28,11 +28,11 @@ struct RoundRectFB {
 }
 
 struct RotatedRectFB {
-    cenX: int16;
-    cenY: int16;
+    cen_x: int16;
+    cen_y: int16;
     w: int16;
     h: int16;
-    angleDeg: int16;
+    angle_deg: int16;
     color: uint16;
 }
 
@@ -48,16 +48,17 @@ struct CircleFB {
 union PrimitiveFB {LineFB, TriangleFB, RoundRectFB, RotatedRectFB, CircleFB}
 
 table AnimationFrameFB {
+	center_x: int16;
+	center_y: int16;
 	duration: uint32;
-	fillColor: uint16;
+	fill_color: uint16;
 	primitives: [PrimitiveFB];
 }
 
 table AnimationFB {
-	interruptCurrent: bool;
-	animationCenterX: int16;
-	animationCenterY: int16;
-	animationFrames: [AnimationFrameFB];
+	center_x: int16;
+	center_y: int16;
+	frames: [AnimationFrameFB];
 }
 
 root_type AnimationFB;

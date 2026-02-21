@@ -5,28 +5,34 @@ using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
 {
-
     internal class AnimationFrame
     {
+        Animation parent = null!;
+
+        public List<Primitive> primitives;
+        private Point center = new(0, 0);
+
         private UInt32 duration;
         private UInt16 fillColor;
-        public List<Primitive> primitives { get; set; }
 
-        public Animation AnimationRoot
+        [JsonIgnore]
+        public Animation Parent
         {
-            get; 
+            get { return parent; }
+            internal set
+            {
+                parent = value;
+                foreach (Primitive p in primitives)
+                {
+                    p.Parent = this;
+                }
+            }
         }
 
-        public UInt32 Duration
-        {
-            set { duration = value; }
-            get { return duration; }
-        }
-
-        public UInt16 FillColor
-        {
-            set { fillColor = value; }
-            get { return fillColor; }
+        public List<Primitive> Primitives
+        { 
+            get { return primitives;  } 
+            set {  primitives = value; } 
         }
 
         [JsonIgnore]
@@ -35,19 +41,42 @@ namespace VectorCubeAnimationEditor
             get { return primitives.Count; }
         }
 
+        public Point Center
+        {
+            get { return center; }
+            set { center = value; }
+        }
+
+        public UInt32 Duration
+        {
+            get { return duration; }
+            set { duration = value; }
+        }
+
+        public UInt16 FillColor
+        {
+            get { return fillColor; }
+            set { fillColor = value; }
+        }
+
         public AnimationFrame()
         {
-            duration = 0;
-            fillColor = 0x0000;
             primitives = [];
+        }
+
+        public AnimationFrame(UInt32 duration, UInt16 fillColor, Animation parent) : this()
+        {
+            this.duration = duration;
+            this.fillColor = fillColor;
+            this.parent = parent;
         }
 
         public AnimationFrame(AnimationFrame frame)
         {
             this.duration = frame.duration;
             this.fillColor = frame.fillColor;
-            primitives = [.. frame.primitives.Select(item => item.Clone())];
-            AnimationRoot = frame.AnimationRoot;
+            this.primitives = [.. frame.primitives.Select(item => item.Clone())];
+            this.parent = frame.Parent;
         }
 
         public Primitive? GetPrimitive(int primitiveIndex)
@@ -65,8 +94,8 @@ namespace VectorCubeAnimationEditor
         public Primitive? AddPrimitive(Type primitiveType, UInt16 color)
         {
             if (PrimitiveCount >= AnimationConstants._MaxPrimitiveCount) return null;
-            Primitive? primitive = (Primitive?)Activator.CreateInstance(primitiveType);
-            if (primitive != null)
+            Primitive? primitive = (Primitive?)Activator.CreateInstance(primitiveType, new object[]{this});
+            if (primitive is not null)
             {
                 primitive.Color = color;
                 primitives.Add(primitive);
@@ -74,20 +103,19 @@ namespace VectorCubeAnimationEditor
             return primitive;
         }
 
-        public int RemovePrimitive(Primitive? primitive)
+        public int RemovePrimitive(Primitive primitive)
         {
-            if (primitive == null) return -1;
             int index = primitives.IndexOf(primitive);
             primitives.Remove(primitive);
             return index;
         }
 
-        public bool MovePrimitiveUp(Primitive? primitive)
+        public bool MovePrimitiveUp(Primitive primitive)
         {
             return false;
         }
 
-        public bool MovePrimitiveDown(Primitive? primitive)
+        public bool MovePrimitiveDown(Primitive primitive)
         {
             return false;
         }
@@ -123,7 +151,7 @@ namespace VectorCubeAnimationEditor
             {
                 UInt16 type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
                 bytePosition += AnimationConstants._PrimitiveTypeWidth;
-                Primitive newPrimitive = null;
+                Primitive? newPrimitive = null;
                 switch (type)
                 {
                     case AnimationConstants._Line:
@@ -145,7 +173,7 @@ namespace VectorCubeAnimationEditor
                         bytePosition += AnimationConstants._LargestPrimitiveByteCount;
                         break;
                 }
-                if (newPrimitive != null)
+                if (newPrimitive is not null)
                 {
                     newPrimitive.DeserializeBinary(ref bytePosition, animationBytes);
                     primitives.Add(newPrimitive);
@@ -169,7 +197,7 @@ namespace VectorCubeAnimationEditor
             }
             VectorOffset primitives_TypeOffset = AnimationFrameFB.CreatePrimitivesTypeVector(builder, primitiveFBs);
             VectorOffset primitivesOffset = AnimationFrameFB.CreatePrimitivesVector(builder, primitiveOffsetsAsInts);
-            return AnimationFrameFB.CreateAnimationFrameFB(builder, duration, fillColor, primitives_TypeOffset, primitivesOffset);
+            return AnimationFrameFB.CreateAnimationFrameFB(builder, (Int16)Center.X, (Int16)Center.Y, duration, fillColor, primitives_TypeOffset, primitivesOffset);
         }
 
         public void DeserializeFB(AnimationFrameFB animationFrameFB)
@@ -180,29 +208,49 @@ namespace VectorCubeAnimationEditor
                 switch (primitiveFB)
                 {
                     case PrimitiveFB.LineFB:
-                        LineFB lineFB = animationFrameFB.Primitives<LineFB>(index).Value;
-                        Line line = (Line)AddPrimitive(typeof(Line), lineFB.Color);
-                        line.DeserializeFB(lineFB);
+                        LineFB? nullableLineFB = animationFrameFB.Primitives<LineFB>(index);
+                        if (nullableLineFB is not null)
+                        {
+                            LineFB lineFB = nullableLineFB.Value;
+                            Line? line = (Line?)AddPrimitive(typeof(Line), lineFB.Color);
+                            line?.DeserializeFB(lineFB);
+                        }
                         break;
                     case PrimitiveFB.TriangleFB:
-                        TriangleFB triangleFB = animationFrameFB.Primitives<TriangleFB>(index).Value;
-                        Triangle triangle = (Triangle)AddPrimitive(typeof(Triangle), triangleFB.Color);
-                        triangle.DeserializeFB(triangleFB);
+                        TriangleFB? nullableTriangleFB = animationFrameFB.Primitives<TriangleFB>(index);
+                        if (nullableTriangleFB is not null)
+                        {
+                            TriangleFB triangleFB = nullableTriangleFB.Value;
+                            Triangle? triangle = (Triangle?)AddPrimitive(typeof(Triangle), triangleFB.Color);
+                            triangle?.DeserializeFB(triangleFB);
+                        }
                         break;
                     case PrimitiveFB.RoundRectFB:
-                        RoundRectFB roundRectFB = animationFrameFB.Primitives<RoundRectFB>(index).Value;
-                        RoundRect roundRect = (RoundRect)AddPrimitive(typeof(RoundRect), roundRectFB.Color);
-                        roundRect.DeserializeFB(roundRectFB);
+                        RoundRectFB? nullableRoundRectFB = animationFrameFB.Primitives<RoundRectFB>(index);
+                        if (nullableRoundRectFB is not null)
+                        {
+                            RoundRectFB roundRectFB = nullableRoundRectFB.Value;
+                            RoundRect? roundRect = (RoundRect?)AddPrimitive(typeof(RoundRect), roundRectFB.Color);
+                            roundRect?.DeserializeFB(roundRectFB);
+                        }
                         break;
                     case PrimitiveFB.RotatedRectFB:
-                        RotatedRectFB rotatedRectFB = animationFrameFB.Primitives<RotatedRectFB>(index).Value;
-                        RotatedRect rotatedRect = (RotatedRect)AddPrimitive(typeof(RotatedRect), rotatedRectFB.Color);
-
+                        RotatedRectFB? nullableRotatedRectFB = animationFrameFB.Primitives<RotatedRectFB>(index);
+                        if (nullableRotatedRectFB is not null)
+                        {
+                            RotatedRectFB rotatedRectFB = nullableRotatedRectFB.Value;
+                            RotatedRect? rotatedRect = (RotatedRect?)AddPrimitive(typeof(RotatedRect), rotatedRectFB.Color);
+                            rotatedRect?.DeserializeFB(rotatedRect);
+                        }
                         break;
                     case PrimitiveFB.CircleFB:
-                        CircleFB circleFB = animationFrameFB.Primitives<CircleFB>(index).Value;
-                        Circle circle = (Circle)AddPrimitive(typeof(Circle), circleFB.Color);
-                        circle.DeserializeFB(circleFB);
+                        CircleFB? nullableCircleFB = animationFrameFB.Primitives<CircleFB>(index);
+                        if (nullableCircleFB is not null)
+                        {
+                            CircleFB circleFB = nullableCircleFB.Value;
+                            Circle? circle = (Circle?)AddPrimitive(typeof(Circle), circleFB.Color);
+                            circle?.DeserializeFB(circleFB);
+                        }
                         break;
                 }   
             }

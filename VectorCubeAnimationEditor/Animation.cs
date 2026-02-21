@@ -5,35 +5,21 @@ using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
 {
-    internal class Animation
+    internal class Animation : IJsonOnDeserialized
     {
-        private bool interruptCurrent = false;
-        private Point animationCenter = new Point(0, 0);
         public List<AnimationFrame> frames { get; set; }
-
-        public bool InterruptCurrent
-        {
-            set
-            {
-                interruptCurrent = value;
-            }
-            get
-            {
-                return interruptCurrent;
-            }
-
-        }
-
-        public Point AnimationCenter
-        {
-            get { return animationCenter; }
-            set { animationCenter = value; }
-        }
+        private Point center = new(AnimationConstants.SCREEN_CENTER_X, AnimationConstants.SCREEN_CENTER_Y);
 
         [JsonIgnore]
         public int FrameCount
         {
             get { return frames.Count; }
+        }
+
+        public Point Center
+        {
+            get { return center; }
+            set { center = value; }
         }
 
         public Animation()
@@ -56,11 +42,7 @@ namespace VectorCubeAnimationEditor
         public AnimationFrame? AddFrame(UInt16 fillColor, UInt32 duration)
         {
             if (FrameCount >= AnimationConstants._MaxFrameCount) return null;
-            AnimationFrame frame = new()
-            {
-                FillColor = fillColor,
-                Duration = duration
-            };
+            AnimationFrame frame = new(duration, fillColor, this);
             frames.Add(frame);
             return frame;
         }
@@ -85,7 +67,7 @@ namespace VectorCubeAnimationEditor
             return frameIndex;
         }
 
-        public bool MoveFrameUp(AnimationFrame frame)
+        public bool MoveFrameUp(AnimationFrame? frame)
         {
             int frameIndex = IndexOf(frame);
             if (frameIndex < 0) return false;
@@ -94,7 +76,7 @@ namespace VectorCubeAnimationEditor
             return true;
         }
 
-        public bool MoveFrameDown(AnimationFrame frame)
+        public bool MoveFrameDown(AnimationFrame? frame)
         {
             int frameIndex = IndexOf(frame);
             if (frameIndex < 1) return false;
@@ -136,6 +118,14 @@ namespace VectorCubeAnimationEditor
             }
         }
 
+        void IJsonOnDeserialized.OnDeserialized()
+        {
+            foreach (AnimationFrame af in frames)
+            {
+                af.Parent = this;
+            }
+        }
+
         public byte[] SerializeFB()
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(1024);
@@ -144,8 +134,8 @@ namespace VectorCubeAnimationEditor
             {
                 animationFrameOffsets[index] = frames[index].SerializeFB(builder);
             }
-            VectorOffset animationFramesOffset = AnimationFB.CreateAnimationFramesVector(builder, animationFrameOffsets);
-            Offset<AnimationFB> animationFB = AnimationFB.CreateAnimationFB(builder, InterruptCurrent, (Int16)AnimationCenter.X, (Int16)AnimationCenter.Y, animationFramesOffset);
+            VectorOffset animationFramesOffset = AnimationFB.CreateFramesVector(builder, animationFrameOffsets);
+            Offset<AnimationFB> animationFB = AnimationFB.CreateAnimationFB(builder, (Int16)Center.X, (Int16)Center.Y, animationFramesOffset);
             AnimationFB.FinishAnimationFBBuffer(builder, animationFB);
             return builder.DataBuffer.ToSizedArray();
         }
@@ -154,13 +144,16 @@ namespace VectorCubeAnimationEditor
         {
             ByteBuffer bb = new ByteBuffer(buffer);
             AnimationFB animationFB = AnimationFB.GetRootAsAnimationFB(bb);
-            interruptCurrent = animationFB.InterruptCurrent;
-            animationCenter = new Point(animationFB.AnimationCenterX, animationFB.AnimationCenterY);
-            for (int frame = 0; frame < animationFB.AnimationFramesLength; frame++)
+            Center = new Point(animationFB.CenterX, animationFB.CenterY);
+            for (int frame = 0; frame < animationFB.FramesLength; frame++)
             {
-                AnimationFrameFB animationFrameFB = animationFB.AnimationFrames(frame).Value;
-                AnimationFrame af = AddFrame(animationFrameFB.FillColor, animationFrameFB.Duration);
-                af.DeserializeFB(animationFrameFB);
+                AnimationFrameFB? nullableAnimationFrameFB = animationFB.Frames(frame);
+                if (nullableAnimationFrameFB is not null)
+                {
+                    AnimationFrameFB animationFrameFB = nullableAnimationFrameFB.Value;
+                    AnimationFrame? af = AddFrame(animationFrameFB.FillColor, animationFrameFB.Duration);
+                    af?.DeserializeFB(animationFrameFB);
+                }
             }
 
         }

@@ -1,20 +1,28 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
-using ST7735Point85;
 using System.Buffers.Binary;
-using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
+using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
 {
     internal class RoundRect : Primitive
     {
+        private AnimationFrame? parent;
+
         private Int16 x0;
         private Int16 y0;
         private Int16 w;
         private Int16 h;
         private Int16 radius;
         private UInt16 color;
+
+        [JsonIgnore]
+        public override AnimationFrame? Parent
+        {
+            get { return parent; }
+            internal set { parent = value; }
+        }
 
         public Int16 X0
         {
@@ -62,14 +70,20 @@ namespace VectorCubeAnimationEditor
             Color = 0;
         }
 
-        public RoundRect(RoundRect rectangle)
+        public RoundRect(AnimationFrame parent) : this()
         {
-            X0 = rectangle.X0;
-            Y0 = rectangle.Y0;
-            W = rectangle.W;
-            H = rectangle.H;
-            Radius = rectangle.Radius;
-            Color = rectangle.Color;
+            this.parent = parent;
+        }
+
+        public RoundRect(RoundRect roundRect)
+        {
+            X0 = roundRect.X0;
+            Y0 = roundRect.Y0;
+            W = roundRect.W;
+            H = roundRect.H;
+            Radius = roundRect.Radius;
+            Color = roundRect.Color;
+            parent = roundRect.Parent;
         }
 
         public override Primitive Clone()

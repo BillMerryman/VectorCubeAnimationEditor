@@ -40,7 +40,6 @@
             grpbxCurrentFrame = new GroupBox();
             btnMoveFrameUp = new Button();
             btnMoveFrameDown = new Button();
-            btnUpdateCurrentFrame = new Button();
             txtCurrentFrameDuration = new TextBox();
             lblCurrentFrameDuration = new Label();
             btnCurrentFrameFillColor = new Button();
@@ -62,37 +61,6 @@
             txtPrimitiveDrawColor = new TextBox();
             lblAddPrimitiveDrawColor = new Label();
             grpbxCurrentPrimitive = new GroupBox();
-            grpbxRoundRect = new GroupBox();
-            txtRoundRectRadius = new TextBox();
-            txtRoundRectH = new TextBox();
-            txtRoundRectW = new TextBox();
-            txtRoundRectY0 = new TextBox();
-            txtRoundRectX0 = new TextBox();
-            lblRoundRectRadius = new Label();
-            lblRoundRectH = new Label();
-            lblRoundRectW = new Label();
-            lblRoundRectY0 = new Label();
-            lblRoundRectX0 = new Label();
-            grpbxRotatedRect = new GroupBox();
-            txtRotatedRectAngleDeg = new TextBox();
-            txtRotatedRectH = new TextBox();
-            txtRotatedRectW = new TextBox();
-            txtRotatedRectCenY = new TextBox();
-            txtRotatedRectCenX = new TextBox();
-            lblRotatedRectAngleDeg = new Label();
-            lblRotatedRectH = new Label();
-            lblRotatedRectW = new Label();
-            lblRotatedRectCenY = new Label();
-            lblRotatedRectCenX = new Label();
-            grpbxLine = new GroupBox();
-            txtLineY1 = new TextBox();
-            txtLineY0 = new TextBox();
-            txtLineX1 = new TextBox();
-            txtLineX0 = new TextBox();
-            lblLineY1 = new Label();
-            lblLineY0 = new Label();
-            lblLineX1 = new Label();
-            lblLineX0 = new Label();
             grpbxCircle = new GroupBox();
             chkCircleTopLeft = new CheckBox();
             chkCircleTopRight = new CheckBox();
@@ -107,6 +75,28 @@
             lblCircleQuadrants = new Label();
             lblCircleY0 = new Label();
             lblCircleX0 = new Label();
+            grpbxRotatedRect = new GroupBox();
+            txtRotatedRectAngleDeg = new TextBox();
+            txtRotatedRectH = new TextBox();
+            txtRotatedRectW = new TextBox();
+            txtRotatedRectCenY = new TextBox();
+            txtRotatedRectCenX = new TextBox();
+            lblRotatedRectAngleDeg = new Label();
+            lblRotatedRectH = new Label();
+            lblRotatedRectW = new Label();
+            lblRotatedRectCenY = new Label();
+            lblRotatedRectCenX = new Label();
+            grpbxRoundRect = new GroupBox();
+            txtRoundRectRadius = new TextBox();
+            txtRoundRectH = new TextBox();
+            txtRoundRectW = new TextBox();
+            txtRoundRectY0 = new TextBox();
+            txtRoundRectX0 = new TextBox();
+            lblRoundRectRadius = new Label();
+            lblRoundRectH = new Label();
+            lblRoundRectW = new Label();
+            lblRoundRectY0 = new Label();
+            lblRoundRectX0 = new Label();
             grpbxTriangle = new GroupBox();
             txtTriangleY1 = new TextBox();
             txtTriangleY0 = new TextBox();
@@ -120,7 +110,15 @@
             lblTriangleY0 = new Label();
             lblTriangleX1 = new Label();
             lblTriangleX0 = new Label();
-            btnUpdateCurrentPrimitive = new Button();
+            grpbxLine = new GroupBox();
+            txtLineY1 = new TextBox();
+            txtLineY0 = new TextBox();
+            txtLineX1 = new TextBox();
+            txtLineX0 = new TextBox();
+            lblLineY1 = new Label();
+            lblLineY0 = new Label();
+            lblLineX1 = new Label();
+            lblLineX0 = new Label();
             btnCurrentPrimitiveDrawColor = new Button();
             txtCurrentPrimitiveDrawColor = new TextBox();
             lblCurrentPrimitiveDrawColor = new Label();
@@ -161,11 +159,11 @@
             ((System.ComponentModel.ISupportInitialize)pctbxCanvas).BeginInit();
             grpbxPrimitives.SuspendLayout();
             grpbxCurrentPrimitive.SuspendLayout();
-            grpbxRoundRect.SuspendLayout();
-            grpbxRotatedRect.SuspendLayout();
-            grpbxLine.SuspendLayout();
             grpbxCircle.SuspendLayout();
+            grpbxRotatedRect.SuspendLayout();
+            grpbxRoundRect.SuspendLayout();
             grpbxTriangle.SuspendLayout();
+            grpbxLine.SuspendLayout();
             grpbxFile.SuspendLayout();
             SuspendLayout();
             // 
@@ -207,17 +205,20 @@
             // txtFrameDuration
             // 
             txtFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            txtFrameDuration.Location = new Point(78, 74);
+            txtFrameDuration.Location = new Point(70, 74);
             txtFrameDuration.Name = "txtFrameDuration";
+            txtFrameDuration.ShortcutsEnabled = false;
             txtFrameDuration.Size = new Size(48, 22);
             txtFrameDuration.TabIndex = 25;
+            txtFrameDuration.KeyDown += txtFrameDuration_KeyDown;
+            txtFrameDuration.Leave += txtFrameDuration_Leave;
             // 
             // lblFrameDuration
             // 
             lblFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            lblFrameDuration.Location = new Point(15, 74);
+            lblFrameDuration.Location = new Point(15, 77);
             lblFrameDuration.Name = "lblFrameDuration";
-            lblFrameDuration.Size = new Size(63, 22);
+            lblFrameDuration.Size = new Size(56, 13);
             lblFrameDuration.TabIndex = 24;
             lblFrameDuration.Text = "Duration:";
             lblFrameDuration.TextAlign = ContentAlignment.MiddleRight;
@@ -225,7 +226,7 @@
             // btnFrameFillColor
             // 
             btnFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            btnFrameFillColor.Location = new Point(132, 46);
+            btnFrameFillColor.Location = new Point(121, 46);
             btnFrameFillColor.Name = "btnFrameFillColor";
             btnFrameFillColor.Size = new Size(32, 22);
             btnFrameFillColor.TabIndex = 23;
@@ -237,17 +238,19 @@
             // txtFrameFillColor
             // 
             txtFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            txtFrameFillColor.Location = new Point(78, 46);
+            txtFrameFillColor.Location = new Point(70, 46);
             txtFrameFillColor.Name = "txtFrameFillColor";
             txtFrameFillColor.Size = new Size(48, 22);
             txtFrameFillColor.TabIndex = 22;
+            txtFrameFillColor.KeyDown += txtFrameFillColor_KeyDown;
+            txtFrameFillColor.Leave += txtFrameFillColor_Leave;
             // 
             // lblAddFillColor
             // 
             lblAddFillColor.Font = new Font("Segoe UI", 8.25F);
-            lblAddFillColor.Location = new Point(15, 46);
+            lblAddFillColor.Location = new Point(15, 50);
             lblAddFillColor.Name = "lblAddFillColor";
-            lblAddFillColor.Size = new Size(63, 22);
+            lblAddFillColor.Size = new Size(56, 13);
             lblAddFillColor.TabIndex = 21;
             lblAddFillColor.Text = "Fill Color:";
             lblAddFillColor.TextAlign = ContentAlignment.MiddleRight;
@@ -256,7 +259,6 @@
             // 
             grpbxCurrentFrame.Controls.Add(btnMoveFrameUp);
             grpbxCurrentFrame.Controls.Add(btnMoveFrameDown);
-            grpbxCurrentFrame.Controls.Add(btnUpdateCurrentFrame);
             grpbxCurrentFrame.Controls.Add(txtCurrentFrameDuration);
             grpbxCurrentFrame.Controls.Add(lblCurrentFrameDuration);
             grpbxCurrentFrame.Controls.Add(btnCurrentFrameFillColor);
@@ -296,32 +298,23 @@
             btnMoveFrameDown.UseVisualStyleBackColor = true;
             btnMoveFrameDown.Click += btnMoveFrameDown_Click;
             // 
-            // btnUpdateCurrentFrame
-            // 
-            btnUpdateCurrentFrame.Enabled = false;
-            btnUpdateCurrentFrame.Font = new Font("Segoe UI", 8.25F);
-            btnUpdateCurrentFrame.Image = (System.Drawing.Image)resources.GetObject("btnUpdateCurrentFrame.Image");
-            btnUpdateCurrentFrame.Location = new Point(70, 92);
-            btnUpdateCurrentFrame.Name = "btnUpdateCurrentFrame";
-            btnUpdateCurrentFrame.Size = new Size(32, 22);
-            btnUpdateCurrentFrame.TabIndex = 21;
-            btnUpdateCurrentFrame.UseVisualStyleBackColor = true;
-            btnUpdateCurrentFrame.Click += btnUpdateCurrentFrame_Click;
-            // 
             // txtCurrentFrameDuration
             // 
             txtCurrentFrameDuration.Enabled = false;
             txtCurrentFrameDuration.Font = new Font("Segoe UI", 8.25F);
             txtCurrentFrameDuration.Location = new Point(65, 66);
             txtCurrentFrameDuration.Name = "txtCurrentFrameDuration";
-            txtCurrentFrameDuration.Size = new Size(85, 22);
+            txtCurrentFrameDuration.ShortcutsEnabled = false;
+            txtCurrentFrameDuration.Size = new Size(48, 22);
             txtCurrentFrameDuration.TabIndex = 20;
+            txtCurrentFrameDuration.KeyDown += txtCurrentFrameDuration_KeyDown;
+            txtCurrentFrameDuration.Leave += txtCurrentFrameDuration_Leave;
             // 
             // lblCurrentFrameDuration
             // 
             lblCurrentFrameDuration.AutoSize = true;
             lblCurrentFrameDuration.Font = new Font("Segoe UI", 8.25F);
-            lblCurrentFrameDuration.Location = new Point(3, 69);
+            lblCurrentFrameDuration.Location = new Point(10, 69);
             lblCurrentFrameDuration.Name = "lblCurrentFrameDuration";
             lblCurrentFrameDuration.Size = new Size(56, 13);
             lblCurrentFrameDuration.TabIndex = 19;
@@ -332,7 +325,7 @@
             // 
             btnCurrentFrameFillColor.Enabled = false;
             btnCurrentFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            btnCurrentFrameFillColor.Location = new Point(115, 40);
+            btnCurrentFrameFillColor.Location = new Point(116, 40);
             btnCurrentFrameFillColor.Name = "btnCurrentFrameFillColor";
             btnCurrentFrameFillColor.Size = new Size(35, 22);
             btnCurrentFrameFillColor.TabIndex = 18;
@@ -349,12 +342,14 @@
             txtCurrentFrameFillColor.Name = "txtCurrentFrameFillColor";
             txtCurrentFrameFillColor.Size = new Size(48, 22);
             txtCurrentFrameFillColor.TabIndex = 17;
+            txtCurrentFrameFillColor.KeyDown += txtCurrentFrameFillColor_KeyDown;
+            txtCurrentFrameFillColor.Leave += txtCurrentFrameFillColor_Leave;
             // 
             // lblCurrentFrameFillColor
             // 
             lblCurrentFrameFillColor.AutoSize = true;
             lblCurrentFrameFillColor.Font = new Font("Segoe UI", 8.25F);
-            lblCurrentFrameFillColor.Location = new Point(3, 40);
+            lblCurrentFrameFillColor.Location = new Point(10, 44);
             lblCurrentFrameFillColor.Name = "lblCurrentFrameFillColor";
             lblCurrentFrameFillColor.Size = new Size(56, 13);
             lblCurrentFrameFillColor.TabIndex = 16;
@@ -366,6 +361,7 @@
             txtCurrentFrameNumber.Font = new Font("Segoe UI", 8.25F);
             txtCurrentFrameNumber.Location = new Point(65, 15);
             txtCurrentFrameNumber.Name = "txtCurrentFrameNumber";
+            txtCurrentFrameNumber.ShortcutsEnabled = false;
             txtCurrentFrameNumber.Size = new Size(35, 22);
             txtCurrentFrameNumber.TabIndex = 15;
             txtCurrentFrameNumber.KeyDown += txtCurrentFrame_KeyDown;
@@ -374,7 +370,7 @@
             // 
             lblCurrentFrameNumber.AutoSize = true;
             lblCurrentFrameNumber.Font = new Font("Segoe UI", 8.25F);
-            lblCurrentFrameNumber.Location = new Point(8, 18);
+            lblCurrentFrameNumber.Location = new Point(15, 20);
             lblCurrentFrameNumber.Name = "lblCurrentFrameNumber";
             lblCurrentFrameNumber.Size = new Size(51, 13);
             lblCurrentFrameNumber.TabIndex = 14;
@@ -421,7 +417,7 @@
             // 
             btnAddFrame.Font = new Font("Segoe UI", 8.25F);
             btnAddFrame.Image = (System.Drawing.Image)resources.GetObject("btnAddFrame.Image");
-            btnAddFrame.Location = new Point(132, 21);
+            btnAddFrame.Location = new Point(121, 19);
             btnAddFrame.Margin = new Padding(0);
             btnAddFrame.Name = "btnAddFrame";
             btnAddFrame.Size = new Size(32, 22);
@@ -432,8 +428,9 @@
             // txtFrameCount
             // 
             txtFrameCount.Font = new Font("Segoe UI", 8.25F);
-            txtFrameCount.Location = new Point(78, 20);
+            txtFrameCount.Location = new Point(70, 20);
             txtFrameCount.Name = "txtFrameCount";
+            txtFrameCount.ShortcutsEnabled = false;
             txtFrameCount.Size = new Size(48, 22);
             txtFrameCount.TabIndex = 1;
             txtFrameCount.KeyDown += txtFrameCount_KeyDown;
@@ -441,7 +438,7 @@
             // lblFrameCount
             // 
             lblFrameCount.Font = new Font("Segoe UI", 8.25F);
-            lblFrameCount.Location = new Point(15, 20);
+            lblFrameCount.Location = new Point(8, 19);
             lblFrameCount.Name = "lblFrameCount";
             lblFrameCount.Size = new Size(63, 22);
             lblFrameCount.TabIndex = 0;
@@ -528,6 +525,8 @@
             txtPrimitiveDrawColor.Name = "txtPrimitiveDrawColor";
             txtPrimitiveDrawColor.Size = new Size(48, 22);
             txtPrimitiveDrawColor.TabIndex = 25;
+            txtPrimitiveDrawColor.KeyDown += txtPrimitiveDrawColor_KeyDown;
+            txtPrimitiveDrawColor.Leave += txtPrimitiveDrawColor_Leave;
             // 
             // lblAddPrimitiveDrawColor
             // 
@@ -541,12 +540,11 @@
             // 
             // grpbxCurrentPrimitive
             // 
-            grpbxCurrentPrimitive.Controls.Add(grpbxRoundRect);
-            grpbxCurrentPrimitive.Controls.Add(grpbxRotatedRect);
-            grpbxCurrentPrimitive.Controls.Add(grpbxLine);
             grpbxCurrentPrimitive.Controls.Add(grpbxCircle);
+            grpbxCurrentPrimitive.Controls.Add(grpbxRotatedRect);
+            grpbxCurrentPrimitive.Controls.Add(grpbxRoundRect);
             grpbxCurrentPrimitive.Controls.Add(grpbxTriangle);
-            grpbxCurrentPrimitive.Controls.Add(btnUpdateCurrentPrimitive);
+            grpbxCurrentPrimitive.Controls.Add(grpbxLine);
             grpbxCurrentPrimitive.Controls.Add(btnCurrentPrimitiveDrawColor);
             grpbxCurrentPrimitive.Controls.Add(txtCurrentPrimitiveDrawColor);
             grpbxCurrentPrimitive.Controls.Add(lblCurrentPrimitiveDrawColor);
@@ -559,288 +557,6 @@
             grpbxCurrentPrimitive.TabIndex = 23;
             grpbxCurrentPrimitive.TabStop = false;
             grpbxCurrentPrimitive.Text = "Current Primitive";
-            // 
-            // grpbxRoundRect
-            // 
-            grpbxRoundRect.Controls.Add(txtRoundRectRadius);
-            grpbxRoundRect.Controls.Add(txtRoundRectH);
-            grpbxRoundRect.Controls.Add(txtRoundRectW);
-            grpbxRoundRect.Controls.Add(txtRoundRectY0);
-            grpbxRoundRect.Controls.Add(txtRoundRectX0);
-            grpbxRoundRect.Controls.Add(lblRoundRectRadius);
-            grpbxRoundRect.Controls.Add(lblRoundRectH);
-            grpbxRoundRect.Controls.Add(lblRoundRectW);
-            grpbxRoundRect.Controls.Add(lblRoundRectY0);
-            grpbxRoundRect.Controls.Add(lblRoundRectX0);
-            grpbxRoundRect.Location = new Point(8, 70);
-            grpbxRoundRect.Name = "grpbxRoundRect";
-            grpbxRoundRect.Size = new Size(146, 119);
-            grpbxRoundRect.TabIndex = 26;
-            grpbxRoundRect.TabStop = false;
-            grpbxRoundRect.Text = "Rectangle";
-            grpbxRoundRect.Visible = false;
-            // 
-            // txtRoundRectRadius
-            // 
-            txtRoundRectRadius.Location = new Point(109, 64);
-            txtRoundRectRadius.Name = "txtRoundRectRadius";
-            txtRoundRectRadius.Size = new Size(30, 22);
-            txtRoundRectRadius.TabIndex = 9;
-            // 
-            // txtRoundRectH
-            // 
-            txtRoundRectH.Location = new Point(109, 40);
-            txtRoundRectH.Name = "txtRoundRectH";
-            txtRoundRectH.Size = new Size(30, 22);
-            txtRoundRectH.TabIndex = 8;
-            // 
-            // txtRoundRectW
-            // 
-            txtRoundRectW.Location = new Point(35, 40);
-            txtRoundRectW.Name = "txtRoundRectW";
-            txtRoundRectW.Size = new Size(30, 22);
-            txtRoundRectW.TabIndex = 7;
-            // 
-            // txtRoundRectY0
-            // 
-            txtRoundRectY0.Location = new Point(109, 16);
-            txtRoundRectY0.Name = "txtRoundRectY0";
-            txtRoundRectY0.Size = new Size(30, 22);
-            txtRoundRectY0.TabIndex = 6;
-            // 
-            // txtRoundRectX0
-            // 
-            txtRoundRectX0.Location = new Point(35, 16);
-            txtRoundRectX0.Name = "txtRoundRectX0";
-            txtRoundRectX0.Size = new Size(30, 22);
-            txtRoundRectX0.TabIndex = 5;
-            // 
-            // lblRoundRectRadius
-            // 
-            lblRoundRectRadius.AutoSize = true;
-            lblRoundRectRadius.Location = new Point(67, 67);
-            lblRoundRectRadius.Name = "lblRoundRectRadius";
-            lblRoundRectRadius.Size = new Size(45, 13);
-            lblRoundRectRadius.TabIndex = 4;
-            lblRoundRectRadius.Text = "Radius:";
-            // 
-            // lblRoundRectH
-            // 
-            lblRoundRectH.AutoSize = true;
-            lblRoundRectH.Location = new Point(94, 43);
-            lblRoundRectH.Name = "lblRoundRectH";
-            lblRoundRectH.Size = new Size(18, 13);
-            lblRoundRectH.TabIndex = 3;
-            lblRoundRectH.Text = "H:";
-            // 
-            // lblRoundRectW
-            // 
-            lblRoundRectW.AutoSize = true;
-            lblRoundRectW.Location = new Point(6, 45);
-            lblRoundRectW.Name = "lblRoundRectW";
-            lblRoundRectW.Size = new Size(21, 13);
-            lblRoundRectW.TabIndex = 2;
-            lblRoundRectW.Text = "W:";
-            // 
-            // lblRoundRectY0
-            // 
-            lblRoundRectY0.AutoSize = true;
-            lblRoundRectY0.Location = new Point(91, 19);
-            lblRoundRectY0.Name = "lblRoundRectY0";
-            lblRoundRectY0.Size = new Size(21, 13);
-            lblRoundRectY0.TabIndex = 1;
-            lblRoundRectY0.Text = "Y0:";
-            // 
-            // lblRoundRectX0
-            // 
-            lblRoundRectX0.AutoSize = true;
-            lblRoundRectX0.Location = new Point(6, 19);
-            lblRoundRectX0.Name = "lblRoundRectX0";
-            lblRoundRectX0.Size = new Size(22, 13);
-            lblRoundRectX0.TabIndex = 0;
-            lblRoundRectX0.Text = "X0:";
-            // 
-            // grpbxRotatedRect
-            // 
-            grpbxRotatedRect.Controls.Add(txtRotatedRectAngleDeg);
-            grpbxRotatedRect.Controls.Add(txtRotatedRectH);
-            grpbxRotatedRect.Controls.Add(txtRotatedRectW);
-            grpbxRotatedRect.Controls.Add(txtRotatedRectCenY);
-            grpbxRotatedRect.Controls.Add(txtRotatedRectCenX);
-            grpbxRotatedRect.Controls.Add(lblRotatedRectAngleDeg);
-            grpbxRotatedRect.Controls.Add(lblRotatedRectH);
-            grpbxRotatedRect.Controls.Add(lblRotatedRectW);
-            grpbxRotatedRect.Controls.Add(lblRotatedRectCenY);
-            grpbxRotatedRect.Controls.Add(lblRotatedRectCenX);
-            grpbxRotatedRect.Location = new Point(8, 70);
-            grpbxRotatedRect.Name = "grpbxRotatedRect";
-            grpbxRotatedRect.Size = new Size(146, 119);
-            grpbxRotatedRect.TabIndex = 33;
-            grpbxRotatedRect.TabStop = false;
-            grpbxRotatedRect.Text = "Rotated Rectangle";
-            grpbxRotatedRect.Visible = false;
-            // 
-            // txtRotatedRectAngleDeg
-            // 
-            txtRotatedRectAngleDeg.Location = new Point(109, 64);
-            txtRotatedRectAngleDeg.Name = "txtRotatedRectAngleDeg";
-            txtRotatedRectAngleDeg.Size = new Size(30, 22);
-            txtRotatedRectAngleDeg.TabIndex = 9;
-            // 
-            // txtRotatedRectH
-            // 
-            txtRotatedRectH.Location = new Point(109, 40);
-            txtRotatedRectH.Name = "txtRotatedRectH";
-            txtRotatedRectH.Size = new Size(30, 22);
-            txtRotatedRectH.TabIndex = 8;
-            // 
-            // txtRotatedRectW
-            // 
-            txtRotatedRectW.Location = new Point(35, 40);
-            txtRotatedRectW.Name = "txtRotatedRectW";
-            txtRotatedRectW.Size = new Size(30, 22);
-            txtRotatedRectW.TabIndex = 7;
-            // 
-            // txtRotatedRectCenY
-            // 
-            txtRotatedRectCenY.Location = new Point(109, 16);
-            txtRotatedRectCenY.Name = "txtRotatedRectCenY";
-            txtRotatedRectCenY.Size = new Size(30, 22);
-            txtRotatedRectCenY.TabIndex = 6;
-            // 
-            // txtRotatedRectCenX
-            // 
-            txtRotatedRectCenX.Location = new Point(35, 16);
-            txtRotatedRectCenX.Name = "txtRotatedRectCenX";
-            txtRotatedRectCenX.Size = new Size(30, 22);
-            txtRotatedRectCenX.TabIndex = 5;
-            // 
-            // lblRotatedRectAngleDeg
-            // 
-            lblRotatedRectAngleDeg.AutoSize = true;
-            lblRotatedRectAngleDeg.Location = new Point(51, 67);
-            lblRotatedRectAngleDeg.Name = "lblRotatedRectAngleDeg";
-            lblRotatedRectAngleDeg.Size = new Size(61, 13);
-            lblRotatedRectAngleDeg.TabIndex = 4;
-            lblRotatedRectAngleDeg.Text = "AngleDeg:";
-            // 
-            // lblRotatedRectH
-            // 
-            lblRotatedRectH.AutoSize = true;
-            lblRotatedRectH.Location = new Point(94, 43);
-            lblRotatedRectH.Name = "lblRotatedRectH";
-            lblRotatedRectH.Size = new Size(18, 13);
-            lblRotatedRectH.TabIndex = 3;
-            lblRotatedRectH.Text = "H:";
-            // 
-            // lblRotatedRectW
-            // 
-            lblRotatedRectW.AutoSize = true;
-            lblRotatedRectW.Location = new Point(6, 45);
-            lblRotatedRectW.Name = "lblRotatedRectW";
-            lblRotatedRectW.Size = new Size(21, 13);
-            lblRotatedRectW.TabIndex = 2;
-            lblRotatedRectW.Text = "W:";
-            // 
-            // lblRotatedRectCenY
-            // 
-            lblRotatedRectCenY.AutoSize = true;
-            lblRotatedRectCenY.Location = new Point(77, 19);
-            lblRotatedRectCenY.Name = "lblRotatedRectCenY";
-            lblRotatedRectCenY.Size = new Size(35, 13);
-            lblRotatedRectCenY.TabIndex = 1;
-            lblRotatedRectCenY.Text = "CenY:";
-            // 
-            // lblRotatedRectCenX
-            // 
-            lblRotatedRectCenX.AutoSize = true;
-            lblRotatedRectCenX.Location = new Point(0, 19);
-            lblRotatedRectCenX.Name = "lblRotatedRectCenX";
-            lblRotatedRectCenX.Size = new Size(36, 13);
-            lblRotatedRectCenX.TabIndex = 0;
-            lblRotatedRectCenX.Text = "CenX:";
-            // 
-            // grpbxLine
-            // 
-            grpbxLine.Controls.Add(txtLineY1);
-            grpbxLine.Controls.Add(txtLineY0);
-            grpbxLine.Controls.Add(txtLineX1);
-            grpbxLine.Controls.Add(txtLineX0);
-            grpbxLine.Controls.Add(lblLineY1);
-            grpbxLine.Controls.Add(lblLineY0);
-            grpbxLine.Controls.Add(lblLineX1);
-            grpbxLine.Controls.Add(lblLineX0);
-            grpbxLine.Location = new Point(8, 70);
-            grpbxLine.Name = "grpbxLine";
-            grpbxLine.Size = new Size(146, 119);
-            grpbxLine.TabIndex = 32;
-            grpbxLine.TabStop = false;
-            grpbxLine.Text = "Line";
-            grpbxLine.Visible = false;
-            // 
-            // txtLineY1
-            // 
-            txtLineY1.Location = new Point(109, 40);
-            txtLineY1.Name = "txtLineY1";
-            txtLineY1.Size = new Size(30, 22);
-            txtLineY1.TabIndex = 17;
-            // 
-            // txtLineY0
-            // 
-            txtLineY0.Location = new Point(109, 16);
-            txtLineY0.Name = "txtLineY0";
-            txtLineY0.Size = new Size(30, 22);
-            txtLineY0.TabIndex = 16;
-            // 
-            // txtLineX1
-            // 
-            txtLineX1.Location = new Point(35, 40);
-            txtLineX1.Name = "txtLineX1";
-            txtLineX1.Size = new Size(30, 22);
-            txtLineX1.TabIndex = 15;
-            // 
-            // txtLineX0
-            // 
-            txtLineX0.Location = new Point(35, 16);
-            txtLineX0.Name = "txtLineX0";
-            txtLineX0.Size = new Size(30, 22);
-            txtLineX0.TabIndex = 14;
-            // 
-            // lblLineY1
-            // 
-            lblLineY1.AutoSize = true;
-            lblLineY1.Location = new Point(77, 43);
-            lblLineY1.Name = "lblLineY1";
-            lblLineY1.Size = new Size(21, 13);
-            lblLineY1.TabIndex = 13;
-            lblLineY1.Text = "Y1:";
-            // 
-            // lblLineY0
-            // 
-            lblLineY0.AutoSize = true;
-            lblLineY0.Location = new Point(77, 19);
-            lblLineY0.Name = "lblLineY0";
-            lblLineY0.Size = new Size(21, 13);
-            lblLineY0.TabIndex = 2;
-            lblLineY0.Text = "Y0:";
-            // 
-            // lblLineX1
-            // 
-            lblLineX1.AutoSize = true;
-            lblLineX1.Location = new Point(6, 43);
-            lblLineX1.Name = "lblLineX1";
-            lblLineX1.Size = new Size(22, 13);
-            lblLineX1.TabIndex = 1;
-            lblLineX1.Text = "X1:";
-            // 
-            // lblLineX0
-            // 
-            lblLineX0.AutoSize = true;
-            lblLineX0.Location = new Point(6, 19);
-            lblLineX0.Name = "lblLineX0";
-            lblLineX0.Size = new Size(22, 13);
-            lblLineX0.TabIndex = 0;
-            lblLineX0.Text = "X0:";
             // 
             // grpbxCircle
             // 
@@ -941,29 +657,41 @@
             // 
             txtCircleR.Location = new Point(50, 40);
             txtCircleR.Name = "txtCircleR";
+            txtCircleR.ShortcutsEnabled = false;
             txtCircleR.Size = new Size(30, 22);
             txtCircleR.TabIndex = 9;
+            txtCircleR.KeyDown += txtCircleR_KeyDown;
+            txtCircleR.Leave += txtCircleR_Leave;
             // 
             // txtCircleDelta
             // 
             txtCircleDelta.Location = new Point(109, 40);
             txtCircleDelta.Name = "txtCircleDelta";
+            txtCircleDelta.ShortcutsEnabled = false;
             txtCircleDelta.Size = new Size(30, 22);
             txtCircleDelta.TabIndex = 8;
+            txtCircleDelta.KeyDown += txtCircleDelta_KeyDown;
+            txtCircleDelta.Leave += txtCircleDelta_Leave;
             // 
             // txtCircleY0
             // 
             txtCircleY0.Location = new Point(109, 16);
             txtCircleY0.Name = "txtCircleY0";
+            txtCircleY0.ShortcutsEnabled = false;
             txtCircleY0.Size = new Size(30, 22);
             txtCircleY0.TabIndex = 6;
+            txtCircleY0.KeyDown += txtCircleY0_KeyDown;
+            txtCircleY0.Leave += txtCircleY0_Leave;
             // 
             // txtCircleX0
             // 
             txtCircleX0.Location = new Point(50, 16);
             txtCircleX0.Name = "txtCircleX0";
+            txtCircleX0.ShortcutsEnabled = false;
             txtCircleX0.Size = new Size(30, 22);
             txtCircleX0.TabIndex = 5;
+            txtCircleX0.KeyDown += txtCircleX0_KeyDown;
+            txtCircleX0.Leave += txtCircleX0_Leave;
             // 
             // lblCircleR
             // 
@@ -1010,6 +738,236 @@
             lblCircleX0.TabIndex = 0;
             lblCircleX0.Text = "X0:";
             // 
+            // grpbxRotatedRect
+            // 
+            grpbxRotatedRect.Controls.Add(txtRotatedRectAngleDeg);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectH);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectW);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectCenY);
+            grpbxRotatedRect.Controls.Add(txtRotatedRectCenX);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectAngleDeg);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectH);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectW);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectCenY);
+            grpbxRotatedRect.Controls.Add(lblRotatedRectCenX);
+            grpbxRotatedRect.Location = new Point(8, 70);
+            grpbxRotatedRect.Name = "grpbxRotatedRect";
+            grpbxRotatedRect.Size = new Size(146, 119);
+            grpbxRotatedRect.TabIndex = 33;
+            grpbxRotatedRect.TabStop = false;
+            grpbxRotatedRect.Text = "Rotated Rectangle";
+            grpbxRotatedRect.Visible = false;
+            // 
+            // txtRotatedRectAngleDeg
+            // 
+            txtRotatedRectAngleDeg.Location = new Point(109, 64);
+            txtRotatedRectAngleDeg.Name = "txtRotatedRectAngleDeg";
+            txtRotatedRectAngleDeg.ShortcutsEnabled = false;
+            txtRotatedRectAngleDeg.Size = new Size(30, 22);
+            txtRotatedRectAngleDeg.TabIndex = 9;
+            txtRotatedRectAngleDeg.KeyDown += txtRotatedRectAngleDeg_KeyDown;
+            txtRotatedRectAngleDeg.Leave += txtRotatedRectAngleDeg_Leave;
+            // 
+            // txtRotatedRectH
+            // 
+            txtRotatedRectH.Location = new Point(109, 40);
+            txtRotatedRectH.Name = "txtRotatedRectH";
+            txtRotatedRectH.ShortcutsEnabled = false;
+            txtRotatedRectH.Size = new Size(30, 22);
+            txtRotatedRectH.TabIndex = 8;
+            txtRotatedRectH.KeyDown += txtRotatedRectH_KeyDown;
+            txtRotatedRectH.Leave += txtRotatedRectH_Leave;
+            // 
+            // txtRotatedRectW
+            // 
+            txtRotatedRectW.Location = new Point(35, 40);
+            txtRotatedRectW.Name = "txtRotatedRectW";
+            txtRotatedRectW.ShortcutsEnabled = false;
+            txtRotatedRectW.Size = new Size(30, 22);
+            txtRotatedRectW.TabIndex = 7;
+            txtRotatedRectW.KeyDown += txtRotatedRectW_KeyDown;
+            txtRotatedRectW.Leave += txtRotatedRectW_Leave;
+            // 
+            // txtRotatedRectCenY
+            // 
+            txtRotatedRectCenY.Location = new Point(109, 16);
+            txtRotatedRectCenY.Name = "txtRotatedRectCenY";
+            txtRotatedRectCenY.ShortcutsEnabled = false;
+            txtRotatedRectCenY.Size = new Size(30, 22);
+            txtRotatedRectCenY.TabIndex = 6;
+            txtRotatedRectCenY.KeyDown += txtRotatedRectCenY_KeyDown;
+            txtRotatedRectCenY.Leave += txtRotatedRectCenY_Leave;
+            // 
+            // txtRotatedRectCenX
+            // 
+            txtRotatedRectCenX.Location = new Point(35, 16);
+            txtRotatedRectCenX.Name = "txtRotatedRectCenX";
+            txtRotatedRectCenX.ShortcutsEnabled = false;
+            txtRotatedRectCenX.Size = new Size(30, 22);
+            txtRotatedRectCenX.TabIndex = 5;
+            txtRotatedRectCenX.KeyDown += txtRotatedRectCenX_KeyDown;
+            txtRotatedRectCenX.Leave += txtRotatedRectCenX_Leave;
+            // 
+            // lblRotatedRectAngleDeg
+            // 
+            lblRotatedRectAngleDeg.AutoSize = true;
+            lblRotatedRectAngleDeg.Location = new Point(51, 67);
+            lblRotatedRectAngleDeg.Name = "lblRotatedRectAngleDeg";
+            lblRotatedRectAngleDeg.Size = new Size(61, 13);
+            lblRotatedRectAngleDeg.TabIndex = 4;
+            lblRotatedRectAngleDeg.Text = "AngleDeg:";
+            // 
+            // lblRotatedRectH
+            // 
+            lblRotatedRectH.AutoSize = true;
+            lblRotatedRectH.Location = new Point(94, 43);
+            lblRotatedRectH.Name = "lblRotatedRectH";
+            lblRotatedRectH.Size = new Size(18, 13);
+            lblRotatedRectH.TabIndex = 3;
+            lblRotatedRectH.Text = "H:";
+            // 
+            // lblRotatedRectW
+            // 
+            lblRotatedRectW.AutoSize = true;
+            lblRotatedRectW.Location = new Point(6, 45);
+            lblRotatedRectW.Name = "lblRotatedRectW";
+            lblRotatedRectW.Size = new Size(21, 13);
+            lblRotatedRectW.TabIndex = 2;
+            lblRotatedRectW.Text = "W:";
+            // 
+            // lblRotatedRectCenY
+            // 
+            lblRotatedRectCenY.AutoSize = true;
+            lblRotatedRectCenY.Location = new Point(77, 19);
+            lblRotatedRectCenY.Name = "lblRotatedRectCenY";
+            lblRotatedRectCenY.Size = new Size(35, 13);
+            lblRotatedRectCenY.TabIndex = 1;
+            lblRotatedRectCenY.Text = "CenY:";
+            // 
+            // lblRotatedRectCenX
+            // 
+            lblRotatedRectCenX.AutoSize = true;
+            lblRotatedRectCenX.Location = new Point(0, 19);
+            lblRotatedRectCenX.Name = "lblRotatedRectCenX";
+            lblRotatedRectCenX.Size = new Size(36, 13);
+            lblRotatedRectCenX.TabIndex = 0;
+            lblRotatedRectCenX.Text = "CenX:";
+            // 
+            // grpbxRoundRect
+            // 
+            grpbxRoundRect.Controls.Add(txtRoundRectRadius);
+            grpbxRoundRect.Controls.Add(txtRoundRectH);
+            grpbxRoundRect.Controls.Add(txtRoundRectW);
+            grpbxRoundRect.Controls.Add(txtRoundRectY0);
+            grpbxRoundRect.Controls.Add(txtRoundRectX0);
+            grpbxRoundRect.Controls.Add(lblRoundRectRadius);
+            grpbxRoundRect.Controls.Add(lblRoundRectH);
+            grpbxRoundRect.Controls.Add(lblRoundRectW);
+            grpbxRoundRect.Controls.Add(lblRoundRectY0);
+            grpbxRoundRect.Controls.Add(lblRoundRectX0);
+            grpbxRoundRect.Location = new Point(8, 70);
+            grpbxRoundRect.Name = "grpbxRoundRect";
+            grpbxRoundRect.Size = new Size(146, 119);
+            grpbxRoundRect.TabIndex = 26;
+            grpbxRoundRect.TabStop = false;
+            grpbxRoundRect.Text = "Round Rectangle";
+            grpbxRoundRect.Visible = false;
+            // 
+            // txtRoundRectRadius
+            // 
+            txtRoundRectRadius.Location = new Point(109, 64);
+            txtRoundRectRadius.Name = "txtRoundRectRadius";
+            txtRoundRectRadius.ShortcutsEnabled = false;
+            txtRoundRectRadius.Size = new Size(30, 22);
+            txtRoundRectRadius.TabIndex = 9;
+            txtRoundRectRadius.KeyDown += txtRoundRectRadius_KeyDown;
+            txtRoundRectRadius.Leave += txtRoundRectRadius_Leave;
+            // 
+            // txtRoundRectH
+            // 
+            txtRoundRectH.Location = new Point(109, 40);
+            txtRoundRectH.Name = "txtRoundRectH";
+            txtRoundRectH.ShortcutsEnabled = false;
+            txtRoundRectH.Size = new Size(30, 22);
+            txtRoundRectH.TabIndex = 8;
+            txtRoundRectH.KeyDown += txtRoundRectH_KeyDown;
+            txtRoundRectH.Leave += txtRoundRectH_Leave;
+            // 
+            // txtRoundRectW
+            // 
+            txtRoundRectW.Location = new Point(35, 40);
+            txtRoundRectW.Name = "txtRoundRectW";
+            txtRoundRectW.ShortcutsEnabled = false;
+            txtRoundRectW.Size = new Size(30, 22);
+            txtRoundRectW.TabIndex = 7;
+            txtRoundRectW.KeyDown += txtRoundRectW_KeyDown;
+            txtRoundRectW.Leave += txtRoundRectW_Leave;
+            // 
+            // txtRoundRectY0
+            // 
+            txtRoundRectY0.Location = new Point(109, 16);
+            txtRoundRectY0.Name = "txtRoundRectY0";
+            txtRoundRectY0.ShortcutsEnabled = false;
+            txtRoundRectY0.Size = new Size(30, 22);
+            txtRoundRectY0.TabIndex = 6;
+            txtRoundRectY0.KeyDown += txtRoundRectY0_KeyDown;
+            txtRoundRectY0.Leave += txtRoundRectY0_Leave;
+            // 
+            // txtRoundRectX0
+            // 
+            txtRoundRectX0.Location = new Point(35, 16);
+            txtRoundRectX0.Name = "txtRoundRectX0";
+            txtRoundRectX0.ShortcutsEnabled = false;
+            txtRoundRectX0.Size = new Size(30, 22);
+            txtRoundRectX0.TabIndex = 5;
+            txtRoundRectX0.KeyDown += txtRoundRectX0_KeyDown;
+            txtRoundRectX0.Leave += txtRoundRectX0_Leave;
+            // 
+            // lblRoundRectRadius
+            // 
+            lblRoundRectRadius.AutoSize = true;
+            lblRoundRectRadius.Location = new Point(67, 67);
+            lblRoundRectRadius.Name = "lblRoundRectRadius";
+            lblRoundRectRadius.Size = new Size(45, 13);
+            lblRoundRectRadius.TabIndex = 4;
+            lblRoundRectRadius.Text = "Radius:";
+            // 
+            // lblRoundRectH
+            // 
+            lblRoundRectH.AutoSize = true;
+            lblRoundRectH.Location = new Point(94, 43);
+            lblRoundRectH.Name = "lblRoundRectH";
+            lblRoundRectH.Size = new Size(18, 13);
+            lblRoundRectH.TabIndex = 3;
+            lblRoundRectH.Text = "H:";
+            // 
+            // lblRoundRectW
+            // 
+            lblRoundRectW.AutoSize = true;
+            lblRoundRectW.Location = new Point(6, 45);
+            lblRoundRectW.Name = "lblRoundRectW";
+            lblRoundRectW.Size = new Size(21, 13);
+            lblRoundRectW.TabIndex = 2;
+            lblRoundRectW.Text = "W:";
+            // 
+            // lblRoundRectY0
+            // 
+            lblRoundRectY0.AutoSize = true;
+            lblRoundRectY0.Location = new Point(91, 19);
+            lblRoundRectY0.Name = "lblRoundRectY0";
+            lblRoundRectY0.Size = new Size(21, 13);
+            lblRoundRectY0.TabIndex = 1;
+            lblRoundRectY0.Text = "Y0:";
+            // 
+            // lblRoundRectX0
+            // 
+            lblRoundRectX0.AutoSize = true;
+            lblRoundRectX0.Location = new Point(6, 19);
+            lblRoundRectX0.Name = "lblRoundRectX0";
+            lblRoundRectX0.Size = new Size(22, 13);
+            lblRoundRectX0.TabIndex = 0;
+            lblRoundRectX0.Text = "X0:";
+            // 
             // grpbxTriangle
             // 
             grpbxTriangle.Controls.Add(txtTriangleY1);
@@ -1036,29 +994,41 @@
             // 
             txtTriangleY1.Location = new Point(102, 40);
             txtTriangleY1.Name = "txtTriangleY1";
+            txtTriangleY1.ShortcutsEnabled = false;
             txtTriangleY1.Size = new Size(30, 22);
             txtTriangleY1.TabIndex = 17;
+            txtTriangleY1.KeyDown += txtTriangleY1_KeyDown;
+            txtTriangleY1.Leave += txtTriangleY1_Leave;
             // 
             // txtTriangleY0
             // 
             txtTriangleY0.Location = new Point(102, 16);
             txtTriangleY0.Name = "txtTriangleY0";
+            txtTriangleY0.ShortcutsEnabled = false;
             txtTriangleY0.Size = new Size(30, 22);
             txtTriangleY0.TabIndex = 16;
+            txtTriangleY0.KeyDown += txtTriangleY0_KeyDown;
+            txtTriangleY0.Leave += txtTriangleY0_Leave;
             // 
             // txtTriangleX1
             // 
             txtTriangleX1.Location = new Point(35, 40);
             txtTriangleX1.Name = "txtTriangleX1";
+            txtTriangleX1.ShortcutsEnabled = false;
             txtTriangleX1.Size = new Size(30, 22);
             txtTriangleX1.TabIndex = 15;
+            txtTriangleX1.KeyDown += txtTriangleX1_KeyDown;
+            txtTriangleX1.Leave += txtTriangleX1_Leave;
             // 
             // txtTriangleX0
             // 
             txtTriangleX0.Location = new Point(35, 16);
             txtTriangleX0.Name = "txtTriangleX0";
+            txtTriangleX0.ShortcutsEnabled = false;
             txtTriangleX0.Size = new Size(30, 22);
             txtTriangleX0.TabIndex = 14;
+            txtTriangleX0.KeyDown += txtTriangleX0_KeyDown;
+            txtTriangleX0.Leave += txtTriangleX0_Leave;
             // 
             // lblTriangleY1
             // 
@@ -1073,15 +1043,21 @@
             // 
             txtTriangleY2.Location = new Point(102, 64);
             txtTriangleY2.Name = "txtTriangleY2";
+            txtTriangleY2.ShortcutsEnabled = false;
             txtTriangleY2.Size = new Size(30, 22);
             txtTriangleY2.TabIndex = 12;
+            txtTriangleY2.KeyDown += txtTriangleY2_KeyDown;
+            txtTriangleY2.Leave += txtTriangleY2_Leave;
             // 
             // txtTriangleX2
             // 
             txtTriangleX2.Location = new Point(35, 64);
             txtTriangleX2.Name = "txtTriangleX2";
+            txtTriangleX2.ShortcutsEnabled = false;
             txtTriangleX2.Size = new Size(30, 22);
             txtTriangleX2.TabIndex = 11;
+            txtTriangleX2.KeyDown += txtTriangleX2_KeyDown;
+            txtTriangleX2.Leave += txtTriangleX2_Leave;
             // 
             // lblTriangleY2
             // 
@@ -1128,17 +1104,99 @@
             lblTriangleX0.TabIndex = 0;
             lblTriangleX0.Text = "X0:";
             // 
-            // btnUpdateCurrentPrimitive
+            // grpbxLine
             // 
-            btnUpdateCurrentPrimitive.Enabled = false;
-            btnUpdateCurrentPrimitive.Font = new Font("Segoe UI", 8.25F);
-            btnUpdateCurrentPrimitive.Image = (System.Drawing.Image)resources.GetObject("btnUpdateCurrentPrimitive.Image");
-            btnUpdateCurrentPrimitive.Location = new Point(64, 195);
-            btnUpdateCurrentPrimitive.Name = "btnUpdateCurrentPrimitive";
-            btnUpdateCurrentPrimitive.Size = new Size(32, 22);
-            btnUpdateCurrentPrimitive.TabIndex = 23;
-            btnUpdateCurrentPrimitive.UseVisualStyleBackColor = true;
-            btnUpdateCurrentPrimitive.Click += btnUpdateCurrentPrimitive_Click;
+            grpbxLine.Controls.Add(txtLineY1);
+            grpbxLine.Controls.Add(txtLineY0);
+            grpbxLine.Controls.Add(txtLineX1);
+            grpbxLine.Controls.Add(txtLineX0);
+            grpbxLine.Controls.Add(lblLineY1);
+            grpbxLine.Controls.Add(lblLineY0);
+            grpbxLine.Controls.Add(lblLineX1);
+            grpbxLine.Controls.Add(lblLineX0);
+            grpbxLine.Location = new Point(8, 70);
+            grpbxLine.Name = "grpbxLine";
+            grpbxLine.Size = new Size(146, 119);
+            grpbxLine.TabIndex = 32;
+            grpbxLine.TabStop = false;
+            grpbxLine.Text = "Line";
+            grpbxLine.Visible = false;
+            // 
+            // txtLineY1
+            // 
+            txtLineY1.Location = new Point(109, 40);
+            txtLineY1.Name = "txtLineY1";
+            txtLineY1.ShortcutsEnabled = false;
+            txtLineY1.Size = new Size(30, 22);
+            txtLineY1.TabIndex = 17;
+            txtLineY1.KeyDown += txtLineY1_KeyDown;
+            txtLineY1.Leave += txtLineY1_Leave;
+            // 
+            // txtLineY0
+            // 
+            txtLineY0.Location = new Point(109, 16);
+            txtLineY0.Name = "txtLineY0";
+            txtLineY0.ShortcutsEnabled = false;
+            txtLineY0.Size = new Size(30, 22);
+            txtLineY0.TabIndex = 16;
+            txtLineY0.KeyDown += txtLineY0_KeyDown;
+            txtLineY0.Leave += txtLineY0_Leave;
+            // 
+            // txtLineX1
+            // 
+            txtLineX1.Location = new Point(35, 40);
+            txtLineX1.Name = "txtLineX1";
+            txtLineX1.ShortcutsEnabled = false;
+            txtLineX1.Size = new Size(30, 22);
+            txtLineX1.TabIndex = 15;
+            txtLineX1.KeyDown += txtLineX1_KeyDown;
+            txtLineX1.Leave += txtLineX1_Leave;
+            // 
+            // txtLineX0
+            // 
+            txtLineX0.Location = new Point(35, 16);
+            txtLineX0.Name = "txtLineX0";
+            txtLineX0.ShortcutsEnabled = false;
+            txtLineX0.Size = new Size(30, 22);
+            txtLineX0.TabIndex = 14;
+            txtLineX0.KeyDown += txtLineX0_KeyDown;
+            txtLineX0.Leave += txtLineX0_Leave;
+            // 
+            // lblLineY1
+            // 
+            lblLineY1.AutoSize = true;
+            lblLineY1.Location = new Point(77, 43);
+            lblLineY1.Name = "lblLineY1";
+            lblLineY1.Size = new Size(21, 13);
+            lblLineY1.TabIndex = 13;
+            lblLineY1.Text = "Y1:";
+            // 
+            // lblLineY0
+            // 
+            lblLineY0.AutoSize = true;
+            lblLineY0.Location = new Point(77, 19);
+            lblLineY0.Name = "lblLineY0";
+            lblLineY0.Size = new Size(21, 13);
+            lblLineY0.TabIndex = 2;
+            lblLineY0.Text = "Y0:";
+            // 
+            // lblLineX1
+            // 
+            lblLineX1.AutoSize = true;
+            lblLineX1.Location = new Point(6, 43);
+            lblLineX1.Name = "lblLineX1";
+            lblLineX1.Size = new Size(22, 13);
+            lblLineX1.TabIndex = 1;
+            lblLineX1.Text = "X1:";
+            // 
+            // lblLineX0
+            // 
+            lblLineX0.AutoSize = true;
+            lblLineX0.Location = new Point(6, 19);
+            lblLineX0.Name = "lblLineX0";
+            lblLineX0.Size = new Size(22, 13);
+            lblLineX0.TabIndex = 0;
+            lblLineX0.Text = "X0:";
             // 
             // btnCurrentPrimitiveDrawColor
             // 
@@ -1161,6 +1219,8 @@
             txtCurrentPrimitiveDrawColor.Name = "txtCurrentPrimitiveDrawColor";
             txtCurrentPrimitiveDrawColor.Size = new Size(48, 22);
             txtCurrentPrimitiveDrawColor.TabIndex = 21;
+            txtCurrentPrimitiveDrawColor.KeyDown += txtCurrentPrimitiveDrawColor_KeyDown;
+            txtCurrentPrimitiveDrawColor.Leave += txtCurrentPrimitiveDrawColor_Leave;
             // 
             // lblCurrentPrimitiveDrawColor
             // 
@@ -1178,6 +1238,7 @@
             txtCurrentPrimitiveNumber.Font = new Font("Segoe UI", 8.25F);
             txtCurrentPrimitiveNumber.Location = new Point(115, 15);
             txtCurrentPrimitiveNumber.Name = "txtCurrentPrimitiveNumber";
+            txtCurrentPrimitiveNumber.ShortcutsEnabled = false;
             txtCurrentPrimitiveNumber.Size = new Size(36, 22);
             txtCurrentPrimitiveNumber.TabIndex = 19;
             txtCurrentPrimitiveNumber.KeyDown += txtCurrentPrimitive_KeyDown;
@@ -1270,6 +1331,7 @@
             txtPrimitiveCount.Font = new Font("Segoe UI", 8.25F);
             txtPrimitiveCount.Location = new Point(78, 20);
             txtPrimitiveCount.Name = "txtPrimitiveCount";
+            txtPrimitiveCount.ShortcutsEnabled = false;
             txtPrimitiveCount.Size = new Size(48, 22);
             txtPrimitiveCount.TabIndex = 8;
             txtPrimitiveCount.KeyDown += txtPrimitiveCount_KeyDown;
@@ -1404,10 +1466,10 @@
             txtIPFourthOctet.Font = new Font("Segoe UI", 8.25F);
             txtIPFourthOctet.Location = new Point(139, 72);
             txtIPFourthOctet.Name = "txtIPFourthOctet";
+            txtIPFourthOctet.ShortcutsEnabled = false;
             txtIPFourthOctet.Size = new Size(26, 22);
             txtIPFourthOctet.TabIndex = 7;
-            txtIPFourthOctet.Text = "1";
-            txtIPFourthOctet.KeyPress += txtIPFourthOctet_KeyPress;
+            txtIPFourthOctet.KeyDown += txtIPFourthOctet_KeyDown;
             txtIPFourthOctet.Leave += txtIPFourthOctet_Leave;
             // 
             // txtIPThirdOctet
@@ -1415,10 +1477,10 @@
             txtIPThirdOctet.Font = new Font("Segoe UI", 8.25F);
             txtIPThirdOctet.Location = new Point(105, 72);
             txtIPThirdOctet.Name = "txtIPThirdOctet";
+            txtIPThirdOctet.ShortcutsEnabled = false;
             txtIPThirdOctet.Size = new Size(26, 22);
             txtIPThirdOctet.TabIndex = 6;
-            txtIPThirdOctet.Text = "1";
-            txtIPThirdOctet.KeyPress += txtIPThirdOctet_KeyPress;
+            txtIPThirdOctet.KeyDown += txtIPThirdOctet_KeyDown;
             txtIPThirdOctet.Leave += txtIPThirdOctet_Leave;
             // 
             // txtIPSecondOctet
@@ -1426,10 +1488,10 @@
             txtIPSecondOctet.Font = new Font("Segoe UI", 8.25F);
             txtIPSecondOctet.Location = new Point(71, 72);
             txtIPSecondOctet.Name = "txtIPSecondOctet";
+            txtIPSecondOctet.ShortcutsEnabled = false;
             txtIPSecondOctet.Size = new Size(26, 22);
             txtIPSecondOctet.TabIndex = 5;
-            txtIPSecondOctet.Text = "168";
-            txtIPSecondOctet.KeyPress += txtIPSecondOctet_KeyPress;
+            txtIPSecondOctet.KeyDown += txtIPSecondOctet_KeyDown;
             txtIPSecondOctet.Leave += txtIPSecondOctet_Leave;
             // 
             // txtIPFirstOctet
@@ -1437,10 +1499,10 @@
             txtIPFirstOctet.Font = new Font("Segoe UI", 8.25F);
             txtIPFirstOctet.Location = new Point(37, 72);
             txtIPFirstOctet.Name = "txtIPFirstOctet";
+            txtIPFirstOctet.ShortcutsEnabled = false;
             txtIPFirstOctet.Size = new Size(26, 22);
             txtIPFirstOctet.TabIndex = 4;
-            txtIPFirstOctet.Text = "192";
-            txtIPFirstOctet.KeyPress += txtIPFirstOctet_KeyPress;
+            txtIPFirstOctet.KeyDown += txtIPFirstOctet_KeyDown;
             txtIPFirstOctet.Leave += txtIPFirstOctet_Leave;
             // 
             // btnTransmitFile
@@ -1515,16 +1577,16 @@
             grpbxPrimitives.PerformLayout();
             grpbxCurrentPrimitive.ResumeLayout(false);
             grpbxCurrentPrimitive.PerformLayout();
-            grpbxRoundRect.ResumeLayout(false);
-            grpbxRoundRect.PerformLayout();
-            grpbxRotatedRect.ResumeLayout(false);
-            grpbxRotatedRect.PerformLayout();
-            grpbxLine.ResumeLayout(false);
-            grpbxLine.PerformLayout();
             grpbxCircle.ResumeLayout(false);
             grpbxCircle.PerformLayout();
+            grpbxRotatedRect.ResumeLayout(false);
+            grpbxRotatedRect.PerformLayout();
+            grpbxRoundRect.ResumeLayout(false);
+            grpbxRoundRect.PerformLayout();
             grpbxTriangle.ResumeLayout(false);
             grpbxTriangle.PerformLayout();
+            grpbxLine.ResumeLayout(false);
+            grpbxLine.PerformLayout();
             grpbxFile.ResumeLayout(false);
             grpbxFile.PerformLayout();
             ResumeLayout(false);
@@ -1565,7 +1627,6 @@
         private TextBox txtRoundRectW;
         private TextBox txtRoundRectRadius;
         private GroupBox grpbxCurrentFrame;
-        private Button btnUpdateCurrentFrame;
         private TextBox txtCurrentFrameDuration;
         private Label lblCurrentFrameDuration;
         private Button btnCurrentFrameFillColor;
@@ -1584,7 +1645,6 @@
         private Button btnFrameFillColor;
         private TextBox txtFrameFillColor;
         private Label lblAddFillColor;
-        private Button btnUpdateCurrentPrimitive;
         private Button btnPrimitiveDrawColor;
         private TextBox txtPrimitiveDrawColor;
         private Label lblAddPrimitiveDrawColor;

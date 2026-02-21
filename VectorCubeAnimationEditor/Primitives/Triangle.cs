@@ -1,14 +1,15 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
-using ST7735Point85;
 using System.Buffers.Binary;
-using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
+using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
 {
     internal class Triangle : Primitive
     {
+        private AnimationFrame? parent;
+
         private Int16 x0;
         private Int16 y0;
         private Int16 x1;
@@ -16,6 +17,13 @@ namespace VectorCubeAnimationEditor
         private Int16 x2;
         private Int16 y2;
         private UInt16 color;
+
+        [JsonIgnore]
+        public override AnimationFrame? Parent
+        {
+            get { return parent; }
+            internal set { parent = value; }
+        }
 
         public Int16 X0
         {
@@ -70,6 +78,11 @@ namespace VectorCubeAnimationEditor
             Color = 0;
         }
 
+        public Triangle(AnimationFrame parent) : this()
+        {
+            this.parent = parent;
+        }
+
         public Triangle(Triangle triangle)
         {
             X0 = triangle.X0;
@@ -79,6 +92,7 @@ namespace VectorCubeAnimationEditor
             X2 = triangle.X2;
             Y2 = triangle.Y2;
             Color = triangle.Color;
+            parent = triangle.Parent;
         }
 
         public override Primitive Clone()

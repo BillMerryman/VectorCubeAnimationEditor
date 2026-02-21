@@ -1,14 +1,15 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
-using ST7735Point85;
 using System.Buffers.Binary;
-using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
+using System.Drawing.Drawing2D;
 
 namespace VectorCubeAnimationEditor
 {
     internal class Circle : Primitive
     {
+        private AnimationFrame? parent;
+
         private Int16 x0;
         private Int16 y0;
         private Int16 r;
@@ -20,6 +21,13 @@ namespace VectorCubeAnimationEditor
         public const byte TopRight = 2;
         public const byte BottomRight = 4;
         public const byte BottomLeft = 8;
+
+        [JsonIgnore]
+        public override AnimationFrame? Parent
+        {
+            get { return parent; }
+            internal set { parent = value; }
+        }
 
         public Int16 X0
         {
@@ -67,6 +75,11 @@ namespace VectorCubeAnimationEditor
             Color = 0;
         }
 
+        public Circle(AnimationFrame parent) : this()
+        {
+            this.parent = parent;
+        }
+
         public Circle(Circle circle)
         {
             X0 = circle.X0;
@@ -75,6 +88,7 @@ namespace VectorCubeAnimationEditor
             Quadrants = circle.Quadrants;
             Delta = circle.Delta;
             Color = circle.Color;
+            parent = circle.Parent;
         }
 
         public override Primitive Clone()

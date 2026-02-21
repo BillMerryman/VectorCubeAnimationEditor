@@ -1,6 +1,7 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
 using System.Text.Json.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace VectorCubeAnimationEditor
 {
@@ -13,12 +14,18 @@ namespace VectorCubeAnimationEditor
     [JsonDerivedType(typeof(RoundRect), "RoundRect")]
     [JsonDerivedType(typeof(RotatedRect), "RotatedRect")]
     [JsonDerivedType(typeof(Circle), "Circle")]
-    internal abstract class Primitive
+    abstract class Primitive
     {
         public abstract UInt16 Color
         {
             get;
             set;
+        }
+
+        public abstract AnimationFrame? Parent
+        {
+            get;
+            internal set;
         }
 
         public abstract Primitive Clone();
