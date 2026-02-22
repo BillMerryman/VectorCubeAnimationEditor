@@ -135,21 +135,21 @@ public struct RotatedRectFB : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
   public RotatedRectFB __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public short CenX { get { return __p.bb.GetShort(__p.bb_pos + 0); } }
-  public short CenY { get { return __p.bb.GetShort(__p.bb_pos + 2); } }
+  public short X0 { get { return __p.bb.GetShort(__p.bb_pos + 0); } }
+  public short Y0 { get { return __p.bb.GetShort(__p.bb_pos + 2); } }
   public short W { get { return __p.bb.GetShort(__p.bb_pos + 4); } }
   public short H { get { return __p.bb.GetShort(__p.bb_pos + 6); } }
   public short AngleDeg { get { return __p.bb.GetShort(__p.bb_pos + 8); } }
   public ushort Color { get { return __p.bb.GetUshort(__p.bb_pos + 10); } }
 
-  public static Offset<AnimationFlatbuffer.RotatedRectFB> CreateRotatedRectFB(FlatBufferBuilder builder, short CenX, short CenY, short W, short H, short AngleDeg, ushort Color) {
+  public static Offset<AnimationFlatbuffer.RotatedRectFB> CreateRotatedRectFB(FlatBufferBuilder builder, short X0, short Y0, short W, short H, short AngleDeg, ushort Color) {
     builder.Prep(2, 12);
     builder.PutUshort(Color);
     builder.PutShort(AngleDeg);
     builder.PutShort(H);
     builder.PutShort(W);
-    builder.PutShort(CenY);
-    builder.PutShort(CenX);
+    builder.PutShort(Y0);
+    builder.PutShort(X0);
     return new Offset<AnimationFlatbuffer.RotatedRectFB>(builder.Offset);
   }
 }
@@ -191,8 +191,8 @@ public struct AnimationFrameFB : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public AnimationFrameFB __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public short CenterX { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
-  public short CenterY { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
+  public short X0 { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
+  public short Y0 { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
   public uint Duration { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
   public ushort FillColor { get { int o = __p.__offset(10); return o != 0 ? __p.bb.GetUshort(o + __p.bb_pos) : (ushort)0; } }
   public AnimationFlatbuffer.PrimitiveFB PrimitivesType(int j) { int o = __p.__offset(12); return o != 0 ? (AnimationFlatbuffer.PrimitiveFB)__p.bb.Get(__p.__vector(o) + j * 1) : (AnimationFlatbuffer.PrimitiveFB)0; }
@@ -207,8 +207,8 @@ public struct AnimationFrameFB : IFlatbufferObject
   public int PrimitivesLength { get { int o = __p.__offset(14); return o != 0 ? __p.__vector_len(o) : 0; } }
 
   public static Offset<AnimationFlatbuffer.AnimationFrameFB> CreateAnimationFrameFB(FlatBufferBuilder builder,
-      short center_x = 0,
-      short center_y = 0,
+      short x0 = 0,
+      short y0 = 0,
       uint duration = 0,
       ushort fill_color = 0,
       VectorOffset primitives_typeOffset = default(VectorOffset),
@@ -218,14 +218,14 @@ public struct AnimationFrameFB : IFlatbufferObject
     AnimationFrameFB.AddPrimitivesType(builder, primitives_typeOffset);
     AnimationFrameFB.AddDuration(builder, duration);
     AnimationFrameFB.AddFillColor(builder, fill_color);
-    AnimationFrameFB.AddCenterY(builder, center_y);
-    AnimationFrameFB.AddCenterX(builder, center_x);
+    AnimationFrameFB.AddY0(builder, y0);
+    AnimationFrameFB.AddX0(builder, x0);
     return AnimationFrameFB.EndAnimationFrameFB(builder);
   }
 
   public static void StartAnimationFrameFB(FlatBufferBuilder builder) { builder.StartTable(6); }
-  public static void AddCenterX(FlatBufferBuilder builder, short centerX) { builder.AddShort(0, centerX, 0); }
-  public static void AddCenterY(FlatBufferBuilder builder, short centerY) { builder.AddShort(1, centerY, 0); }
+  public static void AddX0(FlatBufferBuilder builder, short x0) { builder.AddShort(0, x0, 0); }
+  public static void AddY0(FlatBufferBuilder builder, short y0) { builder.AddShort(1, y0, 0); }
   public static void AddDuration(FlatBufferBuilder builder, uint duration) { builder.AddUint(2, duration, 0); }
   public static void AddFillColor(FlatBufferBuilder builder, ushort fillColor) { builder.AddUshort(3, fillColor, 0); }
   public static void AddPrimitivesType(FlatBufferBuilder builder, VectorOffset primitivesTypeOffset) { builder.AddOffset(4, primitivesTypeOffset.Value, 0); }
@@ -252,8 +252,8 @@ static public class AnimationFrameFBVerify
   static public bool Verify(Google.FlatBuffers.Verifier verifier, uint tablePos)
   {
     return verifier.VerifyTableStart(tablePos)
-      && verifier.VerifyField(tablePos, 4 /*CenterX*/, 2 /*short*/, 2, false)
-      && verifier.VerifyField(tablePos, 6 /*CenterY*/, 2 /*short*/, 2, false)
+      && verifier.VerifyField(tablePos, 4 /*X0*/, 2 /*short*/, 2, false)
+      && verifier.VerifyField(tablePos, 6 /*Y0*/, 2 /*short*/, 2, false)
       && verifier.VerifyField(tablePos, 8 /*Duration*/, 4 /*uint*/, 4, false)
       && verifier.VerifyField(tablePos, 10 /*FillColor*/, 2 /*ushort*/, 2, false)
       && verifier.VerifyVectorOfData(tablePos, 12 /*PrimitivesType*/, 1 /*AnimationFlatbuffer.PrimitiveFB*/, false)
@@ -271,25 +271,25 @@ public struct AnimationFB : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public AnimationFB __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public short CenterX { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
-  public short CenterY { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
+  public short X0 { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
+  public short Y0 { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
   public AnimationFlatbuffer.AnimationFrameFB? Frames(int j) { int o = __p.__offset(8); return o != 0 ? (AnimationFlatbuffer.AnimationFrameFB?)(new AnimationFlatbuffer.AnimationFrameFB()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
   public int FramesLength { get { int o = __p.__offset(8); return o != 0 ? __p.__vector_len(o) : 0; } }
 
   public static Offset<AnimationFlatbuffer.AnimationFB> CreateAnimationFB(FlatBufferBuilder builder,
-      short center_x = 0,
-      short center_y = 0,
+      short x0 = 0,
+      short y0 = 0,
       VectorOffset framesOffset = default(VectorOffset)) {
     builder.StartTable(3);
     AnimationFB.AddFrames(builder, framesOffset);
-    AnimationFB.AddCenterY(builder, center_y);
-    AnimationFB.AddCenterX(builder, center_x);
+    AnimationFB.AddY0(builder, y0);
+    AnimationFB.AddX0(builder, x0);
     return AnimationFB.EndAnimationFB(builder);
   }
 
   public static void StartAnimationFB(FlatBufferBuilder builder) { builder.StartTable(3); }
-  public static void AddCenterX(FlatBufferBuilder builder, short centerX) { builder.AddShort(0, centerX, 0); }
-  public static void AddCenterY(FlatBufferBuilder builder, short centerY) { builder.AddShort(1, centerY, 0); }
+  public static void AddX0(FlatBufferBuilder builder, short x0) { builder.AddShort(0, x0, 0); }
+  public static void AddY0(FlatBufferBuilder builder, short y0) { builder.AddShort(1, y0, 0); }
   public static void AddFrames(FlatBufferBuilder builder, VectorOffset framesOffset) { builder.AddOffset(2, framesOffset.Value, 0); }
   public static VectorOffset CreateFramesVector(FlatBufferBuilder builder, Offset<AnimationFlatbuffer.AnimationFrameFB>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
   public static VectorOffset CreateFramesVectorBlock(FlatBufferBuilder builder, Offset<AnimationFlatbuffer.AnimationFrameFB>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
@@ -310,8 +310,8 @@ static public class AnimationFBVerify
   static public bool Verify(Google.FlatBuffers.Verifier verifier, uint tablePos)
   {
     return verifier.VerifyTableStart(tablePos)
-      && verifier.VerifyField(tablePos, 4 /*CenterX*/, 2 /*short*/, 2, false)
-      && verifier.VerifyField(tablePos, 6 /*CenterY*/, 2 /*short*/, 2, false)
+      && verifier.VerifyField(tablePos, 4 /*X0*/, 2 /*short*/, 2, false)
+      && verifier.VerifyField(tablePos, 6 /*Y0*/, 2 /*short*/, 2, false)
       && verifier.VerifyVectorOfTables(tablePos, 8 /*Frames*/, AnimationFlatbuffer.AnimationFrameFBVerify.Verify, false)
       && verifier.VerifyTableEnd(tablePos);
   }

@@ -31,14 +31,14 @@ namespace VectorCubeAnimationEditor
 
         public Int16 X0
         {
-            get { return x0; }
-            set { x0 = value; }
+            get { return (Parent is not null) ? (Int16)(x0 + Parent.RelativeCenter.X) : x0; }
+            set { x0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
         }
 
         public Int16 Y0
         {
-            get { return y0; }
-            set { y0 = value; }
+            get { return (Parent is not null) ? (Int16)(y0 + Parent.RelativeCenter.Y) : y0; }
+            set { y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
         public Int16 R
@@ -67,9 +67,9 @@ namespace VectorCubeAnimationEditor
 
         public Circle()
         {
+            X0 = 0;
+            Y0 = 0;
             R = AnimationConstants.DEFAULT_PRIMITIVE_RADIUS;
-            X0 = AnimationConstants.SCREEN_CENTER_X;
-            Y0 = AnimationConstants.SCREEN_CENTER_Y;
             Quadrants = BottomLeft | BottomRight | TopRight | TopLeft;
             Delta = 0;
             Color = 0;

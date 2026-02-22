@@ -32,7 +32,8 @@ namespace VectorCubeAnimationEditor
             txtPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(primitiveDrawColor);
         }
 
-        #region Control Delegates
+        #region Control Handlers
+
         private void Editor_Load(object sender, EventArgs e)
         {
             txtFrameCount.Text = animation.FrameCount.ToString();
@@ -892,12 +893,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                Int16 cenX = ((RotatedRect)currentPrimitive).CenX;
+                Int16 cenX = ((RotatedRect)currentPrimitive).X0;
                 ValidateInt16((TextBox)sender, e, ref cenX);
-                if (cenX != ((RotatedRect)currentPrimitive).CenX)
+                if (cenX != ((RotatedRect)currentPrimitive).X0)
                 {
-                    ((RotatedRect)currentPrimitive).CenX = cenX;
-                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).CenX.ToString();
+                    ((RotatedRect)currentPrimitive).X0 = cenX;
+                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).X0.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -907,7 +908,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).CenX.ToString();
+                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).X0.ToString();
             }
         }
 
@@ -915,12 +916,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                Int16 cenY = ((RotatedRect)currentPrimitive).CenY;
+                Int16 cenY = ((RotatedRect)currentPrimitive).Y0;
                 ValidateInt16((TextBox)sender, e, ref cenY);
-                if (cenY != ((RotatedRect)currentPrimitive).CenY)
+                if (cenY != ((RotatedRect)currentPrimitive).Y0)
                 {
-                    ((RotatedRect)currentPrimitive).CenY = cenY;
-                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).CenY.ToString();
+                    ((RotatedRect)currentPrimitive).Y0 = cenY;
+                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).Y0.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -930,7 +931,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).CenY.ToString();
+                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).Y0.ToString();
             }
         }
 
@@ -1625,8 +1626,8 @@ namespace VectorCubeAnimationEditor
 
         private void SetDisplayFieldsFromRotatedRect(RotatedRect rotatedRect)
         {
-            txtRotatedRectCenX.Text = rotatedRect.CenX.ToString();
-            txtRotatedRectCenY.Text = rotatedRect.CenY.ToString();
+            txtRotatedRectCenX.Text = rotatedRect.X0.ToString();
+            txtRotatedRectCenY.Text = rotatedRect.Y0.ToString();
             txtRotatedRectW.Text = rotatedRect.W.ToString();
             txtRotatedRectH.Text = rotatedRect.H.ToString();
             txtRotatedRectAngleDeg.Text = rotatedRect.AngleDeg.ToString();

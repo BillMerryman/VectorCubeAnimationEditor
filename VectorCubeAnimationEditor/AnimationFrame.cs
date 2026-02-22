@@ -44,7 +44,15 @@ namespace VectorCubeAnimationEditor
         public Point Center
         {
             get { return center; }
-            set { center = value; }
+        }
+
+        [JsonIgnore]
+        public Point RelativeCenter
+        {
+            get
+            {
+                return new Point(Parent.Center.X + Center.X, Parent.Center.Y + Center.Y);
+            }
         }
 
         public UInt32 Duration

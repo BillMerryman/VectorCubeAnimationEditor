@@ -144,7 +144,7 @@ namespace VectorCubeAnimationEditor
         {
             ByteBuffer bb = new ByteBuffer(buffer);
             AnimationFB animationFB = AnimationFB.GetRootAsAnimationFB(bb);
-            Center = new Point(animationFB.CenterX, animationFB.CenterY);
+            Center = new Point(animationFB.X0, animationFB.Y0);
             for (int frame = 0; frame < animationFB.FramesLength; frame++)
             {
                 AnimationFrameFB? nullableAnimationFrameFB = animationFB.Frames(frame);

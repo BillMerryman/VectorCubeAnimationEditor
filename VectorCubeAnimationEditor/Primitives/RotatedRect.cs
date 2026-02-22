@@ -10,8 +10,8 @@ namespace VectorCubeAnimationEditor
     {
         private AnimationFrame? parent;
 
-        private Int16 cenX;
-        private Int16 cenY;
+        private Int16 x0;
+        private Int16 y0;
         private Int16 w;
         private Int16 h;
         private Int16 angleDeg;
@@ -24,16 +24,16 @@ namespace VectorCubeAnimationEditor
             internal set { parent = value; }
         }
 
-        public Int16 CenX
+        public Int16 X0
         {
-            get { return cenX; }
-            set { cenX = value; }
+            get { return (Parent is not null) ? (Int16)(x0 + Parent.RelativeCenter.X) : x0; }
+            set { x0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
         }
 
-        public Int16 CenY
+        public Int16 Y0
         {
-            get { return cenY; }
-            set { cenY = value; }
+            get { return (Parent is not null) ? (Int16)(y0 + Parent.RelativeCenter.Y) : y0; }
+            set { y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
         public Int16 W
@@ -62,8 +62,8 @@ namespace VectorCubeAnimationEditor
 
         public RotatedRect()
         {
-            CenX = AnimationConstants.SCREEN_CENTER_X;
-            CenY = AnimationConstants.SCREEN_CENTER_Y;
+            X0 = 0;
+            Y0 = 0;
             W = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
             H = AnimationConstants.DEFAULT_PRIMITIVE_SIZE;
             AngleDeg = 0;
@@ -77,8 +77,8 @@ namespace VectorCubeAnimationEditor
 
         public RotatedRect(RotatedRect rotatedRect)
         {
-            CenX = rotatedRect.CenX;
-            CenY = rotatedRect.CenY;
+            X0 = rotatedRect.X0;
+            Y0 = rotatedRect.Y0;
             W = rotatedRect.W;
             H = rotatedRect.H;
             AngleDeg = rotatedRect.AngleDeg;
@@ -111,17 +111,17 @@ namespace VectorCubeAnimationEditor
 
         public override void Move(Point offset)
         {
-            CenX += (Int16)offset.X;
-            CenY += (Int16)offset.Y;
+            X0 += (Int16)offset.X;
+            Y0 += (Int16)offset.Y;
         }
 
         public override void SerializeBinary(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._RotatedRect);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], CenX);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X0);
             bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], CenY);
+            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y0);
             bytePosition += 2;
             BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], W);
             bytePosition += 2;
@@ -135,9 +135,9 @@ namespace VectorCubeAnimationEditor
 
         public override void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
         {
-            CenX = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
-            CenY = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
             W = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
             bytePosition += 2;
@@ -151,13 +151,13 @@ namespace VectorCubeAnimationEditor
 
         public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
         {
-            return (PrimitiveFB.RotatedRectFB, RotatedRectFB.CreateRotatedRectFB(builder, CenX, CenY, W, H, AngleDeg, Color).Value);
+            return (PrimitiveFB.RotatedRectFB, RotatedRectFB.CreateRotatedRectFB(builder, X0, Y0, W, H, AngleDeg, Color).Value);
         }
 
         public override void DeserializeFB(Object data)
         {
-            CenX = ((RotatedRectFB)data).CenX;
-            CenY = ((RotatedRectFB)data).CenY;
+            X0 = ((RotatedRectFB)data).X0;
+            Y0 = ((RotatedRectFB)data).Y0;
             W = ((RotatedRectFB)data).W;
             H = ((RotatedRectFB)data).H;
             AngleDeg = ((RotatedRectFB)data).AngleDeg;
@@ -166,21 +166,21 @@ namespace VectorCubeAnimationEditor
         #region Screen mapped methods
 
         [JsonIgnore]
-        public Point ScreenCen
+        public Point ScreenCenter
         {
-            get { return new Point(ScreenCenX, ScreenCenY); }
+            get { return new Point(ScreenX0, ScreenY0); }
         }
 
         [JsonIgnore]
-        public Int16 ScreenCenX
+        public Int16 ScreenX0
         {
-            get { return (Int16)(CenX * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
         }
 
         [JsonIgnore]
-        public Int16 ScreenCenY
+        public Int16 ScreenY0
         {
-            get { return (Int16)(CenY * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
         }
 
         #region Mouse handling
@@ -211,7 +211,7 @@ namespace VectorCubeAnimationEditor
                     selectedSide = GetSelectedSide(mouseLocation);
                     if (selectedSide > -1)
                     {
-                        mousedownScreenCen = ScreenCen;
+                        mousedownScreenCen = ScreenCenter;
                         mousedownW = W;
                         mousedownH = H;
                     }
@@ -282,8 +282,8 @@ namespace VectorCubeAnimationEditor
                         newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
                         newCenter.X /= AnimationConstants._ScaleFactor;
                         newCenter.Y /= AnimationConstants._ScaleFactor;
-                        CenX = (Int16)newCenter.X;
-                        CenY = (Int16)newCenter.Y;
+                        X0 = (Int16)newCenter.X;
+                        Y0 = (Int16)newCenter.Y;
                     }
                 }
 
@@ -330,7 +330,7 @@ namespace VectorCubeAnimationEditor
             matrix.Scale(AnimationConstants._ScaleFactor, AnimationConstants._ScaleFactor);
             matrix.TransformPoints(fltVertices);
             matrix.Reset();
-            matrix.Translate(ScreenCenX, ScreenCenY);
+            matrix.Translate(ScreenX0, ScreenY0);
             matrix.TransformPoints(fltVertices);
 
             Point[] vertices = new Point[fltVertices.Length];
@@ -376,13 +376,13 @@ namespace VectorCubeAnimationEditor
 
         public Int16 GetAngle(Point point)
         {
-            return Utility.GetAngleFromReferencePoint(ScreenCen, point);
+            return Utility.GetAngleFromReferencePoint(ScreenCenter, point);
         }
 
         public bool IsPointNearCenter(Point point)
         {
             int margin = 4;
-            return Utility.ArePointsWithinMargin(ScreenCen, point, margin);
+            return Utility.ArePointsWithinMargin(ScreenCenter, point, margin);
         }
 
         #endregion

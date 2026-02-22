@@ -27,38 +27,38 @@ namespace VectorCubeAnimationEditor
 
         public Int16 X0
         {
-            get { return x0; }
-            set { x0 = value; }
+            get { return (Parent is not null) ? (Int16)(x0 + Parent.RelativeCenter.X) : x0; }
+            set { x0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
         }
 
         public Int16 Y0
         {
-            get { return y0; }
-            set { y0 = value; }
+            get { return (Parent is not null) ? (Int16)(y0 + Parent.RelativeCenter.Y) : y0; }
+            set { y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
         public Int16 X1
         {
-            get { return x1; }
-            set { x1 = value; }
+            get { return (Parent is not null) ? (Int16)(x1 + Parent.RelativeCenter.X) : x1; }
+            set { x1 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
         }
 
         public Int16 Y1
         {
-            get { return y1; }
-            set { y1 = value; }
+            get { return (Parent is not null) ? (Int16)(y1 + Parent.RelativeCenter.Y) : y1; }
+            set { y1 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
         public Int16 X2
         {
-            get { return x2; }
-            set { x2 = value; }
+            get { return (Parent is not null) ? (Int16)(x2 + Parent.RelativeCenter.X) : x2; }
+            set { x2 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
         }
 
         public Int16 Y2
         {
-            get { return y2; }
-            set { y2 = value; }
+            get { return (Parent is not null) ? (Int16)(y2 + Parent.RelativeCenter.Y) : y2; }
+            set { y2 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
         public override UInt16 Color
@@ -69,7 +69,7 @@ namespace VectorCubeAnimationEditor
 
         public Triangle()
         {
-            X0 = AnimationConstants.SCREEN_CENTER_X;
+            X0 = 0;
             Y0 = AnimationConstants.DEFAULT_PRIMITIVE_TOP;
             X1 = AnimationConstants.DEFAULT_PRIMITIVE_LEFT;
             Y1 = AnimationConstants.DEFAULT_PRIMITIVE_BOTTOM;
