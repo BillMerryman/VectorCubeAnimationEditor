@@ -118,16 +118,6 @@ namespace ST7735Point85
             return -1;
         }
 
-        public bool MovePrimitiveUp(Primitive? primitive)
-        {
-            return false;
-        }
-
-        public bool MovePrimitiveDown(Primitive? primitive)
-        {
-            return false;
-        }
-
         public void Serialize(ref int bytePosition, byte[] animationBytes)
         {
             BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..], duration);

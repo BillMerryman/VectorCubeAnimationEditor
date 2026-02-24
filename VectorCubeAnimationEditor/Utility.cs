@@ -19,9 +19,9 @@ namespace VectorCubeAnimationEditor
             int green = (_fillColor >> 5) & 0x3F;
             int red = _fillColor & 0x1F;
 
-            red = red << 3;
-            green = green << 2;
-            blue = blue << 3;
+            red <<= 3;
+            green <<= 2;
+            blue <<= 3;
 
             return Color.FromArgb(255, red, green, blue);
         }
@@ -43,8 +43,8 @@ namespace VectorCubeAnimationEditor
                 return false;
             }
             bool redResult = int.TryParse(strRGB[..2], NumberStyles.HexNumber, null, out int red);
-            bool greenResult = int.TryParse(strRGB.Substring(2, 2), NumberStyles.HexNumber, null, out int green);
-            bool blueResult = int.TryParse(strRGB.Substring(4, 2), NumberStyles.HexNumber, null, out int blue);
+            bool greenResult = int.TryParse(strRGB.AsSpan(2, 2), NumberStyles.HexNumber, null, out int green);
+            bool blueResult = int.TryParse(strRGB.AsSpan(4, 2), NumberStyles.HexNumber, null, out int blue);
 
             if(redResult && greenResult && blueResult)
             {

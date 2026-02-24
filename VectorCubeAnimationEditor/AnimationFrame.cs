@@ -1,6 +1,5 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
-using System.Buffers.Binary;
 using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
@@ -102,7 +101,7 @@ namespace VectorCubeAnimationEditor
         public Primitive? AddPrimitive(Type primitiveType, UInt16 color)
         {
             if (PrimitiveCount >= AnimationConstants._MaxPrimitiveCount) return null;
-            Primitive? primitive = (Primitive?)Activator.CreateInstance(primitiveType, new object[]{this});
+            Primitive? primitive = (Primitive?)Activator.CreateInstance(primitiveType, [this]);
             if (primitive is not null)
             {
                 primitive.Color = color;
@@ -116,83 +115,6 @@ namespace VectorCubeAnimationEditor
             int index = primitives.IndexOf(primitive);
             primitives.Remove(primitive);
             return index;
-        }
-
-        public bool MovePrimitiveUp(Primitive primitive)
-        {
-            return false;
-        }
-
-        public bool MovePrimitiveDown(Primitive primitive)
-        {
-            return false;
-        }
-
-        public void SerializeBinary(ref int bytePosition, byte[] animationBytes)
-        {
-            BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..], duration);
-            bytePosition += 4;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], fillColor);
-            bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], (ushort)primitives.Count);
-            bytePosition += 2;
-            for (int index = 0; index < primitives.Count; index++)
-            {
-                primitives[index].SerializeBinary(ref bytePosition, animationBytes);
-            }
-            for (int index = primitives.Count; index < AnimationConstants._MaxPrimitiveCount; index++)
-            {
-                bytePosition += AnimationConstants._PrimitiveTypeWidth;
-                bytePosition += AnimationConstants._LargestPrimitiveByteCount;
-            }
-        }
-
-        public void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
-        {
-            duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 4;
-            fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 2;
-            UInt16 primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 2;
-            for (int index = 0; index < primitiveCount; index++)
-            {
-                UInt16 type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-                bytePosition += AnimationConstants._PrimitiveTypeWidth;
-                Primitive? newPrimitive = null;
-                switch (type)
-                {
-                    case AnimationConstants._Line:
-                        newPrimitive = new Line();
-                        break;
-                    case AnimationConstants._Triangle:
-                        newPrimitive = new Triangle();
-                        break;
-                    case AnimationConstants._RoundRect:
-                        newPrimitive = new RoundRect();
-                        break;
-                    case AnimationConstants._RotatedRect:
-                        newPrimitive = new RotatedRect();
-                        break;
-                    case AnimationConstants._QuarterCircle:
-                        newPrimitive = new Circle();
-                        break;
-                    default:
-                        bytePosition += AnimationConstants._LargestPrimitiveByteCount;
-                        break;
-                }
-                if (newPrimitive is not null)
-                {
-                    newPrimitive.DeserializeBinary(ref bytePosition, animationBytes);
-                    primitives.Add(newPrimitive);
-                }
-
-            }
-            for (int index = primitiveCount; index < AnimationConstants._MaxPrimitiveCount; index++)
-            {
-                bytePosition += AnimationConstants._CommandWidth;
-                bytePosition += AnimationConstants._LargestPrimitiveByteCount;
-            }
         }
 
         public Offset<AnimationFrameFB> SerializeFB(FlatBufferBuilder builder)
@@ -212,57 +134,144 @@ namespace VectorCubeAnimationEditor
         {
             for (int index = 0; index < animationFrameFB.PrimitivesLength; index++)
             {
-                PrimitiveFB primitiveFB = animationFrameFB.PrimitivesType(index);
-                switch (primitiveFB)
+                PrimitiveFB primitiveTypeFB = animationFrameFB.PrimitivesType(index);
+                Type shapeType;
+                Object? primitiveFB = null;
+                Primitive? primitive;
+                UInt16 color = 0;
+
+                switch (primitiveTypeFB)
                 {
                     case PrimitiveFB.LineFB:
+                        shapeType = typeof(Line);
                         LineFB? nullableLineFB = animationFrameFB.Primitives<LineFB>(index);
                         if (nullableLineFB is not null)
                         {
-                            LineFB lineFB = nullableLineFB.Value;
-                            Line? line = (Line?)AddPrimitive(typeof(Line), lineFB.Color);
-                            line?.DeserializeFB(lineFB);
+                            primitiveFB = nullableLineFB.Value;
+                            color = ((LineFB)primitiveFB).Color;
                         }
                         break;
                     case PrimitiveFB.TriangleFB:
+                        shapeType = typeof(Triangle);
                         TriangleFB? nullableTriangleFB = animationFrameFB.Primitives<TriangleFB>(index);
                         if (nullableTriangleFB is not null)
                         {
-                            TriangleFB triangleFB = nullableTriangleFB.Value;
-                            Triangle? triangle = (Triangle?)AddPrimitive(typeof(Triangle), triangleFB.Color);
-                            triangle?.DeserializeFB(triangleFB);
+                            primitiveFB = nullableTriangleFB.Value;
+                            color = ((TriangleFB)primitiveFB).Color;
                         }
                         break;
                     case PrimitiveFB.RoundRectFB:
+                        shapeType = typeof(RoundRect);
                         RoundRectFB? nullableRoundRectFB = animationFrameFB.Primitives<RoundRectFB>(index);
                         if (nullableRoundRectFB is not null)
                         {
-                            RoundRectFB roundRectFB = nullableRoundRectFB.Value;
-                            RoundRect? roundRect = (RoundRect?)AddPrimitive(typeof(RoundRect), roundRectFB.Color);
-                            roundRect?.DeserializeFB(roundRectFB);
+                            primitiveFB = nullableRoundRectFB.Value;
+                            color = ((RoundRectFB)primitiveFB).Color;
                         }
                         break;
                     case PrimitiveFB.RotatedRectFB:
+                        shapeType = typeof(RotatedRect);
                         RotatedRectFB? nullableRotatedRectFB = animationFrameFB.Primitives<RotatedRectFB>(index);
                         if (nullableRotatedRectFB is not null)
                         {
-                            RotatedRectFB rotatedRectFB = nullableRotatedRectFB.Value;
-                            RotatedRect? rotatedRect = (RotatedRect?)AddPrimitive(typeof(RotatedRect), rotatedRectFB.Color);
-                            rotatedRect?.DeserializeFB(rotatedRect);
+                            primitiveFB = nullableRotatedRectFB.Value;
+                            color = ((RotatedRectFB)primitiveFB).Color;
                         }
                         break;
                     case PrimitiveFB.CircleFB:
+                        shapeType = typeof(Circle);
                         CircleFB? nullableCircleFB = animationFrameFB.Primitives<CircleFB>(index);
                         if (nullableCircleFB is not null)
                         {
-                            CircleFB circleFB = nullableCircleFB.Value;
-                            Circle? circle = (Circle?)AddPrimitive(typeof(Circle), circleFB.Color);
-                            circle?.DeserializeFB(circleFB);
+                            primitiveFB = nullableCircleFB.Value;
+                            color = ((CircleFB)primitiveFB).Color;
                         }
                         break;
-                }   
+                    default:
+                        shapeType = typeof(Object);
+                        break;
+
+                }
+                primitive = AddPrimitive(shapeType, color);
+                if (primitiveFB is not null && primitive is not null)
+                {
+                    primitive.Parent = this;
+                    primitive.DeserializeFB(primitiveFB);
+                }
             }
         }
 
     }
 }
+
+
+/*
+ * Old serialization method
+ * 
+public void SerializeBinary(ref int bytePosition, byte[] animationBytes)
+{
+    BinaryPrimitives.WriteUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..], duration);
+    bytePosition += 4;
+    BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], fillColor);
+    bytePosition += 2;
+    BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], (ushort)primitives.Count);
+    bytePosition += 2;
+    for (int index = 0; index < primitives.Count; index++)
+    {
+        primitives[index].SerializeBinary(ref bytePosition, animationBytes);
+    }
+    for (int index = primitives.Count; index < AnimationConstants._MaxPrimitiveCount; index++)
+    {
+        bytePosition += AnimationConstants._PrimitiveTypeWidth;
+        bytePosition += AnimationConstants._LargestPrimitiveByteCount;
+    }
+}
+
+public void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
+{
+    duration = BinaryPrimitives.ReadUInt32LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 4;
+    fillColor = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 2;
+    UInt16 primitiveCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 2;
+    for (int index = 0; index < primitiveCount; index++)
+    {
+        UInt16 type = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+        bytePosition += AnimationConstants._PrimitiveTypeWidth;
+        Primitive? newPrimitive = null;
+        switch (type)
+        {
+            case AnimationConstants._Line:
+                newPrimitive = new Line();
+                break;
+            case AnimationConstants._Triangle:
+                newPrimitive = new Triangle();
+                break;
+            case AnimationConstants._RoundRect:
+                newPrimitive = new RoundRect();
+                break;
+            case AnimationConstants._RotatedRect:
+                newPrimitive = new RotatedRect();
+                break;
+            case AnimationConstants._QuarterCircle:
+                newPrimitive = new Circle();
+                break;
+            default:
+                bytePosition += AnimationConstants._LargestPrimitiveByteCount;
+                break;
+        }
+        if (newPrimitive is not null)
+        {
+            newPrimitive.DeserializeBinary(ref bytePosition, animationBytes);
+            primitives.Add(newPrimitive);
+        }
+
+    }
+    for (int index = primitiveCount; index < AnimationConstants._MaxPrimitiveCount; index++)
+    {
+        bytePosition += AnimationConstants._CommandWidth;
+        bytePosition += AnimationConstants._LargestPrimitiveByteCount;
+    }
+}
+*/

@@ -1,6 +1,5 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
-using System.Buffers.Binary;
 using System.Text.Json.Serialization;
 using System.Drawing.Drawing2D;
 
@@ -115,36 +114,6 @@ namespace VectorCubeAnimationEditor
                 X1 += (Int16)offset.X;
                 Y1 += (Int16)offset.Y;
             }
-        }
-
-        public override void SerializeBinary(ref int bytePosition, byte[] animationBytes)
-        {
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._Line);
-            bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X0);
-            bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y0);
-            bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X1);
-            bytePosition += 2;
-            BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y1);
-            bytePosition += 2;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Color);
-            bytePosition += 6;
-        }
-
-        public override void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
-        {
-            X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 2;
-            Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 2;
-            X1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 2;
-            Y1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 2;
-            Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]); ;
-            bytePosition += 6;
         }
 
         public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
@@ -297,3 +266,39 @@ namespace VectorCubeAnimationEditor
 
     }
 }
+
+
+/*
+ * Old serialization method
+ * 
+public override void SerializeBinary(ref int bytePosition, byte[] animationBytes)
+{
+    BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], AnimationConstants._Line);
+    bytePosition += 2;
+    BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X0);
+    bytePosition += 2;
+    BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y0);
+    bytePosition += 2;
+    BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], X1);
+    bytePosition += 2;
+    BinaryPrimitives.WriteInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Y1);
+    bytePosition += 2;
+    BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], Color);
+    bytePosition += 6;
+}
+
+public override void DeserializeBinary(ref int bytePosition, byte[] animationBytes)
+{
+    X0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 2;
+    Y0 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 2;
+    X1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 2;
+    Y1 = BinaryPrimitives.ReadInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 2;
+    Color = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]); ;
+    bytePosition += 6;
+}
+
+*/

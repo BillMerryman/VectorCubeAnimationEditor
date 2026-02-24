@@ -1,6 +1,5 @@
 ﻿using AnimationFlatbuffer;
 using Google.FlatBuffers;
-using System.Buffers.Binary;
 using System.Text.Json.Serialization;
 
 namespace VectorCubeAnimationEditor
@@ -84,40 +83,6 @@ namespace VectorCubeAnimationEditor
             return true;
         }
 
-        public byte[] SerializeBinary()
-        {
-            byte[] animationBytes = new byte[2402];
-            int bytePosition = 0;
-            BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], (ushort)frames.Count);
-            bytePosition += 2;
-            for (int index = 0; index < frames.Count; index++)
-            {
-                frames[index].SerializeBinary(ref bytePosition, animationBytes);
-            }
-            for (int index = frames.Count; index < AnimationConstants._MaxFrameCount; index++)
-            {
-                for (int primitiveIndex = 0; primitiveIndex < AnimationConstants._MaxPrimitiveCount; primitiveIndex++)
-                {
-                    bytePosition += AnimationConstants._PrimitiveTypeWidth;
-                    bytePosition += AnimationConstants._LargestPrimitiveByteCount;
-                }
-            }
-            return animationBytes;
-        }
-
-        public void DeserializeBinary(byte[] animationBytes)
-        {
-            if (animationBytes.Length != 2402) return;
-            int bytePosition = 0;
-            UInt16 frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
-            bytePosition += 2;
-            for (int index = 0; index < frameCount; index++)
-            {
-                AddFrame(0, 0);
-                frames[index].DeserializeBinary(ref bytePosition, animationBytes);
-            }
-        }
-
         void IJsonOnDeserialized.OnDeserialized()
         {
             foreach (AnimationFrame af in frames)
@@ -128,7 +93,7 @@ namespace VectorCubeAnimationEditor
 
         public byte[] SerializeFB()
         {
-            FlatBufferBuilder builder = new FlatBufferBuilder(1024);
+            FlatBufferBuilder builder = new(1024);
             Offset<AnimationFrameFB>[] animationFrameOffsets = new Offset<AnimationFrameFB>[FrameCount];
             for (int index = 0; index < FrameCount; index++)
             {
@@ -142,7 +107,7 @@ namespace VectorCubeAnimationEditor
 
         public void DeserializeFB(byte[] buffer)
         {
-            ByteBuffer bb = new ByteBuffer(buffer);
+            ByteBuffer bb = new(buffer);
             AnimationFB animationFB = AnimationFB.GetRootAsAnimationFB(bb);
             Center = new Point(animationFB.X0, animationFB.Y0);
             for (int frame = 0; frame < animationFB.FramesLength; frame++)
@@ -152,7 +117,11 @@ namespace VectorCubeAnimationEditor
                 {
                     AnimationFrameFB animationFrameFB = nullableAnimationFrameFB.Value;
                     AnimationFrame? af = AddFrame(animationFrameFB.FillColor, animationFrameFB.Duration);
-                    af?.DeserializeFB(animationFrameFB);
+                    if (af is not null)
+                    {
+                        af.Parent = this;
+                        af.DeserializeFB(animationFrameFB);
+                    }
                 }
             }
 
@@ -160,3 +129,42 @@ namespace VectorCubeAnimationEditor
 
     }
 }
+
+
+/*
+ * Old serialization method...
+ * 
+public byte[] SerializeBinary()
+{
+    byte[] animationBytes = new byte[2402];
+    int bytePosition = 0;
+    BinaryPrimitives.WriteUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..], (ushort)frames.Count);
+    bytePosition += 2;
+    for (int index = 0; index < frames.Count; index++)
+    {
+        frames[index].SerializeBinary(ref bytePosition, animationBytes);
+    }
+    for (int index = frames.Count; index < AnimationConstants._MaxFrameCount; index++)
+    {
+        for (int primitiveIndex = 0; primitiveIndex < AnimationConstants._MaxPrimitiveCount; primitiveIndex++)
+        {
+            bytePosition += AnimationConstants._PrimitiveTypeWidth;
+            bytePosition += AnimationConstants._LargestPrimitiveByteCount;
+        }
+    }
+    return animationBytes;
+}
+
+public void DeserializeBinary(byte[] animationBytes)
+{
+    if (animationBytes.Length != 2402) return;
+    int bytePosition = 0;
+    UInt16 frameCount = BinaryPrimitives.ReadUInt16LittleEndian(animationBytes.AsSpan()[bytePosition..]);
+    bytePosition += 2;
+    for (int index = 0; index < frameCount; index++)
+    {
+        AddFrame(0, 0);
+        frames[index].DeserializeBinary(ref bytePosition, animationBytes);
+    }
+}
+*/

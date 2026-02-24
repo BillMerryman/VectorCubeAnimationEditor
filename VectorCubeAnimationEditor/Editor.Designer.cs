@@ -134,8 +134,6 @@
             lblPrimitiveCount = new Label();
             selectColor = new ColorDialog();
             grpbxFile = new GroupBox();
-            btnSaveToFB = new Button();
-            btnLoadFromFB = new Button();
             btnSaveToJSONFile = new Button();
             btnLoadFromJSONFile = new Button();
             btnSendImage = new Button();
@@ -1348,8 +1346,6 @@
             // 
             // grpbxFile
             // 
-            grpbxFile.Controls.Add(btnSaveToFB);
-            grpbxFile.Controls.Add(btnLoadFromFB);
             grpbxFile.Controls.Add(btnSaveToJSONFile);
             grpbxFile.Controls.Add(btnLoadFromJSONFile);
             grpbxFile.Controls.Add(btnSendImage);
@@ -1371,28 +1367,6 @@
             grpbxFile.TabIndex = 4;
             grpbxFile.TabStop = false;
             grpbxFile.Text = "File";
-            // 
-            // btnSaveToFB
-            // 
-            btnSaveToFB.Font = new Font("Segoe UI", 8.25F);
-            btnSaveToFB.Image = (System.Drawing.Image)resources.GetObject("btnSaveToFB.Image");
-            btnSaveToFB.Location = new Point(134, 44);
-            btnSaveToFB.Name = "btnSaveToFB";
-            btnSaveToFB.Size = new Size(32, 22);
-            btnSaveToFB.TabIndex = 16;
-            btnSaveToFB.UseVisualStyleBackColor = true;
-            btnSaveToFB.Click += btnSaveToFB_Click;
-            // 
-            // btnLoadFromFB
-            // 
-            btnLoadFromFB.Font = new Font("Segoe UI", 8.25F);
-            btnLoadFromFB.Image = (System.Drawing.Image)resources.GetObject("btnLoadFromFB.Image");
-            btnLoadFromFB.Location = new Point(91, 44);
-            btnLoadFromFB.Name = "btnLoadFromFB";
-            btnLoadFromFB.Size = new Size(32, 22);
-            btnLoadFromFB.TabIndex = 15;
-            btnLoadFromFB.UseVisualStyleBackColor = true;
-            btnLoadFromFB.Click += btnLoadFromFB_Click;
             // 
             // btnSaveToJSONFile
             // 
@@ -1609,7 +1583,6 @@
         private GroupBox grpbxFile;
         private Button btnTransmitFile;
         private Button btnSaveToBinaryFile;
-        private Button btnLoadFromBinaryFile;
         private TextBox txtIPFirstOctet;
         private Button btnAddRoundRect;
         private Button btnAddTriangle;
@@ -1716,7 +1689,6 @@
         private Label lblRotatedRectCenX;
         private Button btnLoadFromJSONFile;
         private Button btnSaveToJSONFile;
-        private Button btnSaveToFB;
-        private Button btnLoadFromFB;
+        private Button btnLoadFromBinaryFile;
     }
 }

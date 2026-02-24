@@ -12,7 +12,7 @@ namespace VectorCubeAnimationEditor
         bool highlightCurrent = false;
         Point MouseLocation = new(0, 0);
 
-        byte[] IP = { 192, 168, 1, 1 };
+        byte[] IP = [192, 168, 1, 1];
 
         UInt16 fillColor = 0;
         UInt32 duration = 0;
@@ -45,10 +45,9 @@ namespace VectorCubeAnimationEditor
         {
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] animationBytes = File.ReadAllBytes(openFile.FileName);
+                byte[] flatbuffer = File.ReadAllBytes(openFile.FileName);
                 animation = new Animation();
-                animation.DeserializeBinary(animationBytes);
-
+                animation.DeserializeFB(flatbuffer);
                 if (animation.FrameCount == 0)
                 {
                     currentFrame = null;
@@ -75,12 +74,12 @@ namespace VectorCubeAnimationEditor
 
         private void btnSaveFile_Click(object sender, EventArgs e)
         {
-            saveFile.DefaultExt = ".a4v";
-            saveFile.Filter = "Animations 4 Vector (*.a4v)|*.a4v";
+            saveFile.DefaultExt = ".fb";
+            saveFile.Filter = "Flatbuffers (*.fb)|*.fb";
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] animationBytes = animation.SerializeBinary();
-                File.WriteAllBytes(saveFile.FileName, animationBytes);
+                byte[] flatbuffer = animation.SerializeFB();
+                File.WriteAllBytes(saveFile.FileName, flatbuffer);
             }
         }
 
@@ -122,65 +121,20 @@ namespace VectorCubeAnimationEditor
             saveFile.Filter = "JSON (*.json)|*.json";
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                var options = new JsonSerializerOptions
+                JsonSerializerOptions jsonSerializerOptions = new()
                 {
                     WriteIndented = true
                 };
+                var options = jsonSerializerOptions;
                 string animationJSON = JsonSerializer.Serialize(animation, options);
                 File.WriteAllText(saveFile.FileName, animationJSON);
-            }
-        }
-
-        private void btnLoadFromFB_Click(object sender, EventArgs e)
-        {
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                byte[] flatbuffer = File.ReadAllBytes(openFile.FileName);
-                animation = new Animation();
-                animation.DeserializeFB(flatbuffer);
-                if (animation.FrameCount == 0)
-                {
-                    currentFrame = null;
-                    currentPrimitive = null;
-                    DisableCurrentFrameManipulation();
-                    DisableFrameNavigation();
-                    DisablePrimitiveCreation();
-                    DisablePrimitiveNavigation();
-                    HideAllPrimitiveFields();
-                    pctbxCanvas.Refresh();
-                    return;
-                }
-                AnimationFrame? frame = animation.GetFrame(0);
-                if (frame is not null)
-                {
-                    SetCurrentFrame(frame);
-                    EnableCurrentFrameManipulation();
-                    SetFrameNavigation();
-                }
-
-                txtFrameCount.Text = animation.FrameCount.ToString();
-            }
-        }
-
-        private void btnSaveToFB_Click(object sender, EventArgs e)
-        {
-            saveFile.DefaultExt = ".fb";
-            saveFile.Filter = "Flatbuffers (*.fb)|*.fb";
-            if (saveFile.ShowDialog() == DialogResult.OK)
-            {
-                var options = new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                };
-                byte[] flatbuffer = animation.SerializeFB();
-                File.WriteAllBytes(saveFile.FileName, flatbuffer);
             }
         }
 
         private void btnTransmitFile_Click(object sender, EventArgs e)
         {
             byte[] commandBytes = Utility.getCommandBytes(AnimationConstants._Animation);
-            byte[] animationBytes = animation.SerializeBinary();
+            byte[] animationBytes = animation.SerializeFB();
             string IPAddress = IP[0].ToString();
             IPAddress += ".";
             IPAddress += IP[1].ToString();
@@ -208,7 +162,7 @@ namespace VectorCubeAnimationEditor
             saveFile.Filter = "C Header Files (*.h)|*.h";
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                byte[] animationBytes = animation.SerializeBinary();
+                byte[] animationBytes = animation.SerializeFB();
                 try
                 {
                     using (StreamWriter writer = new(saveFile.FileName))
@@ -1685,19 +1639,19 @@ namespace VectorCubeAnimationEditor
 
         #region Validation helpers
 
-        private bool IsDigit(KeyEventArgs e)
+        private static bool IsDigit(KeyEventArgs e)
         {
             if ((e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9) || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)) return true;
             return false;
         }
 
-        private bool IsHexDigit(KeyEventArgs e)
+        private static bool IsHexDigit(KeyEventArgs e)
         {
             if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.F) || IsDigit(e)) return true;
             return false;
         }
 
-        private bool IsEdit(KeyEventArgs e)
+        private static bool IsEdit(KeyEventArgs e)
         {
             if (e.Control && (e.KeyCode == Keys.A || e.KeyCode == Keys.C || e.KeyCode == Keys.V || e.KeyCode == Keys.X))
             {
@@ -1713,7 +1667,7 @@ namespace VectorCubeAnimationEditor
             return false;
         }
 
-        private void ValidateColor(TextBox txtColorField, KeyEventArgs e, ref UInt16 fillColor)
+        private static void ValidateColor(TextBox txtColorField, KeyEventArgs e, ref UInt16 fillColor)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -1732,7 +1686,7 @@ namespace VectorCubeAnimationEditor
             if (!(IsEdit(e) || IsHexDigit(e))) e.SuppressKeyPress = true;
         }
 
-        private void ValidateByte(TextBox txtOctet, KeyEventArgs e, ref Byte byteIn)
+        private static void ValidateByte(TextBox txtOctet, KeyEventArgs e, ref Byte byteIn)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -1752,7 +1706,7 @@ namespace VectorCubeAnimationEditor
             if (!(IsEdit(e) || IsDigit(e))) e.SuppressKeyPress = true;
         }
 
-        private void ValidateInt16(TextBox txtInt16Field, KeyEventArgs e, ref Int16 value)
+        private static void ValidateInt16(TextBox txtInt16Field, KeyEventArgs e, ref Int16 value)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -1776,7 +1730,7 @@ namespace VectorCubeAnimationEditor
             if (!(IsEdit(e) || IsDigit(e) || isSign)) e.SuppressKeyPress = true;
         }
 
-        private void ValidateUInt32(TextBox txtUInt32Field, KeyEventArgs e, ref UInt32 value)
+        private static void ValidateUInt32(TextBox txtUInt32Field, KeyEventArgs e, ref UInt32 value)
         {
             if (e.KeyCode == Keys.Enter)
             {
