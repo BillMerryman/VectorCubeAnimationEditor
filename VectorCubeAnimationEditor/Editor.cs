@@ -172,9 +172,10 @@ namespace VectorCubeAnimationEditor
                         while (index < animationBytes.Length)
                         {
                             writer.Write("0x");
-                            writer.Write(animationBytes[index++].ToString("X2"));
+                            writer.Write(animationBytes[index].ToString("X2"));
+                            index++;
                             if (index < animationBytes.Length) writer.Write(", ");
-                            if (index % 16 == 0) writer.WriteLine("");
+                            if (index % 16 == 0 && index < animationBytes.Length) writer.WriteLine("");
                         }
                         writer.WriteLine("");
                         writer.WriteLine("};");
