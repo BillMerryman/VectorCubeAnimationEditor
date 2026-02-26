@@ -101,13 +101,14 @@ namespace VectorCubeAnimationEditor
             }
             VectorOffset animationFramesOffset = AnimationFB.CreateFramesVector(builder, animationFrameOffsets);
             Offset<AnimationFB> animationFB = AnimationFB.CreateAnimationFB(builder, (Int16)Center.X, (Int16)Center.Y, animationFramesOffset);
-            AnimationFB.FinishAnimationFBBuffer(builder, animationFB);
+            AnimationFB.FinishSizePrefixedAnimationFBBuffer(builder, animationFB);
             return builder.DataBuffer.ToSizedArray();
         }
 
         public void DeserializeFB(byte[] buffer)
         {
-            ByteBuffer bb = new(buffer);
+            byte[] sizeStripped = buffer[4..];
+            ByteBuffer bb = new(sizeStripped);
             AnimationFB animationFB = AnimationFB.GetRootAsAnimationFB(bb);
             Center = new Point(animationFB.X0, animationFB.Y0);
             for (int frame = 0; frame < animationFB.FramesLength; frame++)

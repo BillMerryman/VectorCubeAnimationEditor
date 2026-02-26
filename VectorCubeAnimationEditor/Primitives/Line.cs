@@ -15,6 +15,35 @@ namespace VectorCubeAnimationEditor
         private Int16 y1;
         private UInt16 color;
 
+        public Int16 X0
+        {
+            get { return x0; }
+            set { x0 = value; }
+        }
+
+        public Int16 Y0
+        {
+            get { return y0; }
+            set { y0 = value; }
+        }
+        public Int16 X1
+        {
+            get { return x1; }
+            set { x1 = value; }
+        }
+
+        public override UInt16 Color
+        {
+            get { return color; }
+            set { color = value; }
+        }
+
+        public Int16 Y1
+        {
+            get { return y1; }
+            set { y1 = value; }
+        }
+
         [JsonIgnore]
         public override AnimationFrame? Parent
         {
@@ -22,34 +51,32 @@ namespace VectorCubeAnimationEditor
             internal set { parent = value; }
         }
 
-        public Int16 X0
+        [JsonIgnore]
+        public Int16 X0_Abs
         {
-            get { return (Parent is not null) ? (Int16)(x0 + Parent.RelativeCenter.X) : x0; }
-            set { x0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
+            get { return (Parent is not null) ? (Int16)(X0 + Parent.RelativeCenter.X) : X0; }
+            set { X0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
         }
 
-        public Int16 Y0
+        [JsonIgnore]
+        public Int16 Y0_Abs
         {
-            get { return (Parent is not null) ? (Int16)(y0 + Parent.RelativeCenter.Y) : y0; }
-            set { y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
+            get { return (Parent is not null) ? (Int16)(Y0 + Parent.RelativeCenter.Y) : Y0; }
+            set { Y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
-        public Int16 X1
+        [JsonIgnore]
+        public Int16 X1_Abs
         {
-            get { return (Parent is not null) ? (Int16)(x1 + Parent.RelativeCenter.X) : x1; }
-            set { x1 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
+            get { return (Parent is not null) ? (Int16)(X1 + Parent.RelativeCenter.X) : X1; }
+            set { X1 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
         }
 
-        public Int16 Y1
+        [JsonIgnore]
+        public Int16 Y1_Abs
         {
             get { return (Parent is not null) ? (Int16)(y1 + Parent.RelativeCenter.Y) : y1; }
             set { y1 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
-        }
-
-        public override UInt16 Color
-        {
-            get { return color; }
-            set { color = value; }
         }
 
         public Line()
@@ -89,16 +116,16 @@ namespace VectorCubeAnimationEditor
                 Width = AnimationConstants._ScaleFactor
             };
             if (isHighlighted) pen.DashStyle = DashStyle.Dash;
-            e.DrawLine(pen, X0 * AnimationConstants._ScaleFactor, Y0 * AnimationConstants._ScaleFactor, X1 * AnimationConstants._ScaleFactor, Y1 * AnimationConstants._ScaleFactor);
+            e.DrawLine(pen, X0_Abs * AnimationConstants._ScaleFactor, Y0_Abs * AnimationConstants._ScaleFactor, X1_Abs * AnimationConstants._ScaleFactor, Y1_Abs * AnimationConstants._ScaleFactor);
             pen.Dispose();
         }
 
         public override void Move(Point offset)
         {
-            X0 += (Int16)offset.X;
-            Y0 += (Int16)offset.Y;
-            X1 += (Int16)offset.X;
-            Y1 += (Int16)offset.Y;
+            X0_Abs += (Int16)offset.X;
+            Y0_Abs += (Int16)offset.Y;
+            X1_Abs += (Int16)offset.X;
+            Y1_Abs += (Int16)offset.Y;
         }
 
         public void MoveEndPoint(int endPointNum, Point offset)
@@ -106,13 +133,13 @@ namespace VectorCubeAnimationEditor
             if (endPointNum < 0 || endPointNum > 1) return;
             if (endPointNum == 0)
             {
-                X0 += (Int16)offset.X;
-                Y0 += (Int16)offset.Y;
+                X0_Abs += (Int16)offset.X;
+                Y0_Abs += (Int16)offset.Y;
             }
             if (endPointNum == 1)
             {
-                X1 += (Int16)offset.X;
-                Y1 += (Int16)offset.Y;
+                X1_Abs += (Int16)offset.X;
+                Y1_Abs += (Int16)offset.Y;
             }
         }
 
@@ -140,25 +167,25 @@ namespace VectorCubeAnimationEditor
         [JsonIgnore]
         public Int16 ScreenX0
         {
-            get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(X0_Abs * AnimationConstants._ScaleFactor); }
         }
 
         [JsonIgnore]
         public Int16 ScreenY0
         {
-            get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(Y0_Abs * AnimationConstants._ScaleFactor); }
         }
 
         [JsonIgnore]
         public Int16 ScreenX1
         {
-            get { return (Int16)(X1 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(X1_Abs * AnimationConstants._ScaleFactor); }
         }
 
         [JsonIgnore]
         public Int16 ScreenY1
         {
-            get { return (Int16)(Y1 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(Y1_Abs * AnimationConstants._ScaleFactor); }
         }
 
         #region Mouse handling
@@ -219,8 +246,8 @@ namespace VectorCubeAnimationEditor
 
         public Point[] GetEndPoints()
         {
-            Point endPoint1 = new(X0, Y0);
-            Point endPoint2 = new(X1, Y1);
+            Point endPoint1 = new(X0_Abs, Y0_Abs);
+            Point endPoint2 = new(X1_Abs, Y1_Abs);
 
             Point[] endPoints = [endPoint1, endPoint2];
 

@@ -16,23 +16,16 @@ namespace VectorCubeAnimationEditor
         private Int16 angleDeg;
         private UInt16 color;
 
-        [JsonIgnore]
-        public override AnimationFrame? Parent
-        {
-            get { return parent; }
-            internal set { parent = value; }
-        }
-
         public Int16 X0
         {
-            get { return (Parent is not null) ? (Int16)(x0 + Parent.RelativeCenter.X) : x0; }
-            set { x0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
+            get { return x0; }
+            set { x0 = value; }
         }
 
         public Int16 Y0
         {
-            get { return (Parent is not null) ? (Int16)(y0 + Parent.RelativeCenter.Y) : y0; }
-            set { y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
+            get { return y0; }
+            set { y0 = value; }
         }
 
         public Int16 W
@@ -57,6 +50,27 @@ namespace VectorCubeAnimationEditor
         {
             get { return color; }
             set { color = value; }
+        }
+
+        [JsonIgnore]
+        public override AnimationFrame? Parent
+        {
+            get { return parent; }
+            internal set { parent = value; }
+        }
+
+        [JsonIgnore]
+        public Int16 X0_Abs
+        {
+            get { return (Parent is not null) ? (Int16)(X0 + Parent.RelativeCenter.X) : X0; }
+            set { X0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
+        }
+
+        [JsonIgnore]
+        public Int16 Y0_Abs
+        {
+            get { return (Parent is not null) ? (Int16)(Y0 + Parent.RelativeCenter.Y) : Y0; }
+            set { Y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
         public RotatedRect()
@@ -110,8 +124,8 @@ namespace VectorCubeAnimationEditor
 
         public override void Move(Point offset)
         {
-            X0 += (Int16)offset.X;
-            Y0 += (Int16)offset.Y;
+            X0_Abs += (Int16)offset.X;
+            Y0_Abs += (Int16)offset.Y;
         }
 
         public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
@@ -139,13 +153,13 @@ namespace VectorCubeAnimationEditor
         [JsonIgnore]
         public Int16 ScreenX0
         {
-            get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(X0_Abs * AnimationConstants._ScaleFactor); }
         }
 
         [JsonIgnore]
         public Int16 ScreenY0
         {
-            get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(Y0_Abs * AnimationConstants._ScaleFactor); }
         }
 
         #region Mouse handling
@@ -247,8 +261,8 @@ namespace VectorCubeAnimationEditor
                         newCenter = Utility.RotateFromReferencePoint(mousedownScreenCen, newCenter, angleDeg);
                         newCenter.X /= AnimationConstants._ScaleFactor;
                         newCenter.Y /= AnimationConstants._ScaleFactor;
-                        X0 = (Int16)newCenter.X;
-                        Y0 = (Int16)newCenter.Y;
+                        X0_Abs = (Int16)newCenter.X;
+                        Y0_Abs = (Int16)newCenter.Y;
                     }
                 }
 

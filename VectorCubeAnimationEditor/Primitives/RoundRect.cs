@@ -16,23 +16,16 @@ namespace VectorCubeAnimationEditor
         private Int16 radius;
         private UInt16 color;
 
-        [JsonIgnore]
-        public override AnimationFrame? Parent
-        {
-            get { return parent; }
-            internal set { parent = value; }
-        }
-
         public Int16 X0
         {
-            get { return (Parent is not null) ? (Int16)(x0 + Parent.RelativeCenter.X) : x0; }
-            set { x0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
+            get { return x0; }
+            set { x0 = value; }
         }
 
         public Int16 Y0
         {
-            get { return (Parent is not null) ? (Int16)(y0 + Parent.RelativeCenter.Y) : y0; }
-            set { y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
+            get { return y0; }
+            set { y0 = value; }
         }
 
         public Int16 W
@@ -57,6 +50,27 @@ namespace VectorCubeAnimationEditor
         {
             get { return color; }
             set { color = value; }
+        }
+
+        [JsonIgnore]
+        public override AnimationFrame? Parent
+        {
+            get { return parent; }
+            internal set { parent = value; }
+        }
+
+        [JsonIgnore]
+        public Int16 X0_Abs
+        {
+            get { return (Parent is not null) ? (Int16)(X0 + Parent.RelativeCenter.X) : X0; }
+            set { X0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.X) : value; }
+        }
+
+        [JsonIgnore]
+        public Int16 Y0_Abs
+        {
+            get { return (Parent is not null) ? (Int16)(Y0 + Parent.RelativeCenter.Y) : Y0; }
+            set { Y0 = (Parent is not null) ? (Int16)(value - Parent.RelativeCenter.Y) : value; }
         }
 
         public RoundRect()
@@ -105,8 +119,8 @@ namespace VectorCubeAnimationEditor
 
         public override void Move(Point offset)
         {
-            X0 += (Int16)offset.X;
-            Y0 += (Int16)offset.Y;
+            X0_Abs += (Int16)offset.X;
+            Y0_Abs += (Int16)offset.Y;
         }
 
         public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
@@ -134,13 +148,13 @@ namespace VectorCubeAnimationEditor
         [JsonIgnore]
         public Int16 ScreenX0
         {
-            get { return (Int16)(X0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(X0_Abs * AnimationConstants._ScaleFactor); }
         }
 
         [JsonIgnore]
         public Int16 ScreenY0
         {
-            get { return (Int16)(Y0 * AnimationConstants._ScaleFactor); }
+            get { return (Int16)(Y0_Abs * AnimationConstants._ScaleFactor); }
         }
 
         [JsonIgnore]
@@ -237,7 +251,7 @@ namespace VectorCubeAnimationEditor
                             switch (selectedSide)
                             {
                                 case 0:
-                                    Y0 += (Int16)unscaledMouseDelta.Y;
+                                    Y0_Abs += (Int16)unscaledMouseDelta.Y;
                                     H -= (Int16)unscaledMouseDelta.Y;
                                     break;
                                 case 1:
@@ -247,7 +261,7 @@ namespace VectorCubeAnimationEditor
                                     H += (Int16)unscaledMouseDelta.Y;
                                     break;
                                 case 3:
-                                    X0 += (Int16)unscaledMouseDelta.X;
+                                    X0_Abs += (Int16)unscaledMouseDelta.X;
                                     W -= (Int16)unscaledMouseDelta.X;
                                     break;
                             }
@@ -295,10 +309,10 @@ namespace VectorCubeAnimationEditor
 
         public Point[] GetVertices()
         {
-            Point bottomRight = new(X0 + W, Y0 + H);
-            Point bottomLeft = new(X0, Y0 + H);
-            Point topLeft = new(X0, Y0);
-            Point topRight = new(X0 + W, Y0);
+            Point bottomRight = new(X0_Abs + W, Y0_Abs + H);
+            Point bottomLeft = new(X0_Abs, Y0_Abs + H);
+            Point topLeft = new(X0_Abs, Y0_Abs);
+            Point topRight = new(X0_Abs + W, Y0_Abs);
 
             Point[] vertices = [bottomRight, bottomLeft, topLeft, topRight];
 
@@ -335,14 +349,14 @@ namespace VectorCubeAnimationEditor
 
         public Point[] GetSides()
         {
-            Point l00 = new(X0 + Radius, Y0);
-            Point l01 = new(X0 + W - Radius, Y0);
-            Point l10 = new(X0 + W, Y0 + Radius);
-            Point l11 = new(X0 + W, Y0 + H - Radius);
-            Point l20 = new(X0 + W - Radius, Y0 + H);
-            Point l21 = new(X0 + Radius, Y0 + H);
-            Point l30 = new(X0, Y0 + H - Radius);
-            Point l31 = new(X0, Y0 + Radius);
+            Point l00 = new(X0_Abs + Radius, Y0_Abs);
+            Point l01 = new(X0_Abs + W - Radius, Y0_Abs);
+            Point l10 = new(X0_Abs + W, Y0_Abs + Radius);
+            Point l11 = new(X0_Abs + W, Y0_Abs + H - Radius);
+            Point l20 = new(X0_Abs + W - Radius, Y0_Abs + H);
+            Point l21 = new(X0_Abs + Radius, Y0_Abs + H);
+            Point l30 = new(X0_Abs, Y0_Abs + H - Radius);
+            Point l31 = new(X0_Abs, Y0_Abs + Radius);
 
             Point[] lines = [l00, l01, l10, l11, l20, l21, l30, l31];
             return lines;

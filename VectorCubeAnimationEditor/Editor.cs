@@ -503,12 +503,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                Int16 x0 = ((Line)currentPrimitive).X0;
+                Int16 x0 = ((Line)currentPrimitive).X0_Abs;
                 ValidateInt16((TextBox)sender, e, ref x0);
-                if (x0 != ((Line)currentPrimitive).X0)
+                if (x0 != ((Line)currentPrimitive).X0_Abs)
                 {
-                    ((Line)currentPrimitive).X0 = x0;
-                    ((TextBox)sender).Text = ((Line)currentPrimitive).X0.ToString();
+                    ((Line)currentPrimitive).X0_Abs = x0;
+                    ((TextBox)sender).Text = ((Line)currentPrimitive).X0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -518,7 +518,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                ((TextBox)sender).Text = ((Line)currentPrimitive).X0.ToString();
+                ((TextBox)sender).Text = ((Line)currentPrimitive).X0_Abs.ToString();
             }
         }
 
@@ -526,12 +526,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                Int16 y0 = ((Line)currentPrimitive).Y0;
+                Int16 y0 = ((Line)currentPrimitive).Y0_Abs;
                 ValidateInt16((TextBox)sender, e, ref y0);
-                if (y0 != ((Line)currentPrimitive).Y0)
+                if (y0 != ((Line)currentPrimitive).Y0_Abs)
                 {
-                    ((Line)currentPrimitive).Y0 = y0;
-                    ((TextBox)sender).Text = ((Line)currentPrimitive).Y0.ToString();
+                    ((Line)currentPrimitive).Y0_Abs = y0;
+                    ((TextBox)sender).Text = ((Line)currentPrimitive).Y0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -541,7 +541,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                ((TextBox)sender).Text = ((Line)currentPrimitive).Y0.ToString();
+                ((TextBox)sender).Text = ((Line)currentPrimitive).Y0_Abs.ToString();
             }
         }
 
@@ -549,12 +549,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                Int16 x1 = ((Line)currentPrimitive).X1;
+                Int16 x1 = ((Line)currentPrimitive).X1_Abs;
                 ValidateInt16((TextBox)sender, e, ref x1);
-                if (x1 != ((Line)currentPrimitive).X1)
+                if (x1 != ((Line)currentPrimitive).X1_Abs)
                 {
-                    ((Line)currentPrimitive).X1 = x1;
-                    ((TextBox)sender).Text = ((Line)currentPrimitive).X1.ToString();
+                    ((Line)currentPrimitive).X1_Abs = x1;
+                    ((TextBox)sender).Text = ((Line)currentPrimitive).X1_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -564,7 +564,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                ((TextBox)sender).Text = ((Line)currentPrimitive).X1.ToString();
+                ((TextBox)sender).Text = ((Line)currentPrimitive).X1_Abs.ToString();
             }
         }
 
@@ -572,12 +572,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                Int16 y1 = ((Line)currentPrimitive).Y1;
+                Int16 y1 = ((Line)currentPrimitive).Y1_Abs;
                 ValidateInt16((TextBox)sender, e, ref y1);
-                if (y1 != ((Line)currentPrimitive).Y1)
+                if (y1 != ((Line)currentPrimitive).Y1_Abs)
                 {
-                    ((Line)currentPrimitive).Y1 = y1;
-                    ((TextBox)sender).Text = ((Line)currentPrimitive).Y1.ToString();
+                    ((Line)currentPrimitive).Y1_Abs = y1;
+                    ((TextBox)sender).Text = ((Line)currentPrimitive).Y1_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -587,7 +587,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Line)))
             {
-                ((TextBox)sender).Text = ((Line)currentPrimitive).Y1.ToString();
+                ((TextBox)sender).Text = ((Line)currentPrimitive).Y1_Abs.ToString();
             }
         }
 
@@ -595,12 +595,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                Int16 x0 = ((Triangle)currentPrimitive).X0;
+                Int16 x0 = ((Triangle)currentPrimitive).X0_Abs;
                 ValidateInt16((TextBox)sender, e, ref x0);
-                if (x0 != ((Triangle)currentPrimitive).X0)
+                if (x0 != ((Triangle)currentPrimitive).X0_Abs)
                 {
-                    ((Triangle)currentPrimitive).X0 = x0;
-                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).X0.ToString();
+                    ((Triangle)currentPrimitive).X0_Abs = x0;
+                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).X0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -610,7 +610,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                ((TextBox)sender).Text = ((Triangle)currentPrimitive).X0.ToString();
+                ((TextBox)sender).Text = ((Triangle)currentPrimitive).X0_Abs.ToString();
             }
         }
 
@@ -618,12 +618,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                Int16 y0 = ((Triangle)currentPrimitive).Y0;
+                Int16 y0 = ((Triangle)currentPrimitive).Y0_Abs;
                 ValidateInt16((TextBox)sender, e, ref y0);
-                if (y0 != ((Triangle)currentPrimitive).Y0)
+                if (y0 != ((Triangle)currentPrimitive).Y0_Abs)
                 {
-                    ((Triangle)currentPrimitive).Y0 = y0;
-                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y0.ToString();
+                    ((Triangle)currentPrimitive).Y0_Abs = y0;
+                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -633,7 +633,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y0.ToString();
+                ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y0_Abs.ToString();
             }
         }
 
@@ -641,12 +641,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                Int16 x1 = ((Triangle)currentPrimitive).X1;
+                Int16 x1 = ((Triangle)currentPrimitive).X1_Abs;
                 ValidateInt16((TextBox)sender, e, ref x1);
-                if (x1 != ((Triangle)currentPrimitive).X1)
+                if (x1 != ((Triangle)currentPrimitive).X1_Abs)
                 {
-                    ((Triangle)currentPrimitive).X1 = x1;
-                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).X1.ToString();
+                    ((Triangle)currentPrimitive).X1_Abs = x1;
+                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).X1_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -656,7 +656,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                ((TextBox)sender).Text = ((Triangle)currentPrimitive).X1.ToString();
+                ((TextBox)sender).Text = ((Triangle)currentPrimitive).X1_Abs.ToString();
             }
         }
 
@@ -664,12 +664,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                Int16 y1 = ((Triangle)currentPrimitive).Y1;
+                Int16 y1 = ((Triangle)currentPrimitive).Y1_Abs;
                 ValidateInt16((TextBox)sender, e, ref y1);
-                if (y1 != ((Triangle)currentPrimitive).Y1)
+                if (y1 != ((Triangle)currentPrimitive).Y1_Abs)
                 {
-                    ((Triangle)currentPrimitive).Y1 = y1;
-                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y1.ToString();
+                    ((Triangle)currentPrimitive).Y1_Abs = y1;
+                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y1_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -679,7 +679,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y1.ToString();
+                ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y1_Abs.ToString();
             }
         }
 
@@ -687,12 +687,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                Int16 x2 = ((Triangle)currentPrimitive).X2;
+                Int16 x2 = ((Triangle)currentPrimitive).X2_Abs;
                 ValidateInt16((TextBox)sender, e, ref x2);
-                if (x2 != ((Triangle)currentPrimitive).X2)
+                if (x2 != ((Triangle)currentPrimitive).X2_Abs)
                 {
-                    ((Triangle)currentPrimitive).X2 = x2;
-                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).X2.ToString();
+                    ((Triangle)currentPrimitive).X2_Abs = x2;
+                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).X2_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -702,7 +702,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                ((TextBox)sender).Text = ((Triangle)currentPrimitive).X2.ToString();
+                ((TextBox)sender).Text = ((Triangle)currentPrimitive).X2_Abs.ToString();
             }
         }
 
@@ -710,12 +710,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                Int16 y2 = ((Triangle)currentPrimitive).Y2;
+                Int16 y2 = ((Triangle)currentPrimitive).Y2_Abs;
                 ValidateInt16((TextBox)sender, e, ref y2);
-                if (y2 != ((Triangle)currentPrimitive).Y2)
+                if (y2 != ((Triangle)currentPrimitive).Y2_Abs)
                 {
-                    ((Triangle)currentPrimitive).Y2 = y2;
-                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y2.ToString();
+                    ((Triangle)currentPrimitive).Y2_Abs = y2;
+                    ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y2_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -725,7 +725,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Triangle)))
             {
-                ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y2.ToString();
+                ((TextBox)sender).Text = ((Triangle)currentPrimitive).Y2_Abs.ToString();
             }
         }
 
@@ -733,12 +733,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RoundRect)))
             {
-                Int16 x0 = ((RoundRect)currentPrimitive).X0;
+                Int16 x0 = ((RoundRect)currentPrimitive).X0_Abs;
                 ValidateInt16((TextBox)sender, e, ref x0);
-                if (x0 != ((RoundRect)currentPrimitive).X0)
+                if (x0 != ((RoundRect)currentPrimitive).X0_Abs)
                 {
-                    ((RoundRect)currentPrimitive).X0 = x0;
-                    ((TextBox)sender).Text = ((RoundRect)currentPrimitive).X0.ToString();
+                    ((RoundRect)currentPrimitive).X0_Abs = x0;
+                    ((TextBox)sender).Text = ((RoundRect)currentPrimitive).X0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -748,7 +748,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RoundRect)))
             {
-                ((TextBox)sender).Text = ((RoundRect)currentPrimitive).X0.ToString();
+                ((TextBox)sender).Text = ((RoundRect)currentPrimitive).X0_Abs.ToString();
             }
         }
 
@@ -756,12 +756,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RoundRect)))
             {
-                Int16 y0 = ((RoundRect)currentPrimitive).Y0;
+                Int16 y0 = ((RoundRect)currentPrimitive).Y0_Abs;
                 ValidateInt16((TextBox)sender, e, ref y0);
-                if (y0 != ((RoundRect)currentPrimitive).Y0)
+                if (y0 != ((RoundRect)currentPrimitive).Y0_Abs)
                 {
-                    ((RoundRect)currentPrimitive).Y0 = y0;
-                    ((TextBox)sender).Text = ((RoundRect)currentPrimitive).Y0.ToString();
+                    ((RoundRect)currentPrimitive).Y0_Abs = y0;
+                    ((TextBox)sender).Text = ((RoundRect)currentPrimitive).Y0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -771,7 +771,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RoundRect)))
             {
-                ((TextBox)sender).Text = ((RoundRect)currentPrimitive).Y0.ToString();
+                ((TextBox)sender).Text = ((RoundRect)currentPrimitive).Y0_Abs.ToString();
             }
         }
 
@@ -848,12 +848,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                Int16 cenX = ((RotatedRect)currentPrimitive).X0;
+                Int16 cenX = ((RotatedRect)currentPrimitive).X0_Abs;
                 ValidateInt16((TextBox)sender, e, ref cenX);
-                if (cenX != ((RotatedRect)currentPrimitive).X0)
+                if (cenX != ((RotatedRect)currentPrimitive).X0_Abs)
                 {
-                    ((RotatedRect)currentPrimitive).X0 = cenX;
-                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).X0.ToString();
+                    ((RotatedRect)currentPrimitive).X0_Abs = cenX;
+                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).X0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -863,7 +863,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).X0.ToString();
+                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).X0_Abs.ToString();
             }
         }
 
@@ -871,12 +871,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                Int16 cenY = ((RotatedRect)currentPrimitive).Y0;
+                Int16 cenY = ((RotatedRect)currentPrimitive).Y0_Abs;
                 ValidateInt16((TextBox)sender, e, ref cenY);
-                if (cenY != ((RotatedRect)currentPrimitive).Y0)
+                if (cenY != ((RotatedRect)currentPrimitive).Y0_Abs)
                 {
-                    ((RotatedRect)currentPrimitive).Y0 = cenY;
-                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).Y0.ToString();
+                    ((RotatedRect)currentPrimitive).Y0_Abs = cenY;
+                    ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).Y0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -886,7 +886,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(RotatedRect)))
             {
-                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).Y0.ToString();
+                ((TextBox)sender).Text = ((RotatedRect)currentPrimitive).Y0_Abs.ToString();
             }
         }
 
@@ -963,12 +963,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Circle)))
             {
-                Int16 x0 = ((Circle)currentPrimitive).X0;
+                Int16 x0 = ((Circle)currentPrimitive).X0_Abs;
                 ValidateInt16((TextBox)sender, e, ref x0);
-                if (x0 != ((Circle)currentPrimitive).X0)
+                if (x0 != ((Circle)currentPrimitive).X0_Abs)
                 {
-                    ((Circle)currentPrimitive).X0 = x0;
-                    ((TextBox)sender).Text = ((Circle)currentPrimitive).X0.ToString();
+                    ((Circle)currentPrimitive).X0_Abs = x0;
+                    ((TextBox)sender).Text = ((Circle)currentPrimitive).X0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -978,7 +978,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Circle)))
             {
-                ((TextBox)sender).Text = ((Circle)currentPrimitive).X0.ToString();
+                ((TextBox)sender).Text = ((Circle)currentPrimitive).X0_Abs.ToString();
             }
         }
 
@@ -986,12 +986,12 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Circle)))
             {
-                Int16 y0 = ((Circle)currentPrimitive).Y0;
+                Int16 y0 = ((Circle)currentPrimitive).Y0_Abs;
                 ValidateInt16((TextBox)sender, e, ref y0);
-                if (y0 != ((Circle)currentPrimitive).Y0)
+                if (y0 != ((Circle)currentPrimitive).Y0_Abs)
                 {
-                    ((Circle)currentPrimitive).Y0 = y0;
-                    ((TextBox)sender).Text = ((Circle)currentPrimitive).Y0.ToString();
+                    ((Circle)currentPrimitive).Y0_Abs = y0;
+                    ((TextBox)sender).Text = ((Circle)currentPrimitive).Y0_Abs.ToString();
                     pctbxCanvas.Refresh();
                 }
             }
@@ -1001,7 +1001,7 @@ namespace VectorCubeAnimationEditor
         {
             if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Circle)))
             {
-                ((TextBox)sender).Text = ((Circle)currentPrimitive).Y0.ToString();
+                ((TextBox)sender).Text = ((Circle)currentPrimitive).Y0_Abs.ToString();
             }
         }
 
@@ -1551,28 +1551,28 @@ namespace VectorCubeAnimationEditor
 
         private void SetDisplayFieldsFromLine(Line line)
         {
-            txtLineX0.Text = line.X0.ToString();
-            txtLineY0.Text = line.Y0.ToString();
-            txtLineX1.Text = line.X1.ToString();
-            txtLineY1.Text = line.Y1.ToString();
+            txtLineX0.Text = line.X0_Abs.ToString();
+            txtLineY0.Text = line.Y0_Abs.ToString();
+            txtLineX1.Text = line.X1_Abs.ToString();
+            txtLineY1.Text = line.Y1_Abs.ToString();
             txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(line.Color);
         }
 
         private void SetDisplayFieldsFromTriangle(Triangle triangle)
         {
-            txtTriangleX0.Text = triangle.X0.ToString();
-            txtTriangleY0.Text = triangle.Y0.ToString();
-            txtTriangleX1.Text = triangle.X1.ToString();
-            txtTriangleY1.Text = triangle.Y1.ToString();
-            txtTriangleX2.Text = triangle.X2.ToString();
-            txtTriangleY2.Text = triangle.Y2.ToString();
+            txtTriangleX0.Text = triangle.X0_Abs.ToString();
+            txtTriangleY0.Text = triangle.Y0_Abs.ToString();
+            txtTriangleX1.Text = triangle.X1_Abs.ToString();
+            txtTriangleY1.Text = triangle.Y1_Abs.ToString();
+            txtTriangleX2.Text = triangle.X2_Abs.ToString();
+            txtTriangleY2.Text = triangle.Y2_Abs.ToString();
             txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(triangle.Color);
         }
 
         private void SetDisplayFieldsFromRoundRect(RoundRect roundRect)
         {
-            txtRoundRectX0.Text = roundRect.X0.ToString();
-            txtRoundRectY0.Text = roundRect.Y0.ToString();
+            txtRoundRectX0.Text = roundRect.X0_Abs.ToString();
+            txtRoundRectY0.Text = roundRect.Y0_Abs.ToString();
             txtRoundRectW.Text = roundRect.W.ToString();
             txtRoundRectH.Text = roundRect.H.ToString();
             txtRoundRectRadius.Text = roundRect.Radius.ToString();
@@ -1581,8 +1581,8 @@ namespace VectorCubeAnimationEditor
 
         private void SetDisplayFieldsFromRotatedRect(RotatedRect rotatedRect)
         {
-            txtRotatedRectCenX.Text = rotatedRect.X0.ToString();
-            txtRotatedRectCenY.Text = rotatedRect.Y0.ToString();
+            txtRotatedRectCenX.Text = rotatedRect.X0_Abs.ToString();
+            txtRotatedRectCenY.Text = rotatedRect.Y0_Abs.ToString();
             txtRotatedRectW.Text = rotatedRect.W.ToString();
             txtRotatedRectH.Text = rotatedRect.H.ToString();
             txtRotatedRectAngleDeg.Text = rotatedRect.AngleDeg.ToString();
@@ -1591,8 +1591,8 @@ namespace VectorCubeAnimationEditor
 
         private void SetDisplayFieldsFromCircle(Circle circle)
         {
-            txtCircleX0.Text = circle.X0.ToString();
-            txtCircleY0.Text = circle.Y0.ToString();
+            txtCircleX0.Text = circle.X0_Abs.ToString();
+            txtCircleY0.Text = circle.Y0_Abs.ToString();
             txtCircleR.Text = circle.R.ToString();
             txtCircleDelta.Text = circle.Delta.ToString();
             txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(circle.Color);
