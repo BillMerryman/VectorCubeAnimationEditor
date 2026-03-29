@@ -13,7 +13,6 @@ namespace VectorCubeAnimationEditor
         private Int16 y0;
         private Int16 r;
         private byte quadrants;
-        private Int16 delta;
         private UInt16 color;
 
         public const byte TopLeft = 1;
@@ -43,12 +42,6 @@ namespace VectorCubeAnimationEditor
         {
             get { return quadrants; }
             set { quadrants = value; }
-        }
-
-        public Int16 Delta
-        {
-            get { return delta; }
-            set { delta = value; }
         }
 
         public override UInt16 Color
@@ -84,7 +77,6 @@ namespace VectorCubeAnimationEditor
             Y0 = 0;
             R = AnimationConstants.DEFAULT_PRIMITIVE_RADIUS;
             Quadrants = BottomLeft | BottomRight | TopRight | TopLeft;
-            Delta = 0;
             Color = 0;
         }
 
@@ -99,7 +91,6 @@ namespace VectorCubeAnimationEditor
             Y0 = circle.Y0;
             R = circle.R;
             Quadrants = circle.Quadrants;
-            Delta = circle.Delta;
             Color = circle.Color;
             parent = circle.Parent;
         }
@@ -135,7 +126,7 @@ namespace VectorCubeAnimationEditor
 
         public override (PrimitiveFB, int) SerializeFB(FlatBufferBuilder builder)
         {
-            return (PrimitiveFB.CircleFB, CircleFB.CreateCircleFB(builder, X0, Y0, R, Quadrants, Delta, Color).Value);
+            return (PrimitiveFB.CircleFB, CircleFB.CreateCircleFB(builder, X0, Y0, R, Quadrants, Color).Value);
         }
 
         public override void DeserializeFB(Object data)
@@ -144,7 +135,6 @@ namespace VectorCubeAnimationEditor
             Y0 = ((CircleFB)data).Y0;
             R = ((CircleFB)data).R;
             Quadrants = ((CircleFB)data).Quadrants;
-            Delta = ((CircleFB)data).Delta;
         }
 
         #region Screen mapped methods

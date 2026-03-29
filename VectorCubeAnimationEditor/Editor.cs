@@ -1028,29 +1028,6 @@ namespace VectorCubeAnimationEditor
             }
         }
 
-        private void txtCircleDelta_KeyDown(object sender, KeyEventArgs e)
-        {
-            if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Circle)))
-            {
-                Int16 delta = ((Circle)currentPrimitive).Delta;
-                ValidateInt16((TextBox)sender, e, ref delta);
-                if (delta != ((Circle)currentPrimitive).Delta)
-                {
-                    ((Circle)currentPrimitive).Delta = delta;
-                    ((TextBox)sender).Text = ((Circle)currentPrimitive).Delta.ToString();
-                    pctbxCanvas.Refresh();
-                }
-            }
-        }
-
-        private void txtCircleDelta_Leave(object sender, EventArgs e)
-        {
-            if ((currentPrimitive is not null) && (currentPrimitive.GetType() == typeof(Circle)))
-            {
-                ((TextBox)sender).Text = ((Circle)currentPrimitive).Delta.ToString();
-            }
-        }
-
         private void chkCircleTopLeft_CheckedChanged(object sender, EventArgs e)
         {
             if (currentPrimitive is not null)
@@ -1594,7 +1571,6 @@ namespace VectorCubeAnimationEditor
             txtCircleX0.Text = circle.X0_Abs.ToString();
             txtCircleY0.Text = circle.Y0_Abs.ToString();
             txtCircleR.Text = circle.R.ToString();
-            txtCircleDelta.Text = circle.Delta.ToString();
             txtCurrentPrimitiveDrawColor.Text = Utility.GetRGBStringFromUIint16(circle.Color);
             chkCircleTopLeft.Checked = ((circle.Quadrants & Circle.TopLeft) == Circle.TopLeft);
             chkCircleTopRight.Checked = ((circle.Quadrants & Circle.TopRight) == Circle.TopRight);

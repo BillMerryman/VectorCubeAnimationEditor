@@ -41,7 +41,7 @@ static public class PrimitiveFBVerify
         result = verifier.VerifyUnionData(tablePos, 12, 2);
         break;
       case PrimitiveFB.CircleFB:
-        result = verifier.VerifyUnionData(tablePos, 12, 2);
+        result = verifier.VerifyUnionData(tablePos, 10, 2);
         break;
       default: result = true;
         break;
@@ -165,13 +165,11 @@ public struct CircleFB : IFlatbufferObject
   public short Y0 { get { return __p.bb.GetShort(__p.bb_pos + 2); } }
   public short R { get { return __p.bb.GetShort(__p.bb_pos + 4); } }
   public byte Quadrants { get { return __p.bb.Get(__p.bb_pos + 6); } }
-  public short Delta { get { return __p.bb.GetShort(__p.bb_pos + 8); } }
-  public ushort Color { get { return __p.bb.GetUshort(__p.bb_pos + 10); } }
+  public ushort Color { get { return __p.bb.GetUshort(__p.bb_pos + 8); } }
 
-  public static Offset<AnimationFlatbuffer.CircleFB> CreateCircleFB(FlatBufferBuilder builder, short X0, short Y0, short R, byte Quadrants, short Delta, ushort Color) {
-    builder.Prep(2, 12);
+  public static Offset<AnimationFlatbuffer.CircleFB> CreateCircleFB(FlatBufferBuilder builder, short X0, short Y0, short R, byte Quadrants, ushort Color) {
+    builder.Prep(2, 10);
     builder.PutUshort(Color);
-    builder.PutShort(Delta);
     builder.Pad(1);
     builder.PutByte(Quadrants);
     builder.PutShort(R);

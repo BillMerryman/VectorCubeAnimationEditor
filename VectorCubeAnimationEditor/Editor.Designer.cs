@@ -67,11 +67,9 @@
             chkCircleBottomLeft = new CheckBox();
             chkCircleBottomRight = new CheckBox();
             txtCircleR = new TextBox();
-            txtCircleDelta = new TextBox();
             txtCircleY0 = new TextBox();
             txtCircleX0 = new TextBox();
             lblCircleR = new Label();
-            lblCircleDelta = new Label();
             lblCircleQuadrants = new Label();
             lblCircleY0 = new Label();
             lblCircleX0 = new Label();
@@ -563,11 +561,9 @@
             grpbxCircle.Controls.Add(chkCircleBottomLeft);
             grpbxCircle.Controls.Add(chkCircleBottomRight);
             grpbxCircle.Controls.Add(txtCircleR);
-            grpbxCircle.Controls.Add(txtCircleDelta);
             grpbxCircle.Controls.Add(txtCircleY0);
             grpbxCircle.Controls.Add(txtCircleX0);
             grpbxCircle.Controls.Add(lblCircleR);
-            grpbxCircle.Controls.Add(lblCircleDelta);
             grpbxCircle.Controls.Add(lblCircleQuadrants);
             grpbxCircle.Controls.Add(lblCircleY0);
             grpbxCircle.Controls.Add(lblCircleX0);
@@ -661,16 +657,6 @@
             txtCircleR.KeyDown += txtCircleR_KeyDown;
             txtCircleR.Leave += txtCircleR_Leave;
             // 
-            // txtCircleDelta
-            // 
-            txtCircleDelta.Location = new Point(109, 40);
-            txtCircleDelta.Name = "txtCircleDelta";
-            txtCircleDelta.ShortcutsEnabled = false;
-            txtCircleDelta.Size = new Size(30, 22);
-            txtCircleDelta.TabIndex = 8;
-            txtCircleDelta.KeyDown += txtCircleDelta_KeyDown;
-            txtCircleDelta.Leave += txtCircleDelta_Leave;
-            // 
             // txtCircleY0
             // 
             txtCircleY0.Location = new Point(109, 16);
@@ -699,15 +685,6 @@
             lblCircleR.Size = new Size(17, 13);
             lblCircleR.TabIndex = 4;
             lblCircleR.Text = "R:";
-            // 
-            // lblCircleDelta
-            // 
-            lblCircleDelta.AutoSize = true;
-            lblCircleDelta.Location = new Point(94, 45);
-            lblCircleDelta.Name = "lblCircleDelta";
-            lblCircleDelta.Size = new Size(18, 13);
-            lblCircleDelta.TabIndex = 3;
-            lblCircleDelta.Text = "D:";
             // 
             // lblCircleQuadrants
             // 
@@ -1622,13 +1599,11 @@
         private TextBox txtPrimitiveDrawColor;
         private Label lblAddPrimitiveDrawColor;
         private GroupBox grpbxCircle;
-        private TextBox txtCircleDelta;
         private TextBox txtCircleY0;
         private TextBox txtCircleX0;
         private TextBox txtCircleR;
         private Label lblCircleY0;
         private Label lblCircleX0;
-        private Label lblCircleDelta;
         private Label lblCircleR;
         private Label lblCircleQuadrants;
         private GroupBox grpbxTriangle;

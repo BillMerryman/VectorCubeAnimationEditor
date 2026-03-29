@@ -41,7 +41,6 @@ struct CircleFB {
     y0: int16;
     r: int16;
     quadrants: ubyte;
-    delta: int16;
     color: uint16;
 }
 
